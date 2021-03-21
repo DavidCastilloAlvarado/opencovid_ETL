@@ -1,0 +1,16 @@
+Include
+Lib
+Scripts
+**.cfg
+build
+Build
+db.sqlite3
+__pycache__
+**/migrations/**
+!**/migrations
+!**/migrations/__init__.py
+howto.md
+customers.csv
+temp
+.vscode
+**/API/*.json
