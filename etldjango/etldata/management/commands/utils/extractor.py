@@ -38,8 +38,8 @@ class Data_Extractor(object):
         try:
             #urllib.request.urlretrieve(url, 'downloads/{}'.format(file_name))
             urlretrieve(url, file_name)
-            if file_name.split(".")[-1] == "pdf":
-                self.pdf_data_extractor(file_name)
+            # if file_name.split(".")[-1] == "pdf":
+            #    self.pdf_data_extractor(file_name)
             return True
         except:
             return False

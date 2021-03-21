@@ -167,3 +167,27 @@ class DB_rt(models.Model):
 
     def __str__(self):
         return self.date
+
+
+class DB_movilidad(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    region = models.CharField(max_length=50)
+    comercial_recreación = models.DecimalField(
+        null=True, decimal_places=2, max_digits=6,)
+    supermercados_farmacias = models.DecimalField(
+        null=True, decimal_places=2, max_digits=6,)
+    parques = models.DecimalField(null=True, decimal_places=2, max_digits=6,)
+    estaciones_de_tránsito = models.DecimalField(
+        null=True, decimal_places=2, max_digits=6,)
+    lugares_de_trabajo = models.DecimalField(
+        null=True, decimal_places=2, max_digits=6,)
+    residencia = models.DecimalField(
+        null=True, decimal_places=2, max_digits=6,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'movil_table'
+
+    def __str__(self):
+        return self.fecha
