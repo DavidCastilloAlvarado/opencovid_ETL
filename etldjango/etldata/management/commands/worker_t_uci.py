@@ -34,7 +34,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         init = options["init"]
         assert init in ['yes', 'no'], "Error in --init argument"
-        self.print_shell("Transforming data UCI to consume in DB sinadef... ")
+        self.print_shell("Transforming data UCI to load in DB UCI... ")
         uci = self.transform_uci("temp/UCI_VENT.csv")
         oxi = self.transform_oxi("temp/O2.csv")
         self.transform_merge(uci, oxi, init)

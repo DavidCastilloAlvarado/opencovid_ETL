@@ -56,7 +56,7 @@ class Command(BaseCommand):
 
     def load_from_DB(self):
         all_pos = DB_positividad.objects.values_list(
-            'fecha', 'region', 'Total_pos').all()  # [:20]
+            'fecha', 'region', 'Total_pos').all()  # [:5000]
         positividad = read_frame(all_pos)
         columns = [
             "fecha",
@@ -78,10 +78,34 @@ class Command(BaseCommand):
                                     }, inplace=True)
         positividad.Fecha = positividad.Fecha.apply(
             lambda x: x.date().strftime("%Y-%m-%d"))
+        positividad.Fecha = positividad.Fecha.apply(
+            lambda x: datetime.strptime(str(x), "%Y-%m-%d"))
+
+        """ 
+        # Filling data with backfill method
+        positividad = pd.pivot_table(
+            positividad, values="cum_pos_total", index="Fecha", columns='REGION').reset_index()
+        totaldatelist = pd.date_range(
+            start=positividad.Fecha.min(), end=positividad.Fecha.max()).tolist()
+        totaldatelist = pd.DataFrame(data={"Fecha": totaldatelist})
+
+        # print(totaldatelist.dtypes)
+        # print(positividad.dtypes)
+
+        positividad = totaldatelist.merge(
+            positividad.set_index("Fecha"), on=["Fecha"], how="outer")
+        positividad = positividad.sort_values(by="Fecha", ascending=False).reset_index(
+            drop=True).fillna(method="backfill").fillna(method="ffill")
+        positividad = pd.melt(positividad, id_vars=[
+                              'Fecha'], var_name='REGION', value_name='cum_pos_total')
+        """
+
         positividad.to_csv("temp/rt_feed.csv", index=False)
         #positividad = pd.read_csv("temp/rt_feed.csv")
         # print(positividad.Fecha[0])
         # print(positividad.dtypes)
+        # print(positividad.Fecha.unique())
+        print(positividad.head())
         rt_score = Generator_RT(path="temp/", name_file="rt_feed.csv")
         rt_score = rt_score.final_results
         rt_score.region = rt_score.region.apply(

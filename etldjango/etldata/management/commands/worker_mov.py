@@ -59,6 +59,7 @@ class Command(BaseCommand):
             "workplaces_percent_change_from_baseline": "lugares_de_trabajo",
             "residential_percent_change_from_baseline": "residencia",
         }, inplace=True)
+        table = table.dropna(subset=["region"])
         table["region"] = table["region"].apply(
             lambda x: normalizer_str(str(x)).upper())
         table["region"] = table["region"].apply(lambda x:

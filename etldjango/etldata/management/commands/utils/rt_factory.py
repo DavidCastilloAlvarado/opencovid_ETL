@@ -231,7 +231,7 @@ class Generator_RT(object):
             numerator = likelihoods[current_day] * current_prior
 
             # (5c) Calcluate the denominator of Bayes' Rule P(k)
-            denominator = np.sum(numerator)
+            denominator = np.sum(numerator) + 1e-10
 
             # Execute full Bayes' Rule
             posteriors[current_day] = numerator/denominator

@@ -40,11 +40,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         init = options["init"]
         assert init in ['yes', 'no'], "Error in --init argument"
-        self.print_shell("Downloading PDF")
         url = self.get_pdfurl_from_webpage(URL_MINSA_REPORT)
         if init == "yes":
+            self.print_shell("Downloading CSV from bucket and cleaning table")
             self.loading_dataset_pre()
         elif init == "no":
+            self.print_shell("Downloading PDF")
             self.download_transform_pdf(url)
         self.print_shell("Work done!")
 
@@ -107,6 +108,8 @@ class Command(BaseCommand):
         print(table.head())
         table.region = table.region.apply(
             lambda x: normalizer_str(x).upper())
+        table.region = table.region.apply(
+            lambda x: "LIMA REGION" if x == "LIMA" else x)  # Lima region instead Lima
         index = table.loc[table.region == "TOTAL"].index[0]
         table.drop(index=[index], inplace=True)
         self.save_table(table, DB_positividad)
