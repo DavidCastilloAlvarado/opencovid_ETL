@@ -18,7 +18,7 @@ class Command(BaseCommand):
         self.create_bucket()
         self.downloading_source_csv()
         self.print_shell('Downloading files from goberment\'s servers  ... ')
-        self.extracting_data_from_gob_origin()
+        # self.extracting_data_from_gob_origin()
         self.print_shell('Uploading files to Bucket ... ')
         self.uploading_bucket()
         self.print_shell('Work done! ... ')

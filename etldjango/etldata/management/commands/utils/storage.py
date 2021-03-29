@@ -1,8 +1,10 @@
 from google.cloud import storage
+from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 import os
 from os import path as pathdir
 from pathlib import Path
 from etldata.models import Logs_extractor
+from .extractor import Data_Extractor
 
 
 class Bucket_handler(object):
@@ -30,13 +32,15 @@ class Bucket_handler(object):
             blob.upload_from_filename(source_file_name)
             print('File {} uploaded to {}.'.format(source_file_name,
                                                    destination_blob_name))
-            destination, status = self.origin + bucket_name+'/' + destination_blob_name, 'ok'
+            destination, status = destination_blob_name, 'ok'
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
                                'status': status,
                                'mode': 'upload'})
         except:
             destination, status = "", 'fail'
+            print('FAIL: uploading {} to {}.'.format(source_file_name,
+                                                     destination_blob_name))
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
                                'status': status,
@@ -56,14 +60,16 @@ class Bucket_handler(object):
         try:
             blob = bucket.blob(source_blob_name)
             blob.download_to_filename(destination_file_name)
-            print("Blob {} downloaded to {}.".format(
-                source_blob_name, destination_file_name))
+            print("Blob {} downloaded to {}.".format(source_blob_name,
+                                                     destination_file_name))
             destination, status = destination_file_name, 'ok'
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
                                'status': status,
                                'mode': 'download'})
         except:
+            print("FAIL: downloading {} to {}.".format(source_blob_name,
+                                                       destination_file_name))
             destination, status = destination_file_name, 'fail'
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
@@ -72,3 +78,22 @@ class Bucket_handler(object):
 
     def log_register(self, data):
         Logs_extractor.objects.create(**data)
+
+
+class GetBucketData(Bucket_handler):
+    def get_from_bucket(self, source_name, destination_name):
+        # Downloading Links file and names
+        # self.download_blob(bucket_name=BUCKET_NAME,
+        #                    source_blob_name="data_source/datos_fuentes.csv",
+        #                    destination_file_name="temp/datos_fuentes.csv")
+        # Downloading GEO data for every Ipress
+        self.download_blob(bucket_name=BUCKET_NAME,
+                           source_blob_name="data_source/geo_ipress.csv",
+                           destination_file_name="temp/geo_ipress.csv")
+        # Loading links and names to donwload from bucket
+        #self.handler = Data_Extractor(csv_urls="temp/datos_fuentes.csv")
+
+        # Downloading the rest of the files from bucket
+        self.download_blob(bucket_name=BUCKET_NAME,
+                           source_blob_name=source_name,
+                           destination_file_name=destination_name)

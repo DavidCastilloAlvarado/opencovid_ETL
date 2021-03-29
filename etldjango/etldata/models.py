@@ -33,7 +33,7 @@ class DB_uci(models_gis.Model):
         db_table = 'uci_table'
 
     def __str__(self):
-        return self.fecha_corte
+        return self.nombre
 
 
 class DB_oxi(models_gis.Model):
@@ -56,7 +56,7 @@ class DB_oxi(models_gis.Model):
         db_table = 'oxi_table'
 
     def __str__(self):
-        return self.fecha_creacion
+        return self.nombre
 
 
 class DB_sinadef(models.Model):
@@ -157,9 +157,6 @@ class DB_sinadef(models.Model):
             models.Index(fields=['-fecha', ]),
         ]
 
-    def __str__(self):
-        return self.fecha
-
 
 class DB_resumen(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -180,9 +177,6 @@ class DB_resumen(models.Model):
             models.Index(fields=['-fecha_creacion', ]),
         ]
 
-    def __str__(self):
-        return self.fecha_creacion
-
 
 class Logs_extractor(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -196,7 +190,7 @@ class Logs_extractor(models.Model):
         db_table = 'log_extractor_table'
 
     def __str__(self):
-        return self.fecha_creacion
+        return self.e_name
 
 
 class DB_positividad(models.Model):
@@ -224,7 +218,7 @@ class DB_positividad(models.Model):
         ]
 
     def __str__(self):
-        return self.fecha
+        return self.region
 
 
 class DB_positividad_dia(models.Model):
@@ -244,7 +238,7 @@ class DB_positividad_dia(models.Model):
         ]
 
     def __str__(self):
-        return self.fecha
+        return self.region
 
 
 class DB_rt(models.Model):
@@ -273,14 +267,14 @@ class DB_rt(models.Model):
         ]
 
     def __str__(self):
-        return self.date
+        return self.region
 
 
 class DB_movilidad(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
-    comercial_recreación = models.DecimalField(null=True,
+    comercial_recreacion = models.DecimalField(null=True,
                                                decimal_places=2,
                                                max_digits=6,)
     supermercados_farmacias = models.DecimalField(null=True,
@@ -289,7 +283,7 @@ class DB_movilidad(models.Model):
     parques = models.DecimalField(null=True,
                                   decimal_places=2,
                                   max_digits=6,)
-    estaciones_de_tránsito = models.DecimalField(null=True,
+    estaciones_de_transito = models.DecimalField(null=True,
                                                  decimal_places=2,
                                                  max_digits=6,)
     lugares_de_trabajo = models.DecimalField(null=True,
@@ -307,4 +301,4 @@ class DB_movilidad(models.Model):
         ]
 
     def __str__(self):
-        return self.fecha
+        return self.region

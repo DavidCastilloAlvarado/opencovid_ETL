@@ -1,6 +1,5 @@
 import urllib.request
 import json
-import PyPDF2
 import pandas as pd
 from tqdm import tqdm
 from .urllibmod import urlretrieve

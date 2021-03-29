@@ -33,7 +33,7 @@ class Command(BaseCommand):
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
-    def get_from_bucket(self, today):
+    def get_from_bucket(self, today,):
         # Downloading Links file and names
         self.bucket.download_blob(bucket_name=BUCKET_NAME,
                                   source_blob_name="data_source/datos_fuentes.csv",
@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
         # Downloading the rest of the files from bucket
         for file_name in self.handler.list_name:
-            destination = BUCKET_ROOT + "/" + today + "/" + file_name
+            source = BUCKET_ROOT + "/" + today + "/" + file_name
             self.bucket.download_blob(bucket_name=BUCKET_NAME,
-                                      source_blob_name=destination,
+                                      source_blob_name=source,
                                       destination_file_name=file_name)
