@@ -28,16 +28,15 @@ class Bucket_handler(object):
             bucket = self.storage_client.get_bucket(bucket_name)
             blob = bucket.blob(destination_blob_name)
             blob.upload_from_filename(source_file_name)
-            print('File {} uploaded to {}.'.format(
-                source_file_name,
-                destination_blob_name))
-            destination, status = destination_blob_name, 'ok'
+            print('File {} uploaded to {}.'.format(source_file_name,
+                                                   destination_blob_name))
+            destination, status = self.origin + bucket_name+'/' + destination_blob_name, 'ok'
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
                                'status': status,
                                'mode': 'upload'})
         except:
-            destination, status = destination_blob_name, 'fail'
+            destination, status = "", 'fail'
             self.log_register({'e_name': destination.split('/')[-1],
                                'url': destination,
                                'status': status,
