@@ -4,6 +4,7 @@ import PyPDF2
 import pandas as pd
 from tqdm import tqdm
 from .urllibmod import urlretrieve
+from etldata.models import Logs_extractor
 
 
 class Data_Extractor(object):
@@ -40,27 +41,17 @@ class Data_Extractor(object):
             urlretrieve(url, file_name)
             # if file_name.split(".")[-1] == "pdf":
             #    self.pdf_data_extractor(file_name)
+            self.log_register({'e_name': file_name.split('/')[-1],
+                               'url': url,
+                               'status': 'ok',
+                               'mode': 'download'})
             return True
         except:
+            self.log_register({'e_name': file_name.split('/')[-1],
+                               'url': url,
+                               'status': 'fail',
+                               'mode': 'download'})
             return False
 
-    def pdf_data_extractor(self, file_name):
-        """
-        Extrae información en formato texto de los documentos pdf
-        """
-        with open(r'downloads/{}.pdf'.format(file_name.split(".")[0]), 'rb') as fhandle:
-            pdfReader = PyPDF2.PdfFileReader(fhandle)
-            n_pages = pdfReader.getNumPages()
-
-            json_file = {}
-            txt_file = ""
-            for pag in range(1, n_pages):
-                pagehandle = pdfReader.getPage(pag)
-                text = pagehandle.extractText()
-                txt_file = txt_file + text + "\n"
-                json_file[pag] = text
-
-            with open('downloads/docs/{}.json'.format(file_name.split(".")[0]), 'w') as outfile:
-                json.dump(json_file, outfile)
-            with open('downloads/docs/{}.txt'.format(file_name.split(".")[0]), 'w') as outfile:
-                json.dump(txt_file, outfile)
+    def log_register(self, data):
+        Logs_extractor.objects.create(**data)

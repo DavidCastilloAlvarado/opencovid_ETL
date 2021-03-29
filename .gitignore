@@ -14,3 +14,7 @@ customers.csv
 temp
 .vscode
 **/API/*.json
+bin/
+lib/
+lib64
+share/

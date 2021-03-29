@@ -87,19 +87,32 @@ WSGI_APPLICATION = 'etldjango.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# DATABASES = {
+#     # 'default': {
+#     #     'ENGINE': 'django.db.backends.sqlite3',
+#     #     'NAME': BASE_DIR / 'db.sqlite3',
+#     # }
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'opencovidlocal',
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin1234',
+#         'HOST': '127.0.0.1',
+#         'DATABASE_PORT': '5432',
+#     }
+# }
+
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'opencovidlocal',
-        'USER': 'postgres',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'opencoviddb',
+        'TEST_NAME': 'testopencoviddb',
+        'USER': 'datacrew',
         'PASSWORD': 'admin1234',
         'HOST': '127.0.0.1',
-        'DATABASE_PORT': '5432',
-    }
+        'DATABASE_PORT': ' 5432',
+
+    },
 }
 
 

@@ -4,6 +4,7 @@ from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, B
 from .utils.storage import Bucket_handler
 from .utils.extractor import Data_Extractor
 from datetime import datetime
+from etldata.models import Logs_extractor
 from tqdm import tqdm
 import time
 
@@ -13,27 +14,36 @@ class Command(BaseCommand):
     bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
 
     def handle(self, *args, **options):
-        os.system("mkdir temp")
+        os.system("mkdir temp")  # Creating temp folder
+        self.create_bucket()
+        self.downloading_source_csv()
+        self.print_shell('Downloading files from goberment\'s servers  ... ')
+        self.extracting_data_from_gob_origin()
+        self.print_shell('Uploading files to Bucket ... ')
+        self.uploading_bucket()
+        self.print_shell('Work done! ... ')
+
+    def create_bucket(self):
         self.print_shell('Creating bucket if doesn\' exist ... ')
         self.bucket.create_bucket(BUCKET_NAME)
+
+    def downloading_source_csv(self):
+        """
+        Function to download the csv file which contain all the url and standar names
+        for the the data from the goberment, then 
+        read that file and download all the files form source.
+        """
         self.print_shell('Downloading url and filenames ... ')
         self.bucket.download_blob(bucket_name=BUCKET_NAME,
                                   source_blob_name="data_source/datos_fuentes.csv",
                                   destination_file_name="temp/datos_fuentes.csv")
         self.handler = Data_Extractor(csv_urls="temp/datos_fuentes.csv")
-
-        #bool_ = options["today"]
         self.print_shell('url and names downloaded')
-        self.print_shell('Downloading files from goberment\'s servers  ... ')
-        self.extracting_data()
-        self.print_shell('Uploading files to Bucket ... ')
-        self.uploading_bucket()
-        self.print_shell('Work done! ... ')
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
-    def extracting_data(self,):
+    def extracting_data_from_gob_origin(self,):
         status = self.handler.extract_queue()
         self.print_shell('Downloaded: {}'.format(status))
 
