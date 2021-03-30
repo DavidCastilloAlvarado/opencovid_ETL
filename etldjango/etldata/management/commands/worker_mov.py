@@ -27,14 +27,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         mode = options["mode"]
-        assert mode in ['full', 'last'], "Error in --init argument"
+        assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming Movility table ...")
         self.downloading_data_from_bucket()
         self.unzip_data()
         table = self.read_raw_table_norm_columns()
-        table = self.filter_date(table, mode, min_date="2021-01-01")
+        table = self.filter_date(table, mode,)
         table = self.fix_data(table)
-        table = self.transform_rollermean7(table)
+        table = self.transform_rollermean(table)
         self.save_table(table, DB_movilidad, mode)
         self.print_shell("Work Done!")
 
@@ -62,7 +62,7 @@ class Command(BaseCommand):
             _ = db.objects.bulk_create(records)
         elif mode == 'last':
             # this is posible because the table is sorter by "-fecha"
-            last_record = DB_movilidad.objects.all()[:1]
+            last_record = db.objects.all()[:1]
             last_record = list(last_record)
             if len(last_record) > 0:
                 last_date = str(last_record[0].fecha.date())
@@ -128,7 +128,7 @@ class Command(BaseCommand):
                                                 "MUNICIPALIDAD METROPOLITANA DE LIMA" if x == "METROPOLITAN MUNICIPALITY OF LIMA" else x)
         return table
 
-    def transform_rollermean7(self, table):
+    def transform_rollermean(self, table, n_roll=7):
         table = table.groupby(["region", "fecha", ]).mean()
         table = table.groupby(["region", ])
         table_roll = pd.DataFrame()
@@ -136,7 +136,7 @@ class Command(BaseCommand):
             table_roll = table_roll.append(region[1]
                                            .sort_values(by="fecha")
                                            .fillna(method="backfill")
-                                           .rolling(7, center=True).mean()
+                                           .rolling(n_roll, center=True).mean()
                                            .dropna())
         table_roll = table_roll.reset_index()
         print(table_roll.head())

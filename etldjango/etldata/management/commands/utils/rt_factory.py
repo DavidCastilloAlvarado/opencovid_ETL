@@ -26,12 +26,12 @@ class Generator_RT(object):
         self.path = path
         dataset = path+name_file
         states = pd.read_csv(dataset, sep=sep,
-                             usecols=['Fecha', 'REGION', 'cum_pos_total'],
-                             parse_dates=['Fecha'],
-                             index_col=['REGION', 'Fecha'],
+                             usecols=['fecha', 'region', 'cum_pos_total'],
+                             parse_dates=['fecha'],
+                             index_col=['region', 'fecha'],
                              squeeze=True).sort_index()
 
-        states = states.rename_axis(index={'REGION': 'state', 'Fecha': 'date'})
+        states = states.rename_axis(index={'region': 'state', 'fecha': 'date'})
         states = states.rename('positive')
         states.index.get_level_values('date')
         states = states
@@ -156,7 +156,8 @@ class Generator_RT(object):
         final_results = None
 
         for state_name, result in tqdm(results.items()):
-            # print(state_name)
+            print(state_name)
+            print(result)
             posteriors = result['posteriors'][max_likelihood_index]
 
             hdis_90 = self.highest_density_interval(posteriors, p=.9)
@@ -183,7 +184,7 @@ class Generator_RT(object):
         self.final_results = self.final_results.reset_index()
         self.final_results.rename(columns={"state": "region"}, inplace=True)
         self.final_results.to_csv(
-            path+'rt_{}.csv'.format(name_file), index=False)
+            path+'rt_{}'.format(name_file), index=False)
 
     @staticmethod
     def get_posteriors(sr, GAMMA, lam, r_t_range, sigma=0.15):

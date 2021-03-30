@@ -86,7 +86,7 @@ class DB_sinadef(models.Model):
     cusco = models.DecimalField(null=True,
                                 decimal_places=2,
                                 max_digits=6,)
-    extrangero = models.DecimalField(null=True,
+    extranjero = models.DecimalField(null=True,
                                      decimal_places=2,
                                      max_digits=6,)
     huancavelica = models.DecimalField(null=True,
@@ -146,9 +146,6 @@ class DB_sinadef(models.Model):
     peru = models.DecimalField(null=True,
                                decimal_places=2,
                                max_digits=6,)
-    peru_roll = models.DecimalField(null=True,
-                                    decimal_places=2,
-                                    max_digits=6,)
 
     class Meta:
         ordering = ['-fecha']
@@ -221,18 +218,18 @@ class DB_positividad(models.Model):
         return self.region
 
 
-class DB_positividad_dia(models.Model):
+class DB_positividad_relativa(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
-    pcr_pos = models.IntegerField(null=True, blank=True, default=None, )
-    pr_pos = models.IntegerField(null=True, blank=True, default=None, )
-    ag_pos = models.IntegerField(null=True, blank=True, default=None, )
-    total_pos = models.IntegerField(null=True, blank=True, default=None, )
+    pcr = models.IntegerField(null=True, blank=True, default=None, )
+    pr = models.IntegerField(null=True, blank=True, default=None, )
+    ag = models.IntegerField(null=True, blank=True, default=None, )
+    total = models.IntegerField(null=True, blank=True, default=None, )
 
     class Meta:
         ordering = ['-fecha']
-        db_table = 'positivo_table_dia'
+        db_table = 'pos_table_relative'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
         ]

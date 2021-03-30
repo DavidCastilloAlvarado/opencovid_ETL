@@ -1,9 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
-from .utils.storage import Bucket_handler
+from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
-from etldata.models import DB_uci
+from .utils.unicodenorm import normalizer_str
+from etldata.models import DB_uci, Logs_extractor
+from django.contrib.gis.geos import Point
 #from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
@@ -15,120 +17,181 @@ import time
 
 class Command(BaseCommand):
     help = "UCI+OXI: Command for transform the tables and upload to the data base"
-    bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
+    bucket = GetBucketData(project_id=GCP_PROJECT_ID)
+    file_name_uci = "UCI_VENT.csv"
+    file_name_oxi = "O2.csv"
 
     def add_arguments(self, parser):
         parser.add_argument(
-            'init', type=str, help="yes/no; yes to load the whole db, no for the lastest record")
+            'mode', type=str, help="full/last; full: load the whole dataset, last: only the latest dates")
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
-    def save_table(self, table, db, init):
-        records = table.to_dict(orient='records')
-        records = [db(**record) for record in tqdm(records)]
-        if init == "yes":
+    def save_table(self, table, db, mode):
+        if mode == 'full':
+            records = table.to_dict(orient='records')
+            records = [db(**record) for record in tqdm(records)]
             _ = db.objects.all().delete()
-        _ = db.objects.bulk_create(records)
+            _ = db.objects.bulk_create(records)
+        elif mode == 'last':
+            # this is posible because the table is sorter by "-fecha"
+            last_record = db.objects.all()[:1]
+            last_record = list(last_record)
+            if len(last_record) > 0:
+                last_date = str(last_record[0].fecha_corte.date())
+            else:
+                last_date = '2020-12-01'
+            table = table.loc[table.fecha_corte > last_date]
+            if len(table):
+                self.print_shell("Storing new records")
+                records = table.to_dict(orient='records')
+                records = [db(**record) for record in tqdm(records)]
+                _ = db.objects.bulk_create(records)
+            else:
+                self.print_shell("No new data was found to store")
+
+    def downloading_data_from_bucket(self, file_name=None):
+        last_record = Logs_extractor.objects.filter(status='ok',
+                                                    mode='upload',
+                                                    e_name=file_name)[:1]
+        last_record = list(last_record)
+        assert len(last_record) > 0, "There are not any file {} in the bucket".format(
+            file_name)
+        last_record = last_record[0]
+        source_url = last_record.url
+        print(source_url)
+        self.bucket.get_from_bucket(source_name=source_url,
+                                    destination_name='temp/'+file_name)
 
     def handle(self, *args, **options):
-        init = options["init"]
-        assert init in ['yes', 'no'], "Error in --init argument"
+        mode = options["mode"]
+        assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
-        uci = self.transform_uci("temp/UCI_VENT.csv")
-        oxi = self.transform_oxi("temp/O2.csv")
-        self.transform_merge(uci, oxi, init)
+        # Downloading data from bucket
+        self.downloading_data_from_bucket(file_name=self.file_name_uci)
+        self.downloading_data_from_bucket(file_name=self.file_name_oxi)
+        # Transform UCI
+        table_uci = self.read_raw_uci_table(filename=self.file_name_uci)
+        table_uci = self.filter_uci_by_date(table_uci)
+        table_uci = self.transform_uci(table_uci)
+        # Transform OXI
+        table_oxi = self.read_raw_oxi_table(filename=self.file_name_oxi)
+        table_oxi = self.filter_oxi_by_date(table_oxi)
+        table_oxi = self.transform_oxi(table_oxi)
+        # Merge data
+        total_table = self.transform_merge(table_uci, table_oxi)
+        # Saving data in table
+        self.save_table(total_table, DB_uci, mode)
         self.print_shell("Work Done!")
 
-    def transform_uci(self, filename,):
-        # Abriendo archivo
-        uci_table = pd.read_csv(filename, sep="|")
-        uci_table.columns = [label.replace(
-            " ", "_").upper() for label in uci_table.columns.tolist()]
-        uci_table.rename(columns={"FECHACORTE": "FECHA_CORTE"}, inplace=True)
-        # Seleccionando ultima fecha
-        uci_table.FECHA_CORTE = uci_table.FECHA_CORTE.apply(
-            lambda x: datetime.strptime(str(x), "%Y%m%d"))
-        # Seleccionando fecha máxima
-        uci_table_td = uci_table.loc[uci_table.FECHA_CORTE ==
-                                     uci_table.FECHA_CORTE.max()]
-        # Selección de columnas
-        # Se verifica que existen códigos des hospitales únicos
-        columns_ext = ["FECHA_CORTE",
-                       "CÓDIGO",
-                       "VENTILADORES_UCI_ZC_TOTAL",
-                       "VENTILADORES_UCI_ZC_DISPONIBLE",
-                       "CAMAS_ZC_TOTAL_OPERATIVO",
-                       "CAMAS_ZC_DISPONIBLE"]
-        columns_new = ["fecha_corte",
-                       "CODIGO",
-                       "serv_uci_total",
-                       "serv_uci_left",
-                       "serv_nc_total",
-                       "serv_nc_left"]
-        uci_vent = uci_table_td.loc[:, columns_ext]
-        uci_vent.columns = columns_new
-        uci_vent["serv_uci"] = uci_vent.apply(
-            lambda x: True if x["serv_uci_total"] + x["serv_nc_total"] > 0 else False, axis=1)
-        print(uci_vent.head())
-        self.print_shell("Records: {}".format(uci_vent.shape))
-        return uci_vent
-
-    def transform_oxi(self, filename,):
-        o2_table = pd.read_csv(filename, sep="|")
-        o2_table.columns = [label.replace(
-            " ", "_").upper() for label in o2_table.columns.tolist()]
-        o2_table.rename(columns={"FECHACORTE": "FECHA_CORTE"}, inplace=True)
-        # Cambio formato de fecha
-        o2_table.FECHA_CORTE = o2_table.FECHA_CORTE.apply(
-            lambda x: datetime.strptime(str(x), "%Y%m%d"))
-        # Solo la fecha maxima
-        fecha_max = o2_table.FECHA_CORTE.max()
-        o2_table_td = o2_table.loc[o2_table.FECHA_CORTE == fecha_max]
-        # Se verifica que existen códigos des hospitales únicos
+    def read_raw_oxi_table(self, filename):
         columns_ext = [
+            "FECHACORTE",
             "CODIGO",
         ]
 
-        columns_val = ["VOL_DISPONIBLE",
-                       "PRODUCCION_DIA_OTR",
-                       "PRODUCCION_DIA_GEN",
-                       "PRODUCCION_DIA_ISO",
-                       "PRODUCCION_DIA_CRIO",
-                       "PRODUCCION_DIAPLA"]
+        columns_val_oxi = ["VOL_DISPONIBLE",
+                           "PRODUCCION_DIA_OTR",
+                           "PRODUCCION_DIA_GEN",
+                           "PRODUCCION_DIA_ISO",
+                           "PRODUCCION_DIA_CRIO",
+                           "PRODUCCION_DIAPLA"]
 
-        columns_new = [
-            "CODIGO",
-            "serv_o2_cant"]
+        o2_table = pd.read_csv('temp/'+filename,
+                               sep="|",
+                               usecols=columns_ext+columns_val_oxi)
+        cols = o2_table.columns.tolist()
+        o2_table.columns = [normalizer_str(label).replace(
+            " ", "_").lower() for label in cols]
+        o2_table.rename(columns={"fechacorte": "fecha_corte"}, inplace=True)
+        return o2_table
 
-        o2 = o2_table_td.loc[:, columns_ext]
-        o2["serv_o2_cant"] = o2_table_td[columns_val].sum(axis=1)
-        o2.columns = columns_new
-        o2["serv_oxi"] = o2.apply(
+    def filter_oxi_by_date(self, table):
+        # Cambio formato de fecha
+        table.fecha_corte = table.fecha_corte.apply(
+            lambda x: datetime.strptime(str(x), "%Y%m%d"))
+        # Solo la fecha maxima
+        fecha_max = table.fecha_corte.max()
+        table = table.loc[table.fecha_corte == fecha_max]
+        return table
+
+    def transform_oxi(self, table,):
+        table.drop_duplicates(inplace=True)
+        table = table.set_index(["fecha_corte", "codigo"])
+        table["serv_o2_cant"] = table.sum(axis=1)
+        table = table[["serv_o2_cant"]]
+        table["serv_oxi"] = table.apply(
             lambda x: True if x["serv_o2_cant"] > 0 else False, axis=1)
-        print(o2.head())
-        self.print_shell("Records: {}".format(o2.shape))
-        return o2
+        table.reset_index(inplace=True)
+        print(table.info())
+        self.print_shell("Records: {}".format(table.shape))
+        return table
 
-    def transform_merge(self, uci, oxi, init="yes"):
+    def read_raw_uci_table(self, filename):
+        columns_ext = ["FECHA_CORTE",
+                       "CODIGO",
+                       "VENTILADORES_UCI_ZC_TOTAL",
+                       "VENTILADORES_UCI_ZC_DISPONIBLE",
+                       "CAMAS_ZC_TOTAL",
+                       "CAMAS_ZC_DISPONIBLES"]
+        # usecols=columns_ext)
+        uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
+        uci_table.columns = [normalizer_str(label).replace(
+            " ", "_").lower() for label in uci_table.columns.tolist()]
+        uci_table.rename(columns={"fechacorte": "fecha_corte"}, inplace=True)
+        return uci_table
+
+    def filter_uci_by_date(self, table):
+        table.fecha_corte = table.fecha_corte.apply(
+            lambda x: datetime.strptime(str(x), "%Y%m%d"))
+        # Seleccionando fecha máxima
+        table = table.loc[table.fecha_corte ==
+                          table.fecha_corte.max()]
+        return table
+
+    def transform_uci(self, table,):
+        table.drop_duplicates(inplace=True)
+        table.rename(columns={
+            'camas_zc_disponibles': "serv_nc_left",
+            'camas_zc_total': "serv_nc_total",
+            'ventiladores_uci_zc_disponible': 'serv_uci_left',
+            'ventiladores_uci_zc_total': 'serv_uci_total',
+        }, inplace=True)
+        table["serv_uci"] = table.apply(
+            lambda x: True if x["serv_uci_total"] + x["serv_nc_total"] > 0 else False, axis=1)
+        print(table.info())
+        self.print_shell("Records: {}".format(table.shape))
+        return table
+
+    def transform_merge(self, uci, oxi):
         # Loading geo data
         ipress = pd.read_csv("temp/geo_ipress.csv")
+        ipress.columns = [normalizer_str(col).lower()
+                          for col in ipress.columns.tolist()]
         # Merge UCI + OXI
         oxi["fecha_corte"] = uci.fecha_corte.max()
-        total_table = uci.merge(oxi.set_index(
-            "CODIGO"), on=["CODIGO", "fecha_corte"], how="outer")
+        total_table = uci.merge(oxi.set_index("codigo"),
+                                on=["codigo", "fecha_corte"],
+                                how="outer")
         total_table["serv_oxi"] = total_table["serv_oxi"].fillna(False)
         total_table["serv_o2_cant"] = total_table["serv_o2_cant"].fillna(0)
         total_table["serv_uci"] = total_table["serv_uci"].fillna(False)
         # Merge UCI + OXI + GEODATA
-        total_table = total_table.merge(ipress.set_index(
-            "CODIGO"), on=["CODIGO"], how="outer")
-        print(total_table.columns)
-        print(total_table.head())
+        total_table = total_table.merge(ipress.set_index("codigo"),
+                                        on=["codigo"],
+                                        how="outer")
+        # print(total_table.columns)
+        # print(total_table.head())
         # Fill NAN values
-        total_table.DISTRITO = total_table.DISTRITO.fillna("")
+        total_table.distrito = total_table.distrito.fillna("")
         total_table = total_table.fillna(0)
         print(total_table.isnull().sum())
+        total_table["location"] = total_table.apply(
+            lambda x: Point(x['longitude'], x['latitude']), axis=1)
+        total_table.drop(columns=['longitude', 'latitude'], inplace=True)
+        print(total_table.info())
         # Loading to dataBase
-        self.save_table(total_table, DB_uci, init)
+        #self.save_table(total_table, DB_uci, init)
         self.print_shell("Records oxi + uci: {}".format(total_table.shape))
+        return total_table
