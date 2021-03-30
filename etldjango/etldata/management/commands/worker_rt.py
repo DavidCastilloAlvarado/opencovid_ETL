@@ -7,7 +7,7 @@ from .utils.rt_factory import Generator_RT
 from .utils.unicodenorm import normalizer_str
 from datetime import datetime, timedelta
 from etldata.models import DB_rt, DB_positividad_relativa
-from django_pandas.io import read_frame
+#from django_pandas.io import read_frame
 # from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
@@ -38,10 +38,10 @@ class Command(BaseCommand):
             last_record = db.objects.all()[:1]
             last_record = list(last_record)
             if len(last_record) > 0:
-                last_date = str(last_record[0].fecha.date())
+                last_date = str(last_record[0].date.date())
             else:
                 last_date = '2020-01-01'
-            table = table.loc[table.fecha > last_date]
+            table = table.loc[table.date > last_date]
             if len(table):
                 self.print_shell("Storing new records")
                 records = table.to_dict(orient='records')
@@ -55,7 +55,8 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("RT calculation started ... ")
         table = self.load_data_from_db()
-        table = self.acumulate_records(table)
+        table = self.filter_data_by_date(table, mode)
+        self.acumulate_records(table)
         table = self.rt_compute()
         self.save_table(table, DB_rt, mode)
         self.print_shell("Work done!")
@@ -64,9 +65,8 @@ class Command(BaseCommand):
         # elif init == "db":
         #     self.load_from_DB()
         # self.print_shell("Work Done!")
-        # KeyError: "[('TUMBES', Timestamp('2021-02-21 00:00:00'))\n ('TUMBES', Timestamp('2021-02-20 00:00:00'))] not found in axi
 
-    def load_data_from_db(self, months_before=6):
+    def load_data_from_db(self, months_before=12):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
         query = DB_positividad_relativa.objects.filter(fecha__gt=min_date)
@@ -76,103 +76,59 @@ class Command(BaseCommand):
         # print(query.info())
         return query
 
+    def date_table_factory(self, fechas_orig):
+        min_ = fechas_orig.min()
+        max_ = fechas_orig.max()
+        totaldatelist = pd.date_range(start=min_, end=max_).tolist()
+        totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
+        return totaldatelist
+
     def acumulate_records(self, table):
         # table.sort_values(by='fecha', inplace=True)
         table = table.groupby(["region", ])
         table_acum = pd.DataFrame()
         for region in table:
-            temp = region[1].sort_values(by="fecha").fillna(method="backfill")
-            min_ = temp.fecha.min()
-            max_ = temp.fecha.max()
-            totaldatelist = pd.date_range(start=min_, end=max_).tolist()
-            totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
+            temp = region[1].sort_values(by="fecha")
+            totaldatelist = self.date_table_factory(temp.fecha)
             temp = totaldatelist.merge(temp.set_index("fecha"),
                                        on=["fecha"],
                                        how="outer")
-            temp = temp.fillna(value={
-                "region": region[0],
-                "total": 1e-6,
-            })
-            # temp.reset_index(inplace=True)
+            if region[0] == 'PUNO':
+                print(temp.loc[(temp.region != temp.region) |
+                               ((temp.fecha > '2020-09-28') & (temp.fecha < '2020-10-03')) |
+                               (temp.total == 0)])
+            else:
+                continue
             temp = temp.sort_values(by="fecha")
+            temp = temp.reset_index(drop=True)
+            temp = temp.fillna(method="ffill")
+            # temp = temp.fillna(value={
+            #     "region": region[0],
+            #     "total": 1e-6,
+            # })
+            # if region[0] == 'SAN MARTIN':
+            #     print(temp.head(20))
+            #     print(temp.loc[(temp.total != temp.total) |
+            #                    (temp.total == 0)])
+
+            # temp.reset_index(inplace=True)
+            #temp = temp.sort_values(by="fecha")
             temp["cum_pos_total"] = temp["total"].cumsum()
-            temp.fecha = temp.fecha.apply(lambda x: x.date())
+            #temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
         print(table_acum.head())
         table_acum.to_csv('temp/' + self.temp_file, index=False)
 
-    def load_from_bucket_test(self):
-        self.bucket.download_blob(bucket_name=BUCKET_NAME,
-                                  source_blob_name="data_source/feed_rt.csv",
-                                  destination_file_name="temp/feed_rt.csv")
-        rt_score = Generator_RT(
-            path="temp/", name_file="feed_rt.csv", sep=";")
-        rt_score = rt_score.final_results
-        rt_score.region = rt_score.region.apply(
-            lambda x: normalizer_str(x).upper())
-        print(rt_score.head(20))
-        self.save_table(rt_score, DB_rt)
-
-    def load_from_DB(self):
-        all_pos = DB_positividad.objects.values_list(
-            'fecha', 'region', 'Total_pos').all()  # [:5000]
-        positividad = read_frame(all_pos)
-        columns = [
-            "fecha",
-            "region",
-            # "PCR_pos",
-            # "PR_pos",
-            # "AG_pos",
-            # "Total",
-            "Total_pos"
-        ]
-        positividad = positividad[columns]
-        positividad.rename(columns={"fecha": "Fecha",
-                                    "region": "REGION",
-                                    # "PCR_pos": "cum_pos_pcr",
-                                    # "PR_pos": "cum_pos_zero",
-                                    # "AG_pos": "cum_pos_ag",
-                                    # "Total": "cum_total_muestras",
-                                    "Total_pos": "cum_pos_total"
-                                    }, inplace=True)
-        positividad.Fecha = positividad.Fecha.apply(
-            lambda x: x.date().strftime("%Y-%m-%d"))
-        positividad.Fecha = positividad.Fecha.apply(
-            lambda x: datetime.strptime(str(x), "%Y-%m-%d"))
-
-        """
-        # Filling data with backfill method
-        positividad = pd.pivot_table(
-            positividad, values="cum_pos_total", index="Fecha", columns='REGION').reset_index()
-        totaldatelist = pd.date_range(
-            start=positividad.Fecha.min(), end=positividad.Fecha.max()).tolist()
-        totaldatelist = pd.DataFrame(data={"Fecha": totaldatelist})
-
-        # print(totaldatelist.dtypes)
-        # print(positividad.dtypes)
-
-        positividad = totaldatelist.merge(
-            positividad.set_index("Fecha"), on=["Fecha"], how="outer")
-        positividad = positividad.sort_values(by="Fecha", ascending=False).reset_index(
-            drop=True).fillna(method="backfill").fillna(method="ffill")
-        positividad = pd.melt(positividad, id_vars=[
-                              'Fecha'], var_name='REGION', value_name='cum_pos_total')
-        """
-
-        positividad.to_csv("temp/rt_feed.csv", index=False)
-        # positividad = pd.read_csv("temp/rt_feed.csv")
-        # print(positividad.Fecha[0])
-        # print(positividad.dtypes)
-        # print(positividad.Fecha.unique())
-        print(positividad.head())
-        rt_score = Generator_RT(path="temp/", name_file="rt_feed.csv")
-        rt_score = rt_score.final_results
-        rt_score.region = rt_score.region.apply(
-            lambda x: normalizer_str(x).upper())
-        print(rt_score.head(20))
-        # print(rt_score.dtypes)
-        self.save_table(rt_score, DB_rt)
+    def filter_data_by_date(self, table, mode):
+        if mode == 'full':
+            # max_date = str(datetime.now().date() - timedelta(days=10))
+            table = table
+        elif mode == 'last':
+            min_date = str(datetime.now().date() - timedelta(days=30))
+            # max_date = str(datetime.now().date())
+            table = table.loc[(table.fecha >= min_date)]
+        return table
 
     def rt_compute(self):
         rt_table = Generator_RT(path="temp/", name_file=self.temp_file)

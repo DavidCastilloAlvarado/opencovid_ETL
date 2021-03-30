@@ -157,7 +157,7 @@ class Generator_RT(object):
 
         for state_name, result in tqdm(results.items()):
             print(state_name)
-            print(result)
+            # print(result)
             posteriors = result['posteriors'][max_likelihood_index]
 
             hdis_90 = self.highest_density_interval(posteriors, p=.9)
@@ -260,6 +260,7 @@ class Generator_RT(object):
 
     def highest_density_interval(self, pmf, p=.9, debug=False):
         # If we pass a DataFrame, just call this recursively on the columns
+        print(pmf)
         if(isinstance(pmf, pd.DataFrame)):
             return pd.DataFrame([self.highest_density_interval(pmf[col], p=p) for col in pmf],
                                 index=pmf.columns)

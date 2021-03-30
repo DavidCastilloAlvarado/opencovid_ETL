@@ -209,7 +209,7 @@ class DB_positividad(models.Model):
 
     class Meta:
         ordering = ['-fecha']
-        db_table = 'positivo_table'
+        db_table = 'pruebas_positividad_table'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
         ]
