@@ -47,14 +47,76 @@ In `etldjango/settings.py`:
 
 ### _Management command_
 
-```shell
+All the commands could be executed independently in any time. They download its own data from the bucket. Previously to run any command the first command has to be executed to have data to process.
 
+1. Download all the raw data from the gobernment
+
+```bash
 python manage.py worker_extractor
-python manage.py worker_getbucket
-python manage.py worker_t_sinadef no
-python manage.py worker_t_uci yes
-python manage.py worker_posit no
-python manage.py worker_rt db
-python manage.py worker_mov
 
+```
+
+2. Calculate Movility - center roller mean 7 days
+
+```bash
+# To initialize the data set
+python manage.py worker_mov full
+
+# to update the last values
+python manage.py worker_mov last
+
+```
+
+3. Table for positive cases from MINSA dataset
+
+```bash
+# To initialize the data set
+python manage.py post_rel full
+# to update the last values
+python manage.py post_rel last
+
+```
+
+4. Table for positive cases from daily MINSA report - % positivity
+
+```bash
+
+python manage.py worker_posit
+
+```
+
+5. Calculate RT score
+
+```bash
+# To initialize the data set
+python manage.py worker_rt full
+# to update the last values
+python manage.py worker_rt last
+```
+
+6. Calculate hospital capacity
+
+```bash
+# To initialize the data set
+python manage.py worker_t_caphosp full
+# to update the last values
+python manage.py worker_t_caphosp last
+```
+
+7. Sinadef table report
+
+```bash
+# To initialize the data set
+python manage.py worker_sinadef full
+# to update the last values
+python manage.py worker_sinadef last
+```
+
+8. Table for UCI status and geopoinst
+
+```bash
+# upload the whole day status and delete the rest
+python manage.py worker_t_uci_geo full
+# append the last day calculations in the current table
+python manage.py worker_t_uci_geo last
 ```

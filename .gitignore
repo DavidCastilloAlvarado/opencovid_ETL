@@ -18,3 +18,5 @@ bin/
 lib/
 lib64
 share/
+**.ipynb
+**.ipynb_checkpoints
