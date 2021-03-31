@@ -299,3 +299,31 @@ class DB_movilidad(models.Model):
 
     def __str__(self):
         return self.region
+
+
+class DB_capacidad_hosp(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_corte = models.DateTimeField()
+    region = models.CharField(max_length=50)
+    uci_zc_ocup = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=6, blank=True,)
+    uci_zc_disp = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=6, blank=True,)
+    uci_zc_total = models.DecimalField(null=True, default=None,
+                                       decimal_places=2, max_digits=6, blank=True,)
+    uci_znc_ocup = models.DecimalField(null=True, default=None,
+                                       decimal_places=2, max_digits=6, blank=True,)
+    uci_znc_disp = models.DecimalField(null=True, default=None,
+                                       decimal_places=2, max_digits=6, blank=True,)
+    uci_znc_total = models.DecimalField(null=True, default=None,
+                                        decimal_places=2, max_digits=6, blank=True,)
+
+    class Meta:
+        ordering = ['-fecha_corte']
+        db_table = 'capacidad_hosp'
+        indexes = [
+            models.Index(fields=['-fecha_corte', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region

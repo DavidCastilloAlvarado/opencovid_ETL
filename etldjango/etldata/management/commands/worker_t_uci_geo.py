@@ -74,6 +74,7 @@ class Command(BaseCommand):
         # Transform UCI
         table_uci = self.read_raw_uci_table(filename=self.file_name_uci)
         table_uci = self.filter_uci_by_date(table_uci)
+        table_uci = self.format_uci_drop_duplicates(table_uci)
         table_uci = self.transform_uci(table_uci)
         # Transform OXI
         table_oxi = self.read_raw_oxi_table(filename=self.file_name_oxi)
@@ -131,10 +132,11 @@ class Command(BaseCommand):
     def read_raw_uci_table(self, filename):
         columns_ext = ["FECHA_CORTE",
                        "CODIGO",
-                       "VENTILADORES_UCI_ZC_TOTAL",
-                       "VENTILADORES_UCI_ZC_DISPONIBLE",
+                       "CAMAS_ZNC_DISPONIBLE",
+                       "CAMAS_ZNC_TOTAL",
                        "CAMAS_ZC_TOTAL",
-                       "CAMAS_ZC_DISPONIBLES"]
+                       "CAMAS_ZC_DISPONIBLES",
+                       ]
         # usecols=columns_ext)
         uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
         uci_table.columns = [normalizer_str(label).replace(
@@ -145,19 +147,30 @@ class Command(BaseCommand):
     def filter_uci_by_date(self, table):
         table.fecha_corte = table.fecha_corte.apply(
             lambda x: datetime.strptime(str(x), "%Y%m%d"))
-        # Seleccionando fecha máxima
-        table = table.loc[table.fecha_corte ==
-                          table.fecha_corte.max()]
+        # Seleccionando fecha máxima - 2
+        min_date = str(table.fecha_corte.max() - timedelta(days=1))
+        table = table.loc[table.fecha_corte >= min_date]
         return table
 
-    def transform_uci(self, table,):
+    def format_uci_drop_duplicates(self, table):
         table.drop_duplicates(inplace=True)
         table.rename(columns={
-            'camas_zc_disponibles': "serv_nc_left",
-            'camas_zc_total': "serv_nc_total",
-            'ventiladores_uci_zc_disponible': 'serv_uci_left',
-            'ventiladores_uci_zc_total': 'serv_uci_total',
+            'camas_zc_disponibles': "serv_uci_left",
+            'camas_zc_total': "serv_uci_total",
+            'camas_znc_disponible': 'serv_nc_left',
+            'camas_znc_total': 'serv_nc_total',
         }, inplace=True)
+        return table
+
+    def transform_uci(self, table):
+        # Sort values by fecha_corte
+        table.sort_values(by="fecha_corte", inplace=True)
+        # Group by codigo and take the last register (last date)
+        table = table.groupby(["codigo"]).last()
+        table.reset_index(inplace=True)
+        # Same date for every record
+        table["fecha_corte"] = table.fecha_corte.max()
+        # Sum all the uci services
         table["serv_uci"] = table.apply(
             lambda x: True if x["serv_uci_total"] + x["serv_nc_total"] > 0 else False, axis=1)
         print(table.info())
