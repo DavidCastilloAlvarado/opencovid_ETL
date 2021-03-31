@@ -34,6 +34,7 @@ class Command(BaseCommand):
             _ = db.objects.all().delete()
             _ = db.objects.bulk_create(records)
         elif mode == 'last':
+            _ = db.objects.all().delete()
             # this is posible because the table is sorter by "-fecha"
             last_record = db.objects.all()[:1]
             last_record = list(last_record)
@@ -93,12 +94,12 @@ class Command(BaseCommand):
             temp = totaldatelist.merge(temp.set_index("fecha"),
                                        on=["fecha"],
                                        how="outer")
-            if region[0] == 'PUNO':
-                print(temp.loc[(temp.region != temp.region) |
-                               ((temp.fecha > '2020-09-28') & (temp.fecha < '2020-10-03')) |
-                               (temp.total == 0)])
-            else:
-                continue
+            # if region[0] == 'PUNO':
+            #     print(temp.loc[(temp.region != temp.region) |
+            #                    ((temp.fecha > '2020-09-28') & (temp.fecha < '2020-10-03')) |
+            #                    (temp.total == 0)])
+            # else:
+            #     continue
             temp = temp.sort_values(by="fecha")
             temp = temp.reset_index(drop=True)
             temp = temp.fillna(method="ffill")

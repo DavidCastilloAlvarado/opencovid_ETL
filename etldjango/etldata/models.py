@@ -62,96 +62,19 @@ class DB_oxi(models_gis.Model):
 class DB_sinadef(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
-    amazonas = models.DecimalField(null=True,
-                                   decimal_places=2,
-                                   max_digits=6,)
-    ancash = models.DecimalField(null=True,
-                                 decimal_places=2,
-                                 max_digits=6,)
-    apurimac = models.DecimalField(null=True,
-                                   decimal_places=2,
-                                   max_digits=6,)
-    arequipa = models.DecimalField(null=True,
-                                   decimal_places=2,
-                                   max_digits=6,)
-    ayacucho = models.DecimalField(null=True,
-                                   decimal_places=2,
-                                   max_digits=6,)
-    cajamarca = models.DecimalField(null=True,
+    region = models.CharField(max_length=100)
+    n_muertes = models.DecimalField(null=True,
                                     decimal_places=2,
                                     max_digits=6,)
-    callao = models.DecimalField(null=True,
-                                 decimal_places=2,
-                                 max_digits=6,)
-    cusco = models.DecimalField(null=True,
-                                decimal_places=2,
-                                max_digits=6,)
-    extranjero = models.DecimalField(null=True,
-                                     decimal_places=2,
-                                     max_digits=6,)
-    huancavelica = models.DecimalField(null=True,
-                                       decimal_places=2,
-                                       max_digits=6,)
-    huanuco = models.DecimalField(null=True,
-                                  decimal_places=2,
-                                  max_digits=6,)
-    ica = models.DecimalField(null=True,
-                              decimal_places=2,
-                              max_digits=6,)
-    junin = models.DecimalField(null=True,
-                                decimal_places=2,
-                                max_digits=6,)
-    la_libertad = models.DecimalField(null=True,
-                                      decimal_places=2,
-                                      max_digits=6,)
-    lambayeque = models.DecimalField(null=True,
-                                     decimal_places=2,
-                                     max_digits=6,)
-    lima = models.DecimalField(null=True,
-                               decimal_places=2,
-                               max_digits=6,)
-    loreto = models.DecimalField(null=True,
-                                 decimal_places=2,
-                                 max_digits=6,)
-    madre_de_dios = models.DecimalField(null=True,
-                                        decimal_places=2,
-                                        max_digits=6,)
-    moquegua = models.DecimalField(null=True,
-                                   decimal_places=2,
-                                   max_digits=6,)
-    pasco = models.DecimalField(null=True,
-                                decimal_places=2,
-                                max_digits=6,)
-    piura = models.DecimalField(null=True,
-                                decimal_places=2,
-                                max_digits=6,)
-    puno = models.DecimalField(null=True,
-                               decimal_places=2,
-                               max_digits=6,)
-    san_martin = models.DecimalField(null=True,
-                                     decimal_places=2,
-                                     max_digits=6,)
-    sin_registro = models.DecimalField(null=True,
-                                       decimal_places=2,
-                                       max_digits=6,)
-    tacna = models.DecimalField(null=True,
-                                decimal_places=2,
-                                max_digits=6,)
-    tumbes = models.DecimalField(null=True,
-                                 decimal_places=2,
-                                 max_digits=6,)
-    ucayali = models.DecimalField(null=True,
-                                  decimal_places=2,
-                                  max_digits=6,)
-    peru = models.DecimalField(null=True,
-                               decimal_places=2,
-                               max_digits=6,)
+    n_muertes_roll = models.DecimalField(null=True,
+                                         decimal_places=2,
+                                         max_digits=6,)
 
     class Meta:
         ordering = ['-fecha']
         db_table = 'sinadef_table'
         indexes = [
-            models.Index(fields=['-fecha', ]),
+            models.Index(fields=['-fecha', 'region']),
         ]
 
 

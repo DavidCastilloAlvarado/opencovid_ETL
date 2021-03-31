@@ -5,6 +5,7 @@ from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
 from etldata.models import DB_sinadef, Logs_extractor
+from .utils.unicodenorm import normalizer_str
 # from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
@@ -25,10 +26,12 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("SINADEF transformation working ....")
-        self.downloading_data_from_bucket()
+        # self.downloading_data_from_bucket()
         table = self.read_file_and_format_date()
         table = self.filter_date_and_deads(table, mode)
-        table = self.transform_sinadef(table)
+        table = self.format_columns_name(table)
+        table = self.transforma_sinadef_table(table)
+        table = self.transform_sinadef_roller_deads_total(table)
         self.save_table(table, DB_sinadef, mode)
         self.print_shell("Work done! ")
 
@@ -73,7 +76,6 @@ class Command(BaseCommand):
 
     def read_file_and_format_date(self):
         col_extr = [
-            "PAIS DOMICILIO",
             "DEPARTAMENTO DOMICILIO",
             "MUERTE VIOLENTA",
             "FECHA",
@@ -95,27 +97,46 @@ class Command(BaseCommand):
             table = table.loc[(table.FECHA >= min_date) &
                               (table["MUERTE VIOLENTA"].isin(list_))]
         elif mode == 'last':
+            max_date = table.FECHA.max() - timedelta(days=1)
             min_date = str(datetime.now().date() - timedelta(days=30))
             table = table.loc[(table.FECHA >= min_date) &
+                              (table.FECHA <= max_date) &
                               (table["MUERTE VIOLENTA"].isin(list_))]
         return table
 
-    def transform_sinadef(self, df, n_roll=7):
-        # Group by department and date
-        df = df.groupby(["DEPARTAMENTO DOMICILIO", "FECHA"]
-                        ).count().reset_index()
-        # pivot table
-        df = pd.pivot_table(df, values='PAIS DOMICILIO', index=['FECHA'],
-                            columns=['DEPARTAMENTO DOMICILIO'], aggfunc=np.sum).fillna(0)[:-1]
-        # Sort by date
-        df = df.sort_values(by='FECHA')
-        # Sum for the whole country
-        df["peru"] = df.sum(1)
-        # Rolling mean
-        df = df.rolling(n_roll, center=True).mean()
-        df.dropna(inplace=True)
-        df.reset_index(inplace=True)
-        # Minus all the columns name
-        cols = df.columns.tolist()
-        df.columns = [col.lower().replace(" ", "_") for col in cols]
-        return df
+    def format_columns_name(self, table):
+        table.rename(columns={
+            'DEPARTAMENTO DOMICILIO': 'region',
+            'FECHA': 'fecha',
+        }, inplace=True)
+        return table
+
+    def transforma_sinadef_table(self, table):
+        table["n_muertes"] = 1
+        table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
+        table.sort_values(by='fecha', inplace=True)
+        return table
+
+    def transform_sinadef_roller_deads_total(self, table, n_roll=7):
+        table = table.groupby(["region", ])
+        table_roll = pd.DataFrame()
+        # Roller mean for every region
+        for region in table:
+            temp = region[1].sort_values(by="fecha")
+            temp = temp.fillna(method="backfill")
+            temp["n_muertes_roll"] = temp.rolling(n_roll, center=True).mean()
+            temp = temp.dropna()
+            table_roll = table_roll.append(temp)
+        table_roll.reset_index(inplace=True)
+        # Roller mean for the whole country
+        temp = table_roll.groupby(["fecha"]).agg({
+            "n_muertes": 'sum',
+            "n_muertes_roll": 'sum',
+        }).reset_index()
+        temp["region"] = "PERU"
+        table_roll = table_roll.append(temp, ignore_index=True)
+
+        print(table_roll.tail(50))
+        print(table_roll.info())
+        self.print_shell("Records :{}".format(table_roll.shape))
+        return table_roll
