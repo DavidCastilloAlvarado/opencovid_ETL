@@ -81,7 +81,7 @@ python manage.py post_rel last
 
 ```bash
 
-python manage.py worker_posit
+python manage.py worker_posit full
 
 ```
 
@@ -103,7 +103,7 @@ python manage.py worker_t_caphosp full
 python manage.py worker_t_caphosp last
 ```
 
-7. Sinadef table report
+7. Sinadef table report - center roller mean 7 days
 
 ```bash
 # To initialize the data set
