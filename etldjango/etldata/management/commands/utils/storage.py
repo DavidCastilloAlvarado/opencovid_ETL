@@ -38,7 +38,7 @@ class Bucket_handler(object):
                                'status': status,
                                'mode': 'upload'})
         except:
-            destination, status = "", 'fail'
+            status = 'fail'
             print('FAIL: uploading {} to {}.'.format(source_file_name,
                                                      destination_blob_name))
             self.log_register({'e_name': destination.split('/')[-1],
