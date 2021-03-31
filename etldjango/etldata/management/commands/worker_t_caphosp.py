@@ -68,7 +68,7 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
         # Downloading data from bucket
-        # self.downloading_data_from_bucket(file_name=self.file_name_uci)
+        self.downloading_data_from_bucket(file_name=self.file_name_uci)
         # Transform UCI
         table = self.read_raw_uci_table(filename=self.file_name_uci)
         table = self.filter_uci_by_date(table, mode)
@@ -87,6 +87,8 @@ class Command(BaseCommand):
                        "CAMAS_ZC_TOTAL",
                        "CAMAS_ZC_DISPONIBLES",
                        "CAMAS_ZC_OCUPADOS",
+                       "VENTILADORES_UCI_ZC_TOTAL",
+                       "VENTILADORES_UCI_ZC_OCUPADOS",
                        ]
         # usecols=columns_ext)
         uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
@@ -111,12 +113,14 @@ class Command(BaseCommand):
     def format_columns_drop_duplicates(self, table):
         table.drop_duplicates(inplace=True)
         table.rename(columns={
-            'camas_zc_disponibles': "uci_zc_disp",
-            'camas_zc_ocupados': "uci_zc_ocup",
-            'camas_zc_total': "uci_zc_total",
-            'camas_znc_ocupados': 'uci_znc_ocup',
-            'camas_znc_disponible': 'uci_znc_disp',
-            'camas_znc_total': 'uci_znc_total',
+            'camas_zc_disponibles': "uci_zc_cama_disp",
+            'camas_zc_ocupados': "uci_zc_cama_ocup",
+            'camas_zc_total': "uci_zc_cama_total",
+            'camas_znc_ocupados': 'uci_znc_cama_ocup',
+            'camas_znc_disponible': 'uci_znc_cama_disp',
+            'camas_znc_total': 'uci_znc_cama_total',
+            'ventiladores_uci_zc_total': 'uci_zc_vent_total',
+            'ventiladores_uci_zc_ocupados': 'uci_zc_vent_ocup',
         }, inplace=True)
         return table
 

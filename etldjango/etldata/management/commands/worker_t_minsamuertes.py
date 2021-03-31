@@ -4,23 +4,18 @@ from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from .utils.urllibmod import urlretrieve
 from datetime import datetime, timedelta
-from etldata.models import DB_positividad_relativa, Logs_extractor
+from etldata.models import DB_minsa_muertes, Logs_extractor
 from .utils.unicodenorm import normalizer_str
 #from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
-from urllib.request import urlopen
-import os
-import time
-import tabula
-import re
 
 
 class Command(BaseCommand):
     help = "Command downloads pdf report from Minsa, for only positive cases, PR, PCR, AG"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
-    file_name = "covidpos.csv"
+    file_name = "fallecidos_covid_minsa.csv"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -55,7 +50,7 @@ class Command(BaseCommand):
             if len(last_record) > 0:
                 last_date = str(last_record[0].fecha.date())
             else:
-                last_date = '2020-01-01'
+                last_date = '2020-05-01'
             table = table.loc[table.fecha > last_date]
             if len(table):
                 self.print_shell("Storing new records")
@@ -68,24 +63,24 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
-        self.downloading_data_from_bucket()
+        # self.downloading_data_from_bucket()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
-        table = self.transform_positiv_rel(table)
-        self.save_table(table, DB_positividad_relativa, mode)
+        table = self.transform_minsa_deads(table)
+        table = self.transform_roller_deads_total(table)
+        self.save_table(table, DB_minsa_muertes, mode)
         self.print_shell("Work done!")
 
     def read_raw_data_format_date(self,):
         cols_extr = [
+            "FECHA_FALLECIMIENTO",
             "DEPARTAMENTO",
-            "METODODX",
-            "FECHA_RESULTADO",
         ]
         # usecols=cols_extr)
         table = pd.read_csv('temp/'+self.file_name, sep=";", usecols=cols_extr)
         cols = table.columns.tolist()
         table.columns = [normalizer_str(col).lower() for col in cols]
-        table.rename(columns={"fecha_resultado": "fecha",
+        table.rename(columns={"fecha_fallecimiento": "fecha",
                               "departamento": "region"}, inplace=True)
         # Format date
         table.fecha = table.fecha.apply(
@@ -102,23 +97,33 @@ class Command(BaseCommand):
         self.print_shell("Records after filter: {}".format(table.shape))
         return table
 
-    def transform_positiv_rel(self, table):
+    def transform_minsa_deads(self, table):
         # pivot table
-        table["count"] = 1
-        table = pd.pivot_table(table,
-                               values="count",
-                               index=['region', 'fecha'],
-                               columns=['metododx'], aggfunc=np.sum).fillna(0)
-        #table = table.reset_index()
-        #table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
-        table.columns = [col.lower() for col in table.columns.tolist()]
-        table["total"] = table.sum(1)
-        table.reset_index(inplace=True)
         table.region = table.region.apply(
             lambda x: normalizer_str(x))
+        table["n_muertes"] = 1
+        table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
         table.sort_values(by='fecha', inplace=True)
-        table.reset_index(inplace=True, drop=True)
-        print(table.info())
-        print(table["total"].sum(0))
-        self.print_shell("Records :{}".format(table.shape))
+        #table.reset_index(inplace=True, drop=True)
         return table
+
+    def transform_roller_deads_total(self, table, n_roll=3):
+        table = table.groupby(["region", ])
+        table_roll = pd.DataFrame()
+        for region in table:
+            temp = region[1].sort_values(by="fecha")
+            temp = temp.fillna(method="backfill")
+            temp["n_muertes_roll"] = temp.rolling(n_roll, center=True).mean()
+            temp = temp.dropna()
+            table_roll = table_roll.append(temp)
+        table_roll.reset_index(inplace=True)
+        temp = table_roll.groupby(["fecha"]).agg({
+            "n_muertes": 'sum',
+            "n_muertes_roll": 'sum',
+        }).reset_index()
+        temp["region"] = "PERU"
+        table_roll = table_roll.append(temp, ignore_index=True)
+        print(table_roll.tail(50))
+        print(table_roll.info())
+        self.print_shell("Records :{}".format(table_roll.shape))
+        return table_roll
