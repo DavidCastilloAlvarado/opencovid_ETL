@@ -34,7 +34,7 @@ class Command(BaseCommand):
             _ = db.objects.all().delete()
             _ = db.objects.bulk_create(records)
         elif mode == 'last':
-            _ = db.objects.all().delete()
+            #_ = db.objects.all().delete()
             # this is posible because the table is sorter by "-fecha"
             last_record = db.objects.all()[:1]
             last_record = list(last_record)

@@ -256,6 +256,50 @@ class DB_capacidad_hosp(models.Model):
         return self.region
 
 
+class DB_capacidad_oxi(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_corte = models.DateTimeField()
+    region = models.CharField(max_length=50)
+    vol_tk_disp = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=8, blank=True,)
+    prod_dia_otro = models.DecimalField(null=True, default=None,
+                                        decimal_places=2, max_digits=8, blank=True,)
+    prod_dia_generador = models.DecimalField(null=True, default=None,
+                                             decimal_places=2, max_digits=8, blank=True,)
+    prod_dia_iso = models.DecimalField(null=True, default=None,
+                                       decimal_places=2, max_digits=8, blank=True,)
+    prod_dia_crio = models.DecimalField(null=True, default=None,
+                                        decimal_places=2, max_digits=8, blank=True,)
+    prod_dia_planta = models.DecimalField(null=True, default=None,
+                                          decimal_places=2, max_digits=8, blank=True,)
+    consumo_vol_tk = models.DecimalField(null=True, default=None,
+                                         decimal_places=2, max_digits=8, blank=True,)
+    consumo_dia_crio = models.DecimalField(null=True, default=None,
+                                           decimal_places=2, max_digits=8, blank=True,)
+    consumo_dia_pla = models.DecimalField(null=True, default=None,
+                                          decimal_places=2, max_digits=8, blank=True,)
+    consumo_dia_iso = models.DecimalField(null=True, default=None,
+                                          decimal_places=2, max_digits=8, blank=True,)
+    consumo_dia_gen = models.DecimalField(null=True, default=None,
+                                          decimal_places=2, max_digits=8, blank=True,)
+    consumo_dia_otro = models.DecimalField(null=True, default=None,
+                                           decimal_places=2, max_digits=8, blank=True,)
+    m3_disp = models.DecimalField(null=True, default=None,
+                                  decimal_places=2, max_digits=9, blank=True,)
+    m3_consumo = models.DecimalField(null=True, default=None,
+                                     decimal_places=2, max_digits=9, blank=True,)
+
+    class Meta:
+        ordering = ['-fecha_corte']
+        db_table = 'capacidad_oxi'
+        indexes = [
+            models.Index(fields=['-fecha_corte', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
+
+
 class DB_minsa_muertes(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
@@ -268,6 +312,28 @@ class DB_minsa_muertes(models.Model):
     class Meta:
         ordering = ['-fecha']
         db_table = 'muertes_minsa'
+        indexes = [
+            models.Index(fields=['-fecha', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
+
+
+class DB_vacunas(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    region = models.CharField(max_length=50)
+    fabricante = models.CharField(max_length=50)
+    provincia = models.CharField(max_length=50)
+    grupo_riesgo = models.CharField(max_length=50)
+    cantidad = models.DecimalField(null=True, default=None,
+                                   decimal_places=2, max_digits=6, blank=True,)
+    dosis = models.IntegerField(null=True, default=None, blank=True,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'vacunas_record'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
         ]

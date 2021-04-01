@@ -4,7 +4,7 @@ from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
 from .utils.unicodenorm import normalizer_str
-from etldata.models import DB_capacidad_hosp, Logs_extractor
+from etldata.models import DB_capacidad_oxi, Logs_extractor
 from django.contrib.gis.geos import Point
 #from django.utils import timezone
 from tqdm import tqdm
@@ -16,9 +16,9 @@ import time
 
 
 class Command(BaseCommand):
-    help = "UCI+OXI: Command for transform the tables and upload to the data base"
+    help = "OXI: Command for transform the tables and upload to the data base"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
-    file_name_uci = "UCI_VENT.csv"
+    file_name_oxi = "O2.csv"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -68,36 +68,43 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
         # Downloading data from bucket
-        self.downloading_data_from_bucket(file_name=self.file_name_uci)
+        # self.downloading_data_from_bucket(file_name=self.file_name_oxi)
         # Transform UCI
-        table = self.read_raw_uci_table(filename=self.file_name_uci)
-        table = self.filter_uci_by_date(table, mode)
+        table = self.read_raw_oxi_table(filename=self.file_name_oxi)
+        table = self.filter_oxi_by_date(table, mode)
         table = self.format_columns_drop_duplicates(table)
-        table = self.transform_uci(table)
-        self.save_table(table, DB_capacidad_hosp, mode)
+        table = self.transform_oxi(table)
+        self.save_table(table, DB_capacidad_oxi, mode)
         self.print_shell("Work Done!")
 
-    def read_raw_uci_table(self, filename):
-        columns_ext = ["FECHA_CORTE",
-                       "CODIGO",
-                       "REGION",
-                       "CAMAS_ZNC_OCUPADOS",
-                       "CAMAS_ZNC_DISPONIBLE",
-                       "CAMAS_ZNC_TOTAL",
-                       "CAMAS_ZC_TOTAL",
-                       "CAMAS_ZC_DISPONIBLES",
-                       "CAMAS_ZC_OCUPADOS",
-                       "VENTILADORES_UCI_ZC_TOTAL",
-                       "VENTILADORES_UCI_ZC_OCUPADOS",
-                       ]
-        # usecols=columns_ext)
-        uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
-        uci_table.columns = [normalizer_str(label).replace(
-            " ", "_").lower() for label in uci_table.columns.tolist()]
-        uci_table.rename(columns={"fechacorte": "fecha_corte"}, inplace=True)
-        return uci_table
+    def read_raw_oxi_table(self, filename):
+        columns_ext = [
+            "FECHACORTE",
+            "CODIGO",
+            "REGION"
+        ]
 
-    def filter_uci_by_date(self, table, mode, min_date="2020-04-01"):
+        columns_val_oxi = ["VOL_DISPONIBLE",
+                           "PRODUCCION_DIA_OTR",
+                           "PRODUCCION_DIA_GEN",
+                           "PRODUCCION_DIA_ISO",
+                           "PRODUCCION_DIA_CRIO",
+                           "PRODUCCION_DIAPLA",
+                           "VOL_CONSUMO_DIA",
+                           "CONSUMO_DIA_CRIO",
+                           "CONSUMO_DIA_PLA",
+                           "CONSUMO_DIA_ISO",
+                           "CONSUMO_DIA_GEN",
+                           "CONSUMO_DIA_OTR"]
+        # usecols=columns_ext)
+        table = pd.read_csv('temp/'+filename,
+                            sep="|",
+                            usecols=columns_ext+columns_val_oxi)
+
+        table.rename(columns={"FECHACORTE": "fecha_corte"}, inplace=True)
+        return table
+
+    def filter_oxi_by_date(self, table, mode, min_date="2020-04-01"):
         table.fecha_corte = table.fecha_corte.apply(
             lambda x: datetime.strptime(str(x), "%Y%m%d"))
         # Seleccionando fecha máxima
@@ -113,28 +120,44 @@ class Command(BaseCommand):
     def format_columns_drop_duplicates(self, table):
         table.drop_duplicates(inplace=True)
         table.rename(columns={
-            'camas_zc_disponibles': "uci_zc_cama_disp",
-            'camas_zc_ocupados': "uci_zc_cama_ocup",
-            'camas_zc_total': "uci_zc_cama_total",
-            'camas_znc_ocupados': 'uci_znc_cama_ocup',
-            'camas_znc_disponible': 'uci_znc_cama_disp',
-            'camas_znc_total': 'uci_znc_cama_total',
-            'ventiladores_uci_zc_total': 'uci_zc_vent_total',
-            'ventiladores_uci_zc_ocupados': 'uci_zc_vent_ocup',
+            'CODIGO': 'codigo',
+            'REGION': 'region',
+            "VOL_DISPONIBLE": 'vol_tk_disp',
+            "PRODUCCION_DIA_OTR": 'prod_dia_otro',
+            "PRODUCCION_DIA_GEN": 'prod_dia_generador',
+            "PRODUCCION_DIA_ISO": 'prod_dia_iso',
+            "PRODUCCION_DIA_CRIO": 'prod_dia_crio',
+            "PRODUCCION_DIAPLA": 'prod_dia_planta',
+            "VOL_CONSUMO_DIA": 'consumo_vol_tk',
+            "CONSUMO_DIA_CRIO": 'consumo_dia_crio',
+            "CONSUMO_DIA_PLA": 'consumo_dia_pla',
+            "CONSUMO_DIA_ISO": 'consumo_dia_iso',
+            "CONSUMO_DIA_GEN": 'consumo_dia_gen',
+            "CONSUMO_DIA_OTR": 'consumo_dia_otro',
         }, inplace=True)
+        self.disponible = ['vol_tk_disp', 'prod_dia_otro',
+                           'prod_dia_generador', 'prod_dia_iso',
+                           'prod_dia_crio', 'prod_dia_planta', ]
+        self.consumo = ['consumo_vol_tk', 'consumo_dia_crio',
+                        'consumo_dia_pla', 'consumo_dia_iso',
+                        'consumo_dia_gen', 'consumo_dia_otro', ]
         return table
 
-    def transform_uci(self, table,):
+    def transform_oxi(self, table,):
         table = table.groupby(["codigo", "fecha_corte"]).last()
         table.reset_index(inplace=True)
         table.drop(columns=["codigo"], inplace=True)
         table = table.groupby(["region", "fecha_corte"]).sum()
         table.reset_index(inplace=True)
+        table["m3_disp"] = table[self.disponible].sum(1)
+        table["m3_consumo"] = table[self.consumo].sum(1)
+        # Sum for the whole country
         temp = table.groupby(["fecha_corte"]).sum()
         temp = temp.reset_index()
         temp['region'] = "PERU"
         table = table.append(temp)
         print(table.tail())
+        print(table.describe())
         print(table.info())
         self.print_shell("Records: {}".format(table.shape))
         return table
