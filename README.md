@@ -120,3 +120,21 @@ python manage.py worker_t_uci_geo full
 # append the last day calculations in the current table
 python manage.py worker_t_uci_geo last
 ```
+
+9. Table for OXI status by regions
+
+```bash
+# upload the whole day status and delete the rest
+python manage.py worker_t_oxistat full
+# append the last day calculations in the current table
+python manage.py worker_t_oxistat last
+```
+
+10. Table for Vaccine resume
+
+```bash
+# upload the whole day status and delete the rest
+python manage.py worker_t_vacunas full
+# append the last day calculations in the current table
+python manage.py worker_t_vacunas last
+```
