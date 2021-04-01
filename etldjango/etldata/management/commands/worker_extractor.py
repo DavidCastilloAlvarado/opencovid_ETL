@@ -10,7 +10,7 @@ import time
 
 
 class Command(BaseCommand):
-    help = 'This command download in local and then upload the table to our bucket in GCP'
+    help = 'This command download in local and then upload the raw data to our bucket in GCP'
     bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
 
     def handle(self, *args, **options):
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         self.extracting_data_from_gob_origin()
         self.print_shell('Uploading files to Bucket ... ')
         self.uploading_bucket()
-        self.print_shell('Work done! ... ')
+        self.print_shell('Work Done!')
 
     def create_bucket(self):
         self.print_shell('Creating bucket if doesn\' exist ... ')

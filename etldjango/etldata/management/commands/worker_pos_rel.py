@@ -18,7 +18,7 @@ import re
 
 
 class Command(BaseCommand):
-    help = "Command downloads pdf report from Minsa, for only positive cases, PR, PCR, AG"
+    help = "Command for store the positive cases  PR, PCR, AG from minsa table"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     file_name = "covidpos.csv"
 
@@ -73,7 +73,7 @@ class Command(BaseCommand):
         table = self.filter_by_date(table, mode)
         table = self.transform_positiv_rel(table)
         self.save_table(table, DB_positividad_relativa, mode)
-        self.print_shell("Work done!")
+        self.print_shell("Work Done!")
 
     def read_raw_data_format_date(self,):
         cols_extr = [

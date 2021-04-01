@@ -16,7 +16,7 @@ import time
 
 
 class Command(BaseCommand):
-    help = "Command downloads pdf report from Minsa, for positive cases"
+    help = "Command to calculate RT score over the positive cases acum"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     temp_file = 'positive_acum.csv'
 
@@ -60,7 +60,7 @@ class Command(BaseCommand):
         self.acumulate_records(table)
         table = self.rt_compute()
         self.save_table(table, DB_rt, mode)
-        self.print_shell("Work done!")
+        self.print_shell("Work Done!")
         # if init == "test":
         #     self.load_from_bucket_test()
         # elif init == "db":

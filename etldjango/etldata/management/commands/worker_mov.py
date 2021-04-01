@@ -17,7 +17,7 @@ import os
 
 
 class Command(BaseCommand):
-    help = "Command downloads pdf report from Minsa, for positive cases"
+    help = "Command for create the report about population movility"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     file_name = 'mov_report.zip'
 

@@ -70,7 +70,7 @@ class Command(BaseCommand):
         # elif init == "no":
         #     self.print_shell("Downloading PDF")
         #     self.download_transform_pdf(url)
-        self.print_shell("Work done!")
+        self.print_shell("Work Done!")
 
     def check_if_already_exist_in_db(self, url):
         ind = url.index(".pdf")

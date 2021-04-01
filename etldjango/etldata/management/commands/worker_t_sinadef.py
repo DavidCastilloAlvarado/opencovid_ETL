@@ -26,14 +26,14 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("SINADEF transformation working ....")
-        # self.downloading_data_from_bucket()
+        self.downloading_data_from_bucket()
         table = self.read_file_and_format_date()
         table = self.filter_date_and_deads(table, mode)
         table = self.format_columns_name(table)
         table = self.transforma_sinadef_table(table)
         table = self.transform_sinadef_roller_deads_total(table)
         self.save_table(table, DB_sinadef, mode)
-        self.print_shell("Work done! ")
+        self.print_shell("Work Done!")
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))

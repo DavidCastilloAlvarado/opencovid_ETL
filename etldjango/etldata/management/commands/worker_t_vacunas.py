@@ -13,7 +13,7 @@ import numpy as np
 
 
 class Command(BaseCommand):
-    help = "Command for Store Vacunas records"
+    help = "Command for store Vaccines records"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     file_name = "vacunas.csv"
 
@@ -63,13 +63,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
-        # self.downloading_data_from_bucket()
+        self.downloading_data_from_bucket()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
         table = self.format_columns(table)
         table = self.transform_vacunas(table)
         self.save_table(table, DB_vacunas, mode)
-        self.print_shell("Work done!")
+        self.print_shell("Work Done!")
 
     def read_raw_data_format_date(self,):
         cols_extr = [

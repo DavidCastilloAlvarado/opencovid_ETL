@@ -68,8 +68,8 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
         # Downloading data from bucket
-        # self.downloading_data_from_bucket(file_name=self.file_name_oxi)
-        # Transform UCI
+        self.downloading_data_from_bucket(file_name=self.file_name_oxi)
+        # Transform oxi
         table = self.read_raw_oxi_table(filename=self.file_name_oxi)
         table = self.filter_oxi_by_date(table, mode)
         table = self.format_columns_drop_duplicates(table)

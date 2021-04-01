@@ -16,7 +16,7 @@ import time
 
 
 class Command(BaseCommand):
-    help = "UCI+OXI: Command for transform the tables and upload to the data base"
+    help = "Hospital capacity: Command for transform the tables and upload to the data base"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     file_name_uci = "UCI_VENT.csv"
 

@@ -106,11 +106,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'opencoviddb',
-        'TEST_NAME': 'testopencoviddb',
         'USER': 'datacrew',
         'PASSWORD': 'admin1234',
         'HOST': '127.0.0.1',
         'DATABASE_PORT': ' 5432',
+        'TEST': {
+            'NAME': 'mytestdatabase',
+        },
 
     },
 }
