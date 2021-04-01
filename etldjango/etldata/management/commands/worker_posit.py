@@ -136,7 +136,6 @@ class Command(BaseCommand):
     def formating_table(self, table, fecha):
         self.print_shell('Formating table to store in db ... ')
         table.drop(columns=["Región.1"], inplace=True)
-        table["mypos"] = round((table["Total.1"]/table["Total"])*100, 1)
         table["fecha"] = fecha
         print(table.dtypes)
         table.rename(columns={"Región": "region",
@@ -149,14 +148,14 @@ class Command(BaseCommand):
                               "AG.1": "ag_pos",
                               "Total.1": "total_pos",
                               "% Positividad": "positividad",
-                              "mypos": "positividad_verif"
+                              "mypos": "positividad_verif",
                               }, inplace=True)
+        table.drop(columns=["positividad"], inplace=True)
         table.region = table.region.apply(lambda x: normalizer_str(x).upper())
-        table.region = table.region.apply(
-            lambda x: "LIMA REGION" if x == "LIMA" else x)  # Lima region instead Lima
+        # table.region = table.region.apply(lambda x: "LIMA REGION" if x == "LIMA" else x)  # Lima region instead Lima
         index = table.loc[table.region == "TOTAL"].index[0]
         table.drop(index=[index], inplace=True)
-        print(table.head())
+        print(table.head(50))
         return table
 
     # def loading_dataset_pre(self):

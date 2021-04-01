@@ -125,14 +125,10 @@ class DB_positividad(models.Model):
     pr_pos = models.IntegerField(null=True, blank=True, default=None, )
     ag_pos = models.IntegerField(null=True, blank=True, default=None, )
     total_pos = models.IntegerField(null=True, blank=True, default=None, )
-    positividad = models.DecimalField(null=True, default=None,
-                                      decimal_places=2, max_digits=6, blank=True,)
-    positividad_verif = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=6, blank=True,)
 
     class Meta:
         ordering = ['-fecha']
-        db_table = 'pruebas_positividad_table'
+        db_table = 'table_pruebas_positividad'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
         ]
@@ -152,7 +148,7 @@ class DB_positividad_relativa(models.Model):
 
     class Meta:
         ordering = ['-fecha']
-        db_table = 'pos_table_relative'
+        db_table = 'table_positividad_rel'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
         ]
