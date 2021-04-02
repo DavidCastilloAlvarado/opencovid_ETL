@@ -48,13 +48,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.print_shell("Computing covid19 resume from db")
         # Downloading data from bucket
-        deads_before_d, deads_before_d_std = self.query_avg_daily_deads_before_covid(
+        deaths_before_d, deaths_before_d_std = self.query_avg_daily_deaths_before_covid(
             DB_sinadef)
-        deads_after, count = self.query_total_deads_sinadef(DB_sinadef)
-        self.deads_sinadef = self.calculate_sinadef(deads_before_d,
-                                                    deads_after, count,
-                                                    deads_before_d_std)
-        self.deads_minsa = self.query_deads_minsa(DB_minsa_muertes)
+        deaths_after = self.query_total_deaths_sinadef(DB_sinadef)
+        self.deaths_sinadef = self.calculate_subreg_deaths(deaths_before_d,
+                                                           deaths_after,
+                                                           deaths_before_d_std)
+        self.deaths_minsa = self.query_deaths_minsa(DB_minsa_muertes)
         self.vaccinated = self.query_vaccinated_first_dosis(DB_vacunas)
         self.camas_uci_disp = self.query_camas_uci_disponible(DB_uci)
         self.active_cases = self.query_active_cases(DB_positividad_relativa)
@@ -62,14 +62,19 @@ class Command(BaseCommand):
         self.print_shell("Work Done!")
 
     def save_resume(self, db):
-        data = dict(fallecidos_sinadef=self.deads_sinadef,
-                    fallecidos_minsa=self.deads_minsa,
+        """
+        All metrics are avg in the last 7 days,
+        except camas_uci_disp, wich is the last day.
+        """
+        data = dict(fallecidos_sinadef=self.deaths_sinadef,
+                    fallecidos_minsa=self.deaths_minsa,
                     vacunados=self.vaccinated,
                     camas_uci_disp=self.camas_uci_disp,
                     active_cases=self.active_cases,)
-        _ = db.objects.create(**data)
+        print(data)
+        #_ = db.objects.create(**data)
 
-    def query_avg_daily_deads_before_covid(self, db):
+    def query_avg_daily_deaths_before_covid(self, db):
         min_fecha_hist = datetime.strptime("01-01-18", "%d-%m-%y")
         max_fecha_hist = datetime.strptime("01-01-20", "%d-%m-%y")
         daily_deads = db.objects.values('fecha').filter(fecha__gt=min_fecha_hist,
@@ -78,50 +83,78 @@ class Command(BaseCommand):
         daily_deads = daily_deads.annotate(Sum('n_muertes'))
         daily_deads = daily_deads.aggregate(Avg('n_muertes__sum'),
                                             StdDev('n_muertes__sum'))
-
         print(daily_deads)
         return daily_deads['n_muertes__sum__avg'], daily_deads['n_muertes__sum__stddev']
 
-    def query_total_deads_sinadef(self, db):
+    def query_total_deaths_sinadef(self, db):
+        """
+        AVG deaths by sinadef in the last 7 days
+        """
         max_fecha_hist = datetime.strptime("01-03-20", "%d-%m-%y")
-        total_deads = db.objects.values('fecha').filter(fecha__gt=max_fecha_hist,
-                                                        region='PERU')
-        total_deads = total_deads.annotate(Sum('n_muertes'))
-        total_deads = total_deads.aggregate(Sum('n_muertes__sum'),
-                                            Count('n_muertes__sum'))
-        print(total_deads)
-        return total_deads['n_muertes__sum__sum'],  total_deads['n_muertes__sum__count']
-
-    def calculate_sinadef(self, daily_after, total_before, count, std):
-        std = pow(float((std**2)*count), .5)
-        mean_total_deads = float(total_before - count*daily_after)
-        result_min = mean_total_deads - std
-        result_max = mean_total_deads + std
-        print(result_min, result_max)
-        return mean_total_deads
-
-    def query_deads_minsa(self, db):
-        query = db.objects.values('fecha').filter(region='PERU')
+        query = db.objects.values('fecha')
+        query = query.filter(fecha__gt=max_fecha_hist,
+                             region='PERU')
+        query = query.order_by('-fecha')[:7]
         query = query.annotate(Sum('n_muertes'))
-        query = query.aggregate(Sum('n_muertes__sum'),
+        query = query.aggregate(Avg('n_muertes__sum'),
                                 Count('n_muertes__sum'))
         print(query)
-        return query['n_muertes__sum__sum']
+        return query['n_muertes__sum__avg']
+
+    def calculate_subreg_deaths(self, daily_before, total_after, std):
+        """
+        AVG deaths in the last 7 days
+        """
+        mean_total_deaths = float(total_after - daily_before)
+        result_min = mean_total_deaths - float(std)
+        result_max = mean_total_deaths + float(std)
+        print(result_min, result_max)
+        return mean_total_deaths
+
+    def query_deaths_minsa(self, db):
+        """
+        AVG deaths reported by minsa in the last 7 days
+        """
+        #min_date = str(datetime.now().date() - timedelta(days=7))
+        query = db.objects.values('fecha')
+        query = query.filter(region='PERU')
+        query = query.order_by('-fecha')[:7]
+        query = query.annotate(Sum('n_muertes'))
+        query = query.aggregate(Avg('n_muertes__sum'),
+                                Count('n_muertes__sum'))
+        print(query)
+        return query['n_muertes__sum__avg']
 
     def query_vaccinated_first_dosis(self, db):
-        query = db.objects.values('dosis').filter(dosis=1)
-        query = query.aggregate(Count('dosis'))
+        """
+        AVG Vaccinations by day in the last 7 days
+        """
+        #min_date = str(datetime.now().date() - timedelta(days=7))
+        query = db.objects.values('fecha')
+        query = query.order_by('-fecha')[:7]  # dosis=1,
+        query = query.annotate(Sum('cantidad'))
+        #query = query.order_by('-fecha')
+        query = query.aggregate(Avg('cantidad__sum'))
         print(query)
-        return query['dosis__count']
+        return query['cantidad__sum__avg']
 
     def query_camas_uci_disponible(self, db):
+        """
+        TOTAL UCI beds available today
+        """
         query = db.objects.aggregate(Sum('serv_uci_left'),
                                      Sum('serv_uci_total'))
         print(query)
         return query['serv_uci_left__sum']  # , query['serv_uci_total__sum']
 
     def query_active_cases(self, db):
-        min_date = str(datetime.now().date() - timedelta(days=14))
-        query = db.objects.filter(fecha__gt=min_date).aggregate(Sum('total'))
+        """
+        AVG New cases by day (rolling mean 7)
+        """
+        #min_date = str(datetime.now().date() - timedelta(days=7))
+        query = db.objects
+        #query = query.filter(fecha__gte=min_date)
+        query = query.order_by('-fecha')[:7]
+        query = query.aggregate(Avg('total'))
         print(query)
-        return query['total__sum']
+        return query['total__avg']
