@@ -82,17 +82,23 @@ class DB_resumen(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fallecidos_minsa = models.DecimalField(null=True,
                                            decimal_places=2,
-                                           max_digits=6,)
-    fallecidos_diresa = models.DecimalField(null=True,
-                                            decimal_places=2,
-                                            max_digits=6,)
-    fallecidos_subregistros = models.DecimalField(null=True,
-                                                  decimal_places=2,
-                                                  max_digits=6,)
+                                           max_digits=9,)
+    fallecidos_sinadef = models.DecimalField(null=True,
+                                             decimal_places=2,
+                                             max_digits=9,)
+    vacunados = models.DecimalField(null=True,
+                                    decimal_places=2,
+                                    max_digits=9,)
+    camas_uci_disp = models.DecimalField(null=True,
+                                         decimal_places=2,
+                                         max_digits=9,)
+    active_cases = models.DecimalField(null=True,
+                                       decimal_places=2,
+                                       max_digits=9,)
 
     class Meta:
         ordering = ['-fecha_creacion']
-        db_table = 'dead_table'
+        db_table = 'resume_table'
         indexes = [
             models.Index(fields=['-fecha_creacion', ]),
         ]

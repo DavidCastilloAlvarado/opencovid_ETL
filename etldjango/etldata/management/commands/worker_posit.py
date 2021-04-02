@@ -57,7 +57,7 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         url = self.get_pdfurl_from_webpage(URL_MINSA_REPORT)
-        self.check_if_already_exist_in_db(url)
+        # self.check_if_already_exist_in_db(url)
         filename, fecha_pdf = self.download_pdf_(url)
         self.uploading_pdf_to_bucket(filename, fecha_pdf)
         self.read_pdf_validate(filename)

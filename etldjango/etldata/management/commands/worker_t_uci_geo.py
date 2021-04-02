@@ -67,7 +67,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
-        self.print_shell("Transforming data UCI to load in DB UCI... ")
+        self.print_shell("UCI table + OXI table data processing ... ")
         # Downloading data from bucket
         self.downloading_data_from_bucket(file_name=self.file_name_uci)
         self.downloading_data_from_bucket(file_name=self.file_name_oxi)
