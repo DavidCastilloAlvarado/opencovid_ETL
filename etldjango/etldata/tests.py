@@ -63,3 +63,8 @@ class CommandETLOpenCovid2(TestCase):
         args = ["last"]
         call_command('worker_mov', *args, stdout=out)
         self.assertIn('Work Done!', out.getvalue())
+
+    def test_command_resume(self):
+        out = StringIO()
+        call_command('worker_t_resumen', stdout=out)
+        self.assertIn('Work Done!', out.getvalue())

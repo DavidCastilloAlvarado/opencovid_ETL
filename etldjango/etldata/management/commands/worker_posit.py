@@ -22,21 +22,33 @@ URL_MINSA_REPORT = "https://www.dge.gob.pe/portalnuevo/covid-19/covid-cajas/situ
 class Command(BaseCommand):
     help = "Command downloads pdf report from Minsa, for positive cases"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
+    filename = 'test_positivos.csv'
 
     def add_arguments(self, parser):
+        """
+        Example:
+        - for initialize the database
+        $python manage.py worker_posit csv
+        - for load the last pdf from minsa report
+        $python manage.py worker_posit pdf
+        - for load a particular daily report from minsa %d%m%y
+        $python manage.py worker_posit pdf --day 230321
+        """
         parser.add_argument(
-            'mode', type=str, help="full/last , full: the whole external dataset. last: only the latest records")
+            'mode', type=str, help="csv/pdf , csv: load the data from a csv file. pdf: load the data from Minsa's webpage")
+        parser.add_argument(
+            '--day', type=str, help="put a date time to try to download %d%m%y")
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
     def save_table(self, table, db, mode):
-        if mode == 'full':
+        if mode == 'csv':
             records = table.to_dict(orient='records')
             records = [db(**record) for record in tqdm(records)]
             _ = db.objects.all().delete()
             _ = db.objects.bulk_create(records)
-        elif mode == 'last':
+        elif mode == 'pdf':
             # this is posible because the table is sorter by "-fecha"
             last_record = db.objects.all()[:1]
             last_record = list(last_record)
@@ -55,21 +67,22 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         mode = options["mode"]
-        assert mode in ['full', 'last'], "Error in --mode argument"
-        url = self.get_pdfurl_from_webpage(URL_MINSA_REPORT)
-        self.check_if_already_exist_in_db(url)
-        filename, fecha_pdf = self.download_pdf_(url)
-        self.uploading_pdf_to_bucket(filename, fecha_pdf)
-        self.read_pdf_validate(filename)
-        table = self.extracting_table_from_pdf(filename)
-        table = self.formating_table(table, fecha_pdf)
+        day = options["day"]
+        assert mode in ['pdf', 'csv'], "Error in --mode argument"
+        if mode == 'pdf':
+            url = self.get_pdfurl_from_webpage(URL_MINSA_REPORT, day)
+            self.print_shell(url)
+            self.check_if_already_exist_in_db(url)
+            filename, fecha_pdf = self.download_pdf_from_web(url)
+            self.uploading_pdf_to_bucket(filename, fecha_pdf)
+            self.read_pdf_validate(filename)
+            table = self.extracting_table_from_pdf(filename)
+            table = self.formating_table(table, fecha_pdf)
+        elif mode == 'csv':
+            self.download_csv_from_bucket()
+            table = self.loading_csv_dataset_pre()
+
         self.save_table(table, DB_positividad, mode)
-        # if init == "yes":
-        #     self.print_shell("Downloading CSV from bucket and cleaning table")
-        #     self.loading_dataset_pre()
-        # elif init == "no":
-        #     self.print_shell("Downloading PDF")
-        #     self.download_transform_pdf(url)
         self.print_shell("Work Done!")
 
     def check_if_already_exist_in_db(self, url):
@@ -77,9 +90,9 @@ class Command(BaseCommand):
         fecha_pdf = datetime.strptime(url[(ind-6):ind], "%d%m%y")
         if DB_positividad.objects.filter(fecha=fecha_pdf).exists():
             raise 'The record "fecha" already exist'
-        self.print_shell('The file has passed to download ... ')
+        self.print_shell('The file passed to download ... ')
 
-    def get_pdfurl_from_webpage(self, url):
+    def get_pdfurl_from_webpage(self, url, day=None):
         self.print_shell('Getting minsa report url ... ')
         html = urlopen(url)
         text = html.read()
@@ -89,9 +102,18 @@ class Command(BaseCommand):
         for link in links:
             if ".pdf" in link and "coronavirus" in link:
                 pdf.append(link)
+        if day:
+            return self.changing_date_to_pdf_url(pdf[0], day)
         return pdf[0]
 
-    def download_pdf_(self, url):
+    def changing_date_to_pdf_url(self, url, day):
+        end = url.index(".pdf")
+        init = end-6
+        url1 = url[:init]
+        url2 = url[end:]
+        return url1 + day + url2
+
+    def download_pdf_from_web(self, url):
         self.print_shell('Downloading pdf ... ')
         # Geting datatime from name in url
         ind = url.index(".pdf")
@@ -103,7 +125,7 @@ class Command(BaseCommand):
     def uploading_pdf_to_bucket(self, filename, fecha):
         self.print_shell('Uploading pdf to bucket ... ')
         # Uploading pdf to bucket
-        TODAY = str(datetime.now().date())
+        TODAY = str(fecha.date())  # datetime.now().date()
         destination = BUCKET_ROOT + "/report_minsa/" + TODAY + "/" + filename
         self.bucket.upload_blob(bucket_name=BUCKET_NAME,
                                 source_file_name=filename,
@@ -151,33 +173,30 @@ class Command(BaseCommand):
                               "mypos": "positividad_verif",
                               }, inplace=True)
         table.drop(columns=["positividad"], inplace=True)
-        table.region = table.region.apply(lambda x: normalizer_str(x).upper())
-        # table.region = table.region.apply(lambda x: "LIMA REGION" if x == "LIMA" else x)  # Lima region instead Lima
+        table = self.formating_region_column(table)
         index = table.loc[table.region == "TOTAL"].index[0]
         table.drop(index=[index], inplace=True)
         print(table.head(50))
         return table
 
-    # def loading_dataset_pre(self):
-    #     filename_local = "temp/positividad.csv"
-    #     self.bucket.download_blob(bucket_name=BUCKET_NAME,
-    #                               source_blob_name="data_source/feed_rt.csv",
-    #                               destination_file_name=filename_local)
-    #     data_pre = pd.read_csv(filename_local, sep=";")
-    #     data_pre.REGION = data_pre.REGION.apply(
-    #         lambda x: normalizer_str(x).upper())
-    #     data_pre.drop(columns=["COUNTRY"], inplace=True)
-    #     data_pre.rename(columns={"REGION": "region",
-    #                              "Fecha": "fecha",
-    #                              "cum_pos_pcr": "PCR_pos",
-    #                              "cum_pos_zero": "PR_pos",
-    #                              "cum_pos_ag": "AG_pos",
-    #                              "cum_pos_total": "Total_pos",
-    #                              "cum_total_muestras": "Total"}, inplace=True)
-    #     cols = ["PCR_pos", "PR_pos", "AG_pos", "Total_pos", "Total"]
-    #     data_pre[cols] = data_pre[cols].applymap(
-    #         lambda x: str(x).replace(" ", "").replace("\u202f", "").replace(",", ".") if x == x else x)
-    #     data_pre = data_pre.apply(pd.to_numeric, errors="ignore")
-    #     print(data_pre.dtypes)
-    #     data_pre = data_pre.fillna(0)
-    #     self.save_table(data_pre, DB_positividad, init="yes")
+    def download_csv_from_bucket(self):
+        self.print_shell("Downloading csv from bucket ...")
+        self.bucket.download_blob(bucket_name=BUCKET_NAME,
+                                  source_blob_name="data_source/"+self.filename,
+                                  destination_file_name='temp/'+self.filename)
+
+    def loading_csv_dataset_pre(self):
+        # The file already have the format column
+        table = pd.read_csv('temp/'+self.filename,)
+        table = self.formating_region_column(table)
+        print(table.info())
+        table = table.fillna(0)
+        print(table.region.unique())
+        return table
+
+    def formating_region_column(self, table):
+        table.region = table.region.apply(lambda x: normalizer_str(x).upper())
+        # Lima METROPOLITANA instead of Lima
+        table.region = table.region.apply(
+            lambda x: "LIMA METROPOLITANA" if x == "LIMA" else x)
+        return table

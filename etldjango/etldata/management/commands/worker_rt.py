@@ -21,8 +21,20 @@ class Command(BaseCommand):
     temp_file = 'positive_acum.csv'
 
     def add_arguments(self, parser):
+        """
+        - for reboot the dataset for the last 12months
+        $python manage.py worker_rt full
+        - for reboot the dataset for the last 6 months
+        $python manage.py worker_rt full --m 6
+        - for update the dataset using the last month
+        $python manage.py worker_rt last
+        - for update the dataset using the las 6 months
+        $python manage.py worker_rt last --m 6
+        """
         parser.add_argument(
             'mode', type=str, help="full/last , full: the whole external dataset. last: only the latest records")
+        parser.add_argument(
+            '--m', type=int, help="months, months for analysis, only available in last")
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
@@ -53,11 +65,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         mode = options["mode"]
+        months = options["m"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("RT calculation started ... ")
         table = self.load_data_from_db()
-        table = self.filter_data_by_date(table, mode)
-        self.acumulate_records(table)
+        table = self.acumulate_records(table)
+        table = self.filter_data_by_date(table, mode, months)
+        self.save_table_to_csv(table)
         table = self.rt_compute()
         self.save_table(table, DB_rt, mode)
         self.print_shell("Work Done!")
@@ -119,14 +133,19 @@ class Command(BaseCommand):
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
         print(table_acum.head())
-        table_acum.to_csv('temp/' + self.temp_file, index=False)
+        return table_acum
 
-    def filter_data_by_date(self, table, mode):
+    def save_table_to_csv(self, table):
+        table.to_csv('temp/' + self.temp_file, index=False)
+
+    def filter_data_by_date(self, table, mode, months):
+        months = 1 if not months else months
+        min_date = str(datetime.now().date() -
+                       timedelta(days=int(months*30)))
         if mode == 'full':
             # max_date = str(datetime.now().date() - timedelta(days=10))
-            table = table
+            table = table.loc[(table.fecha >= min_date)]
         elif mode == 'last':
-            min_date = str(datetime.now().date() - timedelta(days=30))
             # max_date = str(datetime.now().date())
             table = table.loc[(table.fecha >= min_date)]
         return table

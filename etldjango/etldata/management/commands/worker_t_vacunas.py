@@ -90,13 +90,15 @@ class Command(BaseCommand):
         return table
 
     def filter_by_date(self, table, mode, min_date="2020-03-01"):
-
+        max_date_table = table.fecha.max()
         if mode == 'full':
             # max_date = str(datetime.now().date() - timedelta(days=30)) # test only
-            table = table.loc[(table.fecha >= min_date)]
+            table = table.loc[(table.fecha >= min_date) &
+                              (table.fecha < max_date_table)]
         elif mode == 'last':
             min_date = str(datetime.now().date() - timedelta(days=30))
-            table = table.loc[(table.fecha >= min_date)]
+            table = table.loc[(table.fecha >= min_date) &
+                              (table.fecha < max_date_table)]
         self.print_shell("Records after filter: {}".format(table.shape))
         return table
 

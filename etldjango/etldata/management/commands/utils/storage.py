@@ -81,15 +81,16 @@ class Bucket_handler(object):
 
 
 class GetBucketData(Bucket_handler):
-    def get_from_bucket(self, source_name, destination_name):
+    def get_from_bucket(self, source_name, destination_name, ipress=False):
         # Downloading Links file and names
         # self.download_blob(bucket_name=BUCKET_NAME,
         #                    source_blob_name="data_source/datos_fuentes.csv",
         #                    destination_file_name="temp/datos_fuentes.csv")
         # Downloading GEO data for every Ipress
-        self.download_blob(bucket_name=BUCKET_NAME,
-                           source_blob_name="data_source/geo_ipress.csv",
-                           destination_file_name="temp/geo_ipress.csv")
+        if ipress:
+            self.download_blob(bucket_name=BUCKET_NAME,
+                               source_blob_name="data_source/geo_ipress.csv",
+                               destination_file_name="temp/geo_ipress.csv")
         # Loading links and names to donwload from bucket
         #self.handler = Data_Extractor(csv_urls="temp/datos_fuentes.csv")
 

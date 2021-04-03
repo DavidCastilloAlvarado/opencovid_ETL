@@ -20,3 +20,4 @@ lib64
 share/
 **.ipynb
 **.ipynb_checkpoints
+**.csv**

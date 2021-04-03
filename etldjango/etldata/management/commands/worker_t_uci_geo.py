@@ -62,7 +62,7 @@ class Command(BaseCommand):
         source_url = last_record.url
         print(source_url)
         self.bucket.get_from_bucket(source_name=source_url,
-                                    destination_name='temp/'+file_name)
+                                    destination_name='temp/'+file_name, ipress=True)
 
     def handle(self, *args, **options):
         mode = options["mode"]

@@ -17,7 +17,7 @@ import time
 
 
 class Command(BaseCommand):
-    help = "RESUMEN: Command fore create a resumen using the current date in the DB"
+    help = "RESUMEN: Command for create the resumen using the current date in the DB"
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
@@ -72,27 +72,28 @@ class Command(BaseCommand):
                     camas_uci_disp=self.camas_uci_disp,
                     active_cases=self.active_cases,)
         print(data)
-        #_ = db.objects.create(**data)
+        _ = db.objects.create(**data)
 
     def query_avg_daily_deaths_before_covid(self, db):
         min_fecha_hist = datetime.strptime("01-01-18", "%d-%m-%y")
         max_fecha_hist = datetime.strptime("01-01-20", "%d-%m-%y")
-        daily_deads = db.objects.values('fecha').filter(fecha__gt=min_fecha_hist,
-                                                        fecha__lt=max_fecha_hist,
-                                                        region='PERU')
-        daily_deads = daily_deads.annotate(Sum('n_muertes'))
-        daily_deads = daily_deads.aggregate(Avg('n_muertes__sum'),
-                                            StdDev('n_muertes__sum'))
-        print(daily_deads)
-        return daily_deads['n_muertes__sum__avg'], daily_deads['n_muertes__sum__stddev']
+        query = db.objects.values('fecha').filter(fecha__gt=min_fecha_hist,
+                                                  fecha__lt=max_fecha_hist,
+                                                  region='PERU')
+        query = query.annotate(Sum('n_muertes'))
+        query = query.aggregate(Avg('n_muertes__sum'),
+                                StdDev('n_muertes__sum'))
+        print(query)
+        return query['n_muertes__sum__avg'], query['n_muertes__sum__stddev']
 
     def query_total_deaths_sinadef(self, db):
         """
         AVG deaths by sinadef in the last 7 days
         """
-        max_fecha_hist = datetime.strptime("01-03-20", "%d-%m-%y")
+        #max_fecha_hist = datetime.strptime("01-03-20", "%d-%m-%y")
+        min_date = str(datetime.now().date() - timedelta(days=30))
         query = db.objects.values('fecha')
-        query = query.filter(fecha__gt=max_fecha_hist,
+        query = query.filter(fecha__gt=min_date,
                              region='PERU')
         query = query.order_by('-fecha')[:7]
         query = query.annotate(Sum('n_muertes'))
@@ -115,9 +116,11 @@ class Command(BaseCommand):
         """
         AVG deaths reported by minsa in the last 7 days
         """
-        #min_date = str(datetime.now().date() - timedelta(days=7))
-        query = db.objects.values('fecha')
+        min_date = str(datetime.now().date() - timedelta(days=30))
+        query = db.objects
         query = query.filter(region='PERU')
+        query = query.filter(fecha__gt=min_date)
+        query = query.values('fecha')
         query = query.order_by('-fecha')[:7]
         query = query.annotate(Sum('n_muertes'))
         query = query.aggregate(Avg('n_muertes__sum'),
@@ -129,10 +132,13 @@ class Command(BaseCommand):
         """
         AVG Vaccinations by day in the last 7 days
         """
-        #min_date = str(datetime.now().date() - timedelta(days=7))
-        query = db.objects.values('fecha')
-        query = query.order_by('-fecha')[:7]  # dosis=1,
+        min_date = str(datetime.now().date() - timedelta(days=30))
+        query = db.objects
+        query = query.filter(fecha__gt=min_date)
+        query = query.values('fecha')
+        # dosis=1,
         query = query.annotate(Sum('cantidad'))
+        query = query.order_by('-fecha')[:7]
         #query = query.order_by('-fecha')
         query = query.aggregate(Avg('cantidad__sum'))
         print(query)
@@ -151,10 +157,12 @@ class Command(BaseCommand):
         """
         AVG New cases by day (rolling mean 7)
         """
-        #min_date = str(datetime.now().date() - timedelta(days=7))
-        query = db.objects
-        #query = query.filter(fecha__gte=min_date)
+        min_date = str(datetime.now().date() - timedelta(days=30))
+        query = db.objects.values('fecha')
+        query = query.filter(fecha__gt=min_date)
         query = query.order_by('-fecha')[:7]
-        query = query.aggregate(Avg('total'))
+        query = query.annotate(Sum('total'))
+        #query = query.filter(fecha__gte=min_date)
+        query = query.aggregate(Avg('total__sum'), Count('total__sum'))
         print(query)
-        return query['total__avg']
+        return query['total__sum__avg']
