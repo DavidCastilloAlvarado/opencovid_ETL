@@ -4,7 +4,7 @@ from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
 from .utils.unicodenorm import normalizer_str
-from etldata.models import DB_minsa_muertes, DB_positividad, DB_capacidad_hosp, DB_minsa_muertes, DB_rt, DB_epidemiologico
+from etldata.models import DB_minsa_muertes, DB_positividad_salida, DB_capacidad_hosp, DB_minsa_muertes, DB_rt, DB_epidemiologico
 from django.contrib.gis.geos import Point
 # from django.utils import timezone
 from django.db.models import F, Sum, Avg, Count, StdDev, Max, Q
@@ -17,7 +17,7 @@ import time
 
 
 class Command(BaseCommand):
-    help = "RESUMEN: Command for create the resumen using the current date in the DB"
+    help = "Epidemiolog: Command for create the resumen using the current date in the DB"
     bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
     filename = 'poblacion.csv'
 
@@ -26,6 +26,8 @@ class Command(BaseCommand):
         Example:
         - for initialize the database using the last three weeks
         $python manage.py worker_t_epidem full --w 3
+        - for append the last three weeks
+        $python manage.py worker_t_epidem last --w 3
         """
         parser.add_argument(
             'mode', type=str, help="full/last , full: load the last 5 weeks, last: load the last week")
@@ -67,8 +69,7 @@ class Command(BaseCommand):
         # Downloading data from bucket
         self.downloading_source_csv()
         self.load_poblacion_table_popu()
-        self.print_shell('Work Done!')
-        table_pos = self.query_test_positivos(DB_positividad, weeks)
+        table_pos = self.query_test_positivos(DB_positividad_salida, weeks)
         table_pos = self.normalizer_100k_population(table_pos,
                                                     ['total', 'total_pos'])
         table_uci = self.query_uci_status(DB_capacidad_hosp, weeks)
@@ -80,6 +81,7 @@ class Command(BaseCommand):
         table = self.aggregate_avg_by_week(table)
         table = self.scoring_variables(table)
         self.save_table(table, DB_epidemiologico, mode)
+        self.print_shell('Work Done!')
 
     def get_weeks_from_args(self, mode, weeks):
         if weeks:
@@ -92,7 +94,7 @@ class Command(BaseCommand):
     def downloading_source_csv(self):
         """
         Function to download the csv file which contain all the url and standar names
-        for the the data from the goberment, then 
+        for the the data from the goberment, then
         read that file and download all the files form source.
         """
         self.print_shell('Downloading poblacion.csv ... ')
@@ -122,12 +124,16 @@ class Command(BaseCommand):
         fecha_min = fecha_max - timedelta(days=8*weeks)
         query = db.objects.values('fecha',
                                   'region',
-                                  'total',
+                                  'total_test',
                                   'total_pos')
         query = query.filter(fecha__gt=fecha_min)
-        query = query.annotate(positividad=(F('total_pos') / F('total')*100))
+        query = query.annotate(positividad=(
+            F('total_pos') / F('total_test')*100))
         query = query.order_by('region')
         query = pd.DataFrame.from_records(query)
+        query.rename(columns={
+            'total_test': 'total'
+        }, inplace=True)
         print(query)
         return query
 
@@ -147,18 +153,20 @@ class Command(BaseCommand):
         return query
 
     def query_deaths_minsa(self, db, weeks):
+        columns = ['fecha',
+                   'region',
+                   'n_muertes', ]
         fecha_max = self.get_fecha_max(db,)
         fecha_min = fecha_max - timedelta(days=8*weeks)
         query = db.objects
-        query = query.values('fecha',
-                             'region',
-                             'n_muertes')
         query = query.filter(fecha__gt=fecha_min)
         query = query.exclude(region='PERU')
         query = query.order_by('region')
+        query = query.values(*columns)
 
         query = pd.DataFrame.from_records(query)
-        print(query)
+        print(query.loc[query.region == 'PUNO'].n_muertes.mean())
+        print(query.loc[query.region == 'PUNO'])
         return query
 
     def query_rt_score(self, db, weeks):
@@ -182,14 +190,14 @@ class Command(BaseCommand):
                 x['region'] = 'LIMA METROPOLITANA'
             n_pp = self.table_popu.loc[self.table_popu.region == x['region']]
             n_pp = n_pp['poblacion'].tolist()[0]
-            return round(x[column]/n_pp*100000, 2)
+            return x[column]/n_pp*100000
         for column in columns:
             table[column] = table.apply(change_normal, args=(column,), axis=1)
         print(table.isnull().sum())
-        print(table)
+        print(table.info())
         return table
 
-    @staticmethod
+    @ staticmethod
     def rename_total_table_columns(table):
         table.rename(columns={
             'total': 'avg_test',
@@ -220,7 +228,7 @@ class Command(BaseCommand):
         cols.remove('fecha')
         total[cols] = total[cols].apply(pd.to_numeric, errors='ignore')
         # print(total.sort_values(by='fecha').tail(50))
-        #print(total.loc[total.region == 'LIMA METROPOLITANA'])
+        # print(total.loc[total.region == 'LIMA METROPOLITANA'])
         # print(posit.loc[posit.region ==
         #       'LIMA METROPOLITANA'].sort_values(by='fecha'))
         return total
@@ -263,7 +271,7 @@ class Command(BaseCommand):
         print(table.info())
         return table
 
-    @staticmethod
+    @ staticmethod
     def calculate_score(table):
         cut_score = [0, 17, 27, 30, 1e7]
         color = [1, 2, 3, 4]
@@ -297,14 +305,14 @@ class Command(BaseCommand):
             temp = temp.groupby(["n_week", "region"]).agg({
                 'fecha': 'first',
                 'avg_test': 'mean',
-                'incid_100': 'mean',
+                'incid_100': 'sum',
                 'positividad': 'mean',
                 'uci': 'mean',
-                'fall_100': 'mean',
+                'fall_100': 'sum',
                 'Rt': 'mean',
             })
             temp = temp.reset_index()
-            #temp.fecha = temp.fecha.apply(lambda x: x.date())
+            # temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
         print(table_acum.head())

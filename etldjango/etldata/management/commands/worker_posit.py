@@ -6,6 +6,7 @@ from .utils.urllibmod import urlretrieve
 from datetime import datetime, timedelta
 from etldata.models import DB_positividad
 from .utils.unicodenorm import normalizer_str
+from django.db.models import F, Sum, Avg, Count, StdDev, Max, Q
 #from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
@@ -33,11 +34,15 @@ class Command(BaseCommand):
         $python manage.py worker_posit pdf
         - for load a particular daily report from minsa %d%m%y
         $python manage.py worker_posit pdf --day 230321
+        - update database from any day automatically
+        $python manage.py worker_posit pdf --update yes
         """
         parser.add_argument(
             'mode', type=str, help="csv/pdf , csv: load the data from a csv file. pdf: load the data from Minsa's webpage")
         parser.add_argument(
             '--day', type=str, help="put a date time to try to download %d%m%y")
+        parser.add_argument(
+            '--update', type=str, help="yes: to update from the last recors to the last pdf available")
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
@@ -68,21 +73,29 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mode = options["mode"]
         day = options["day"]
+        update = options["update"]
         assert mode in ['pdf', 'csv'], "Error in --mode argument"
         if mode == 'pdf':
-            url = self.get_pdfurl_from_webpage(URL_MINSA_REPORT, day)
-            self.print_shell(url)
-            self.check_if_already_exist_in_db(url)
-            filename, fecha_pdf = self.download_pdf_from_web(url)
-            self.uploading_pdf_to_bucket(filename, fecha_pdf)
-            self.read_pdf_validate(filename)
-            table = self.extracting_table_from_pdf(filename)
-            table = self.formating_table(table, fecha_pdf)
+            urls = self.get_pdfurl_from_webpage(URL_MINSA_REPORT, day, update)
+            for url in urls:
+                self.check_if_already_exist_in_db(url)
+                try:
+                    filename, fecha_pdf = self.download_pdf_from_web(url)
+                except:
+                    self.print_shell(
+                        "Url: {} can't be downloaded!".format(url))
+                    continue
+                self.uploading_pdf_to_bucket(filename, fecha_pdf)
+                self.read_pdf_validate(filename)
+                table = self.extracting_table_from_pdf(filename)
+                table = self.formating_table(table, fecha_pdf)
+                self.save_table(table, DB_positividad, mode)
+                self.print_shell("Record {} loaded in db!".format(fecha_pdf))
         elif mode == 'csv':
             self.download_csv_from_bucket()
             table = self.loading_csv_dataset_pre()
+            self.save_table(table, DB_positividad, mode)
 
-        self.save_table(table, DB_positividad, mode)
         self.print_shell("Work Done!")
 
     def check_if_already_exist_in_db(self, url):
@@ -92,7 +105,14 @@ class Command(BaseCommand):
             raise 'The record "fecha" already exist'
         self.print_shell('The file passed to download ... ')
 
-    def get_pdfurl_from_webpage(self, url, day=None):
+    def get_fecha_max(self, db, fecha='fecha'):
+        query = db.objects.values(fecha)
+        query = query.aggregate(Max(fecha))
+        query = query[fecha+'__max'].date()
+        print(query)
+        return query
+
+    def get_pdfurl_from_webpage(self, url, day=None, update=None):
         self.print_shell('Getting minsa report url ... ')
         html = urlopen(url)
         text = html.read()
@@ -103,8 +123,23 @@ class Command(BaseCommand):
             if ".pdf" in link and "coronavirus" in link:
                 pdf.append(link)
         if day:
-            return self.changing_date_to_pdf_url(pdf[0], day)
-        return pdf[0]
+            return [self.changing_date_to_pdf_url(pdf[0], day)]
+        elif update:
+            assert update == 'yes', 'you only can use "yes" in this field'
+            return self.get_urls_to_download(pdf[0])
+
+        self.print_shell(url)
+        return [pdf[0]]
+
+    def get_urls_to_download(self, url):
+        last_date = self.get_fecha_max(DB_positividad,) + timedelta(days=1)
+        today = datetime.now()
+        list_dates = pd.date_range(start=last_date, end=today).tolist()
+        list_dates = [day.strftime("%d%m%y") for day in list_dates]
+        list_dates = [self.changing_date_to_pdf_url(
+            url, day) for day in list_dates]
+        print(list_dates)
+        return list_dates
 
     def changing_date_to_pdf_url(self, url, day):
         end = url.index(".pdf")

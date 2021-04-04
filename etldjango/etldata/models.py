@@ -403,3 +403,67 @@ class DB_epidemiologico(models.Model):
 
     def __str__(self):
         return self.region
+
+
+class DB_positividad_salida(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    region = models.CharField(max_length=50)
+    pcr_total = models.DecimalField(null=True, blank=True,
+                                    decimal_places=2,
+                                    max_digits=10,)
+    pr_total = models.DecimalField(null=True, blank=True,
+                                   decimal_places=2,
+                                   max_digits=10,)
+    ag_total = models.DecimalField(null=True, blank=True,
+                                   decimal_places=2,
+                                   max_digits=10,)
+    total_test = models.DecimalField(null=True, blank=True,
+                                     decimal_places=2,
+                                     max_digits=10,)
+    pcr_pos = models.DecimalField(null=True, blank=True,
+                                  decimal_places=2,
+                                  max_digits=10,)
+    pr_pos = models.DecimalField(null=True, blank=True,
+                                 decimal_places=2,
+                                 max_digits=10,)
+    ag_pos = models.DecimalField(null=True, blank=True,
+                                 decimal_places=2,
+                                 max_digits=10,)
+    total_pos = models.DecimalField(null=True, blank=True,
+                                    decimal_places=2,
+                                    max_digits=10,)
+    pcr_total_roll = models.DecimalField(null=True, blank=True,
+                                         decimal_places=2,
+                                         max_digits=10,)
+    pr_total_roll = models.DecimalField(null=True, blank=True,
+                                        decimal_places=2,
+                                        max_digits=10,)
+    ag_total_roll = models.DecimalField(null=True, blank=True,
+                                        decimal_places=2,
+                                        max_digits=10,)
+    total_test_roll = models.DecimalField(null=True, blank=True,
+                                          decimal_places=2,
+                                          max_digits=10,)
+    pcr_pos_roll = models.DecimalField(null=True, blank=True,
+                                       decimal_places=2,
+                                       max_digits=10,)
+    pr_pos_roll = models.DecimalField(null=True, blank=True,
+                                      decimal_places=2,
+                                      max_digits=10,)
+    ag_pos_roll = models.DecimalField(null=True, blank=True,
+                                      decimal_places=2,
+                                      max_digits=10,)
+    total_pos_roll = models.DecimalField(null=True, blank=True,
+                                         decimal_places=2,
+                                         max_digits=10,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'tabla_test_y_positivos_dia'
+        indexes = [
+            models.Index(fields=['-fecha', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
