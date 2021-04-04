@@ -123,14 +123,30 @@ class DB_positividad(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
-    pcr_total = models.IntegerField(null=True, blank=True, default=None, )
-    pr_total = models.IntegerField(null=True, blank=True, default=None, )
-    ag_total = models.IntegerField(null=True, blank=True, default=None, )
-    total = models.IntegerField(null=True, blank=True, default=None, )
-    pcr_pos = models.IntegerField(null=True, blank=True, default=None, )
-    pr_pos = models.IntegerField(null=True, blank=True, default=None, )
-    ag_pos = models.IntegerField(null=True, blank=True, default=None, )
-    total_pos = models.IntegerField(null=True, blank=True, default=None, )
+    pcr_total = models.DecimalField(null=True, blank=True,
+                                    decimal_places=2,
+                                    max_digits=10,)
+    pr_total = models.DecimalField(null=True, blank=True,
+                                   decimal_places=2,
+                                   max_digits=10,)
+    ag_total = models.DecimalField(null=True, blank=True,
+                                   decimal_places=2,
+                                   max_digits=10,)
+    total = models.DecimalField(null=True, blank=True,
+                                decimal_places=2,
+                                max_digits=10,)
+    pcr_pos = models.DecimalField(null=True, blank=True,
+                                  decimal_places=2,
+                                  max_digits=10,)
+    pr_pos = models.DecimalField(null=True, blank=True,
+                                 decimal_places=2,
+                                 max_digits=10,)
+    ag_pos = models.DecimalField(null=True, blank=True,
+                                 decimal_places=2,
+                                 max_digits=10,)
+    total_pos = models.DecimalField(null=True, blank=True,
+                                    decimal_places=2,
+                                    max_digits=10,)
 
     class Meta:
         ordering = ['-fecha']
@@ -231,21 +247,21 @@ class DB_capacidad_hosp(models.Model):
     fecha_corte = models.DateTimeField()
     region = models.CharField(max_length=50)
     uci_zc_cama_ocup = models.DecimalField(null=True, default=None,
-                                           decimal_places=2, max_digits=6, blank=True,)
+                                           decimal_places=2, max_digits=8, blank=True,)
     uci_zc_cama_disp = models.DecimalField(null=True, default=None,
-                                           decimal_places=2, max_digits=6, blank=True,)
+                                           decimal_places=2, max_digits=8, blank=True,)
     uci_zc_cama_total = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=6, blank=True,)
+                                            decimal_places=2, max_digits=8, blank=True,)
     uci_znc_cama_ocup = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=6, blank=True,)
+                                            decimal_places=2, max_digits=8, blank=True,)
     uci_znc_cama_disp = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=6, blank=True,)
+                                            decimal_places=2, max_digits=8, blank=True,)
     uci_znc_cama_total = models.DecimalField(null=True, default=None,
-                                             decimal_places=2, max_digits=6, blank=True,)
+                                             decimal_places=2, max_digits=8, blank=True,)
     uci_zc_vent_ocup = models.DecimalField(null=True, default=None,
-                                           decimal_places=2, max_digits=6, blank=True,)
+                                           decimal_places=2, max_digits=8, blank=True,)
     uci_zc_vent_total = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=6, blank=True,)
+                                            decimal_places=2, max_digits=8, blank=True,)
 
     class Meta:
         ordering = ['-fecha_corte']
@@ -338,6 +354,51 @@ class DB_vacunas(models.Model):
         db_table = 'vacunas_record'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
+
+
+class DB_epidemiologico(models.Model):
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    n_week = models.IntegerField(null=True, default=None, blank=True,)
+    fecha = models.DateTimeField()
+    region = models.CharField(max_length=50)
+
+    avg_test = models.DecimalField(null=True, default=None,
+                                   decimal_places=2, max_digits=8, blank=True,)
+    incid_100 = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=8, blank=True,)
+    positividad = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=8, blank=True,)
+    uci = models.DecimalField(null=True, default=None,
+                              decimal_places=2, max_digits=8, blank=True,)
+    fall_100 = models.DecimalField(null=True, default=None,
+                                   decimal_places=2, max_digits=8, blank=True,)
+    Rt = models.DecimalField(null=True, default=None,
+                             decimal_places=2, max_digits=8, blank=True,)
+    fall_score = models.DecimalField(null=True, default=None,
+                                     decimal_places=2, max_digits=8, blank=True,)
+    uci_score = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=8, blank=True,)
+    incid_score = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=8, blank=True,)
+    rt_score = models.DecimalField(null=True, default=None,
+                                   decimal_places=2, max_digits=8, blank=True,)
+    posit_score = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=8, blank=True,)
+    test_score = models.DecimalField(null=True, default=None,
+                                     decimal_places=2, max_digits=8, blank=True,)
+    score = models.DecimalField(null=True, default=None,
+                                decimal_places=2, max_digits=8, blank=True,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'semaforo_epidem'
+        indexes = [
+            models.Index(fields=['-fecha', 'region']),
+            models.Index(fields=['-n_week', 'region']),
         ]
 
     def __str__(self):

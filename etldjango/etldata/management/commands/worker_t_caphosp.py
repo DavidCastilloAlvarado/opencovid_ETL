@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from .utils.unicodenorm import normalizer_str
 from etldata.models import DB_capacidad_hosp, Logs_extractor
 from django.contrib.gis.geos import Point
-#from django.utils import timezone
+# from django.utils import timezone
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
@@ -68,7 +68,7 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
         # Downloading data from bucket
-        self.downloading_data_from_bucket(file_name=self.file_name_uci)
+        # self.downloading_data_from_bucket(file_name=self.file_name_uci)
         # Transform UCI
         table = self.read_raw_uci_table(filename=self.file_name_uci)
         table = self.filter_uci_by_date(table, mode)
@@ -81,6 +81,7 @@ class Command(BaseCommand):
         columns_ext = ["FECHA_CORTE",
                        "CODIGO",
                        "REGION",
+                       "PROVINCIA",
                        "CAMAS_ZNC_OCUPADOS",
                        "CAMAS_ZNC_DISPONIBLE",
                        "CAMAS_ZNC_TOTAL",
@@ -125,6 +126,7 @@ class Command(BaseCommand):
         return table
 
     def transform_uci(self, table,):
+        table = self.getting_lima_region_and_metropol(table)
         table = table.groupby(["codigo", "fecha_corte"]).last()
         table.reset_index(inplace=True)
         table.drop(columns=["codigo"], inplace=True)
@@ -134,7 +136,21 @@ class Command(BaseCommand):
         temp = temp.reset_index()
         temp['region'] = "PERU"
         table = table.append(temp)
+        table = table.astype(float, errors='ignore')
         print(table.tail())
         print(table.info())
+        print(table.describe())
         self.print_shell("Records: {}".format(table.shape))
         return table
+
+    def getting_lima_region_and_metropol(self, table):
+        def transform_region(x):
+            if x['region'] == 'LIMA':
+                if x['provincia'] == 'LIMA':
+                    return 'LIMA METROPOLITANA'
+                else:
+                    return 'LIMA REGION'
+            else:
+                return x['region']
+        table['region'] = table.apply(transform_region, axis=1)
+        return table.drop(columns=['provincia'])

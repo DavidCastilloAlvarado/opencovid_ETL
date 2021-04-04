@@ -73,13 +73,9 @@ class Command(BaseCommand):
         table = self.filter_data_by_date(table, mode, months)
         self.save_table_to_csv(table)
         table = self.rt_compute()
+        table = self.format_region_field(table)
         self.save_table(table, DB_rt, mode)
         self.print_shell("Work Done!")
-        # if init == "test":
-        #     self.load_from_bucket_test()
-        # elif init == "db":
-        #     self.load_from_DB()
-        # self.print_shell("Work Done!")
 
     def load_data_from_db(self, months_before=12):
         min_date = str(datetime.now().date() -
@@ -108,26 +104,11 @@ class Command(BaseCommand):
             temp = totaldatelist.merge(temp.set_index("fecha"),
                                        on=["fecha"],
                                        how="outer")
-            # if region[0] == 'PUNO':
-            #     print(temp.loc[(temp.region != temp.region) |
-            #                    ((temp.fecha > '2020-09-28') & (temp.fecha < '2020-10-03')) |
-            #                    (temp.total == 0)])
-            # else:
-            #     continue
+
             temp = temp.sort_values(by="fecha")
             temp = temp.reset_index(drop=True)
             temp = temp.fillna(method="ffill")
-            # temp = temp.fillna(value={
-            #     "region": region[0],
-            #     "total": 1e-6,
-            # })
-            # if region[0] == 'SAN MARTIN':
-            #     print(temp.head(20))
-            #     print(temp.loc[(temp.total != temp.total) |
-            #                    (temp.total == 0)])
 
-            # temp.reset_index(inplace=True)
-            #temp = temp.sort_values(by="fecha")
             temp["cum_pos_total"] = temp["total"].cumsum()
             #temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
@@ -156,3 +137,8 @@ class Command(BaseCommand):
         rt_table.final_results.columns = [col.lower() for col in cols]
         print(rt_table.final_results.info())
         return rt_table.final_results
+
+    def format_region_field(self, table):
+        table.region = table.region.apply(
+            lambda x: 'LIMA METROPOLITANA' if x == 'LIMA' else x.upper())
+        return table

@@ -104,6 +104,7 @@ class Command(BaseCommand):
 
     def transform_positiv_rel(self, table):
         # pivot table
+        table = self.getting_lima_region_and_metropol(table)
         table["count"] = 1
         table = pd.pivot_table(table,
                                values="count",
@@ -121,4 +122,13 @@ class Command(BaseCommand):
         print(table.info())
         print(table["total"].sum(0))
         self.print_shell("Records :{}".format(table.shape))
+        return table
+
+    def getting_lima_region_and_metropol(self, table):
+        def transform_region(x):
+            if x['region'] == 'LIMA':
+                return 'LIMA METROPOLITANA'
+            else:
+                return x['region']
+        table['region'] = table.apply(transform_region, axis=1)
         return table

@@ -75,13 +75,16 @@ class Command(BaseCommand):
         cols_extr = [
             "FECHA_FALLECIMIENTO",
             "DEPARTAMENTO",
+            "PROVINCIA",
         ]
         # usecols=cols_extr)
-        table = pd.read_csv('temp/'+self.file_name, sep=";", usecols=cols_extr)
+        table = pd.read_csv('temp/'+self.file_name, sep=";",
+                            usecols=cols_extr, encoding='latin-1')
         cols = table.columns.tolist()
         table.columns = [normalizer_str(col).lower() for col in cols]
         table.rename(columns={"fecha_fallecimiento": "fecha",
-                              "departamento": "region"}, inplace=True)
+                              "departamento": "region",
+                              "provincia": "provincia"}, inplace=True)
         # Format date
         table.fecha = table.fecha.apply(
             lambda x: datetime.strptime(str(int(x)), "%Y%m%d") if x == x else x)
@@ -99,6 +102,7 @@ class Command(BaseCommand):
 
     def transform_minsa_deads(self, table):
         # pivot table
+        table = self.getting_lima_region_and_metropol(table)
         table.region = table.region.apply(
             lambda x: normalizer_str(x))
         table["n_muertes"] = 1
@@ -106,6 +110,18 @@ class Command(BaseCommand):
         table.sort_values(by='fecha', inplace=True)
         #table.reset_index(inplace=True, drop=True)
         return table
+
+    def getting_lima_region_and_metropol(self, table):
+        def transform_region(x):
+            if x['region'] == 'LIMA':
+                if x['provincia'] == 'LIMA':
+                    return 'LIMA METROPOLITANA'
+                else:
+                    return 'LIMA REGION'
+            else:
+                return x['region']
+        table['region'] = table.apply(transform_region, axis=1)
+        return table.drop(columns=['provincia'])
 
     def transform_roller_deads_total(self, table, n_roll=3):
         table = table.groupby(["region", ])

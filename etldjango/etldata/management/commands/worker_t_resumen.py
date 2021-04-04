@@ -7,7 +7,7 @@ from .utils.unicodenorm import normalizer_str
 from etldata.models import DB_sinadef, DB_minsa_muertes, DB_vacunas, DB_uci, DB_positividad_relativa, DB_resumen
 from django.contrib.gis.geos import Point
 # from django.utils import timezone
-from django.db.models import Sum, Avg, Count, StdDev
+from django.db.models import Sum, Avg, Count, StdDev, Max
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
@@ -157,12 +157,20 @@ class Command(BaseCommand):
         """
         AVG New cases by day (rolling mean 7)
         """
-        min_date = str(datetime.now().date() - timedelta(days=30))
+        fecha_max = self.get_fecha_max(db, 'fecha')
+        min_date = str(fecha_max - timedelta(days=7))
         query = db.objects.values('fecha')
         query = query.filter(fecha__gt=min_date)
-        query = query.order_by('-fecha')[:7]
+        query = query.order_by('-fecha')
         query = query.annotate(Sum('total'))
         #query = query.filter(fecha__gte=min_date)
         query = query.aggregate(Avg('total__sum'), Count('total__sum'))
         print(query)
         return query['total__sum__avg']
+
+    def get_fecha_max(self, db, fecha='fecha'):
+        query = db.objects.values(fecha)
+        query = query.aggregate(Max(fecha))
+        query = query[fecha+'__max'].date()
+        print(query)
+        return query
