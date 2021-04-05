@@ -28,14 +28,18 @@ In `etldjango/settings.py`:
 
 ```python
 
-   'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'opencovidlocal',
-        'USER': 'postgres',
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'opencoviddb',
+        'USER': 'datacrew',
         'PASSWORD': 'admin1234',
         'HOST': '127.0.0.1',
-        'DATABASE_PORT': '5432',
-    }
+        'DATABASE_PORT': ' 5432',
+        'TEST': {
+            'NAME': 'mytestdatabase',
+        },
+
+    },
 ```
 
 2.  Make all migrations before to run
@@ -77,21 +81,31 @@ python manage.py post_rel last
 
 ```
 
-4. Table for positive cases from daily MINSA report - % positivity
+4. Table for positive cases from PDF daily MINSA report - % positivity
 
 ```bash
 
-python manage.py worker_posit full
-
+# for upload the data from a csv in the bucket
+python manage.py worker_posit csv
+# for AUTO update the data from the last record until today
+python manage.py workrt_posit pdf --update yes
+# load the last pdf from minsa report
+python manage.py worker_posit pdf
+# load a particular daily report from minsa %d%m%y
+python manage.py worker_posit pdf --day 230321
 ```
 
 5. Calculate RT score
 
 ```bash
-# To initialize the data set
+# reboot the db for the last 12months
 python manage.py worker_rt full
-# to update the last values
+# reboot the db for the last 6 months
+python manage.py worker_rt full --m 6
+# update the db using the last month
 python manage.py worker_rt last
+# update the db using the las 6 months
+python manage.py worker_rt last --m 6
 ```
 
 6. Calculate hospital capacity
@@ -137,4 +151,22 @@ python manage.py worker_t_oxistat last
 python manage.py worker_t_vacunas full
 # append the last day calculations in the current table
 python manage.py worker_t_vacunas last
+```
+
+11. Table for epidemiological ranking
+
+```bash
+# initialize the database using the last 3 weeks
+python manage.py worker_t_epidem full --w 3
+# append the last three weeks to the database
+python manage.py worker_t_epidem last --w 3
+```
+
+12. Table for create the daily records for positive and test cases and roller mean.
+
+```bash
+# reboot the database for the last 12months
+python manage.py worker_positividad full
+# update the database using the last 3 months
+python manage.py worker_positividad last --m 3
 ```
