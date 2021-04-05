@@ -170,3 +170,19 @@ python manage.py worker_positividad full
 # update the database using the last 3 months
 python manage.py worker_positividad last --m 3
 ```
+
+13. Command for update the deaths table from Minsa dataset
+
+```bash
+# initialize the database
+python manage.py worker_t_minsamuertes full
+# append the last data only
+python manage.py worker_t_minsamuertes last
+```
+
+14. Command for update the resumen table.
+
+```bash
+python manage.py worker_t_resumen
+
+```
