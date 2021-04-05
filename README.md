@@ -49,9 +49,9 @@ In `etldjango/settings.py`:
 
 ## **Using**
 
-### _Management command_
+### _Management commands_
 
-All the commands could be executed independently in any time. They download its own data from the bucket. Previously to run any command the first command has to be executed to have data to process.
+All the commands could be executed independently in any time. They download its own data from the bucket. Before run any command the first command has to be executed to have data in the bucket.
 
 1. Download all the raw data from the gobernment
 
@@ -71,7 +71,7 @@ python manage.py worker_mov last
 
 ```
 
-3. Table for positive cases from MINSA dataset
+3. Command for only positive cases table from MINSA dataset
 
 ```bash
 # To initialize the data set
@@ -81,7 +81,7 @@ python manage.py post_rel last
 
 ```
 
-4. Table for positive cases from PDF daily MINSA report - % positivity
+4. Command for positive/test cumulative cases table from PDF daily MINSA report - % positivity
 
 ```bash
 
@@ -95,7 +95,7 @@ python manage.py worker_posit pdf
 python manage.py worker_posit pdf --day 230321
 ```
 
-5. Calculate RT score
+5. Command for calculate RT score
 
 ```bash
 # reboot the db for the last 12months
@@ -108,7 +108,7 @@ python manage.py worker_rt last
 python manage.py worker_rt last --m 6
 ```
 
-6. Calculate hospital capacity
+6. Command for calculate hospital capacity
 
 ```bash
 # To initialize the data set
@@ -117,7 +117,7 @@ python manage.py worker_t_caphosp full
 python manage.py worker_t_caphosp last
 ```
 
-7. Sinadef table report - center roller mean 7 days
+7.  Command for Sinadef table report - center roller mean 7 days
 
 ```bash
 # To initialize the data set
@@ -126,7 +126,7 @@ python manage.py worker_sinadef full
 python manage.py worker_sinadef last
 ```
 
-8. Table for UCI status and geopoinst
+8. Command for UCI status and geopoints
 
 ```bash
 # upload the whole day status and delete the rest
@@ -135,7 +135,7 @@ python manage.py worker_t_uci_geo full
 python manage.py worker_t_uci_geo last
 ```
 
-9. Table for OXI status by regions
+9. Command for OXI status table by regions
 
 ```bash
 # upload the whole day status and delete the rest
@@ -144,7 +144,7 @@ python manage.py worker_t_oxistat full
 python manage.py worker_t_oxistat last
 ```
 
-10. Table for Vaccine resume
+10. Command for the Vaccine resume table
 
 ```bash
 # upload the whole day status and delete the rest
@@ -153,7 +153,7 @@ python manage.py worker_t_vacunas full
 python manage.py worker_t_vacunas last
 ```
 
-11. Table for epidemiological ranking
+11. Command for the epidemiological ranking table
 
 ```bash
 # initialize the database using the last 3 weeks
@@ -162,7 +162,7 @@ python manage.py worker_t_epidem full --w 3
 python manage.py worker_t_epidem last --w 3
 ```
 
-12. Table for create the daily records for positive and test cases and roller mean.
+12. Command for the daily record table for positive and test cases and roller mean.
 
 ```bash
 # reboot the database for the last 12months
