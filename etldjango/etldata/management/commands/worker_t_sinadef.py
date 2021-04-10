@@ -77,6 +77,7 @@ class Command(BaseCommand):
     def read_file_and_format_date(self):
         col_extr = [
             "DEPARTAMENTO DOMICILIO",
+            "PROVINCIA DOMICILIO",
             "MUERTE VIOLENTA",
             "FECHA",
         ]
@@ -107,11 +108,13 @@ class Command(BaseCommand):
     def format_columns_name(self, table):
         table.rename(columns={
             'DEPARTAMENTO DOMICILIO': 'region',
+            'PROVINCIA DOMICILIO': 'provincia',
             'FECHA': 'fecha',
         }, inplace=True)
         return table
 
     def transforma_sinadef_table(self, table):
+        table = self.getting_lima_region_and_metropol(table)
         table["n_muertes"] = 1
         table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
         table.sort_values(by='fecha', inplace=True)
@@ -140,3 +143,15 @@ class Command(BaseCommand):
         print(table_roll.info())
         self.print_shell("Records :{}".format(table_roll.shape))
         return table_roll
+
+    def getting_lima_region_and_metropol(self, table):
+        def transform_region(x):
+            if x['region'] == 'LIMA':
+                if x['provincia'] == 'LIMA':
+                    return 'LIMA METROPOLITANA'
+                else:
+                    return 'LIMA REGION'
+            else:
+                return x['region']
+        table['region'] = table.apply(transform_region, axis=1)
+        return table.drop(columns=['provincia'])

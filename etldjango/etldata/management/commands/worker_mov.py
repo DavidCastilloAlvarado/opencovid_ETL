@@ -125,7 +125,7 @@ class Command(BaseCommand):
             lambda x: normalizer_str(str(x)).upper())
 
         table["region"] = table["region"].apply(lambda x:
-                                                "MUNICIPALIDAD METROPOLITANA DE LIMA" if x == "METROPOLITAN MUNICIPALITY OF LIMA" else x)
+                                                "LIMA METROPOLITANA" if x == "METROPOLITAN MUNICIPALITY OF LIMA" else x)
         return table
 
     def transform_rollermean(self, table, n_roll=7):

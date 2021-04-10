@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from os import path as pathdir
+from decouple import config
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -105,11 +106,11 @@ WSGI_APPLICATION = 'etldjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'opencoviddb',
-        'USER': 'datacrew',
-        'PASSWORD': 'admin1234',
-        'HOST': '127.0.0.1',
-        'DATABASE_PORT': ' 5432',
+        'NAME': config('NAME'),
+        'USER': config('USER_NAME'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('IP_SERVER'),
+        'DATABASE_PORT': '5432',
         'TEST': {
             'NAME': 'mytestdatabase',
         },

@@ -6,7 +6,8 @@ from .utils.urllibmod import urlretrieve
 from .utils.rt_factory import Generator_RT
 from .utils.unicodenorm import normalizer_str
 from datetime import datetime, timedelta
-from etldata.models import DB_rt, DB_positividad_relativa
+from etldata.models import DB_rt, DB_positividad
+from django.db.models import F, Sum, Avg, Count, StdDev, Max, Q
 #from django_pandas.io import read_frame
 # from django.utils import timezone
 from tqdm import tqdm
@@ -69,7 +70,7 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("RT calculation started ... ")
         table = self.load_data_from_db()
-        table = self.acumulate_records(table)
+        table = self.fix_daily_records(table)
         table = self.filter_data_by_date(table, mode, months)
         self.save_table_to_csv(table)
         table = self.rt_compute()
@@ -80,11 +81,14 @@ class Command(BaseCommand):
     def load_data_from_db(self, months_before=12):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
-        query = DB_positividad_relativa.objects.filter(fecha__gt=min_date)
+        query = DB_positividad.objects
+        query = query.filter(fecha__gt=min_date)
+        query = query.annotate(total_posit=F(
+            'pcr_pos') + F('pr_pos') + F('ag_pos'))
         query = pd.DataFrame.from_records(query
-                                          .values('fecha', 'region', 'total'))
+                                          .values('fecha', 'region', 'total_posit'))
         # query.fecha = query.fecha.apply(lambda x: x.date())
-        # print(query.info())
+        #print(query.loc[query.region == 'PIURA'])
         return query
 
     def date_table_factory(self, fechas_orig):
@@ -94,26 +98,33 @@ class Command(BaseCommand):
         totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
         return totaldatelist
 
-    def acumulate_records(self, table):
+    def fix_daily_records(self, table):
         # table.sort_values(by='fecha', inplace=True)
         table = table.groupby(["region", ])
         table_acum = pd.DataFrame()
         for region in table:
             temp = region[1].sort_values(by="fecha")
+            temp = self.drop_bad_records(temp)
             totaldatelist = self.date_table_factory(temp.fecha)
             temp = totaldatelist.merge(temp.set_index("fecha"),
                                        on=["fecha"],
                                        how="outer")
-
             temp = temp.sort_values(by="fecha")
+            temp["total_posit"] = temp["total_posit"].interpolate(method='linear',
+                                                                  limit_direction='forward',
+                                                                  axis=0)
             temp = temp.reset_index(drop=True)
-            temp = temp.fillna(method="ffill")
+            temp.dropna(inplace=True)
+            #temp = temp.fillna(method="ffill")
 
-            temp["cum_pos_total"] = temp["total"].cumsum()
+            #temp["cum_pos_total"] = temp["total"].cumsum()
             #temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
-        # print(table_acum.info())
-        print(table_acum.head())
+        table_acum.rename(columns={'total_posit': 'cum_pos_total'},
+                          inplace=True)
+        print(table_acum.info())
+        print(table_acum.tail())
+        print(table_acum.loc[table_acum.region == 'LIMA REGION'])
         return table_acum
 
     def save_table_to_csv(self, table):
@@ -141,4 +152,13 @@ class Command(BaseCommand):
     def format_region_field(self, table):
         table.region = table.region.apply(
             lambda x: 'LIMA METROPOLITANA' if x == 'LIMA' else x.upper())
+        return table
+
+    def drop_bad_records(self, table):
+        for _ in range(3):
+            table["diff"] = table["total_posit"].diff()
+            table["diff"] = table["diff"].apply(
+                lambda x: np.nan if x < 0 else x)
+            table.dropna(subset=["diff"], inplace=True)
+        table.drop(columns=["diff"], inplace=True)
         return table

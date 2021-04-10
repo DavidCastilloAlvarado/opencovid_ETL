@@ -68,7 +68,7 @@ class Command(BaseCommand):
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("Transforming data UCI to load in DB UCI... ")
         # Downloading data from bucket
-        # self.downloading_data_from_bucket(file_name=self.file_name_uci)
+        self.downloading_data_from_bucket(file_name=self.file_name_uci)
         # Transform UCI
         table = self.read_raw_uci_table(filename=self.file_name_uci)
         table = self.filter_uci_by_date(table, mode)

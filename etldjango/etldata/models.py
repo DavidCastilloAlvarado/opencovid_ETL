@@ -392,6 +392,8 @@ class DB_epidemiologico(models.Model):
                                      decimal_places=2, max_digits=8, blank=True,)
     score = models.DecimalField(null=True, default=None,
                                 decimal_places=2, max_digits=8, blank=True,)
+    val_score = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=8, blank=True,)
 
     class Meta:
         ordering = ['-fecha']

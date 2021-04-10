@@ -124,7 +124,20 @@ class Command(BaseCommand):
         table = table.groupby(by=cols).sum()
         table.sort_values(by='fecha', inplace=True)
         table.reset_index(inplace=True)
+        table = self.getting_lima_region_and_metropol(table)
         print(table.tail(20))
         print(table.info())
         print(table.grupo_riesgo.unique())
         return table
+
+    def getting_lima_region_and_metropol(self, table):
+        def transform_region(x):
+            if x['region'] == 'LIMA':
+                if x['provincia'] == 'LIMA':
+                    return 'LIMA METROPOLITANA'
+                else:
+                    return 'LIMA REGION'
+            else:
+                return x['region']
+        table['region'] = table.apply(transform_region, axis=1)
+        return table.drop(columns=['provincia'])

@@ -267,7 +267,7 @@ class Command(BaseCommand):
                                      labels=color[::-1],
                                      include_lowest=True).astype(int)
 
-        table['score'] = self.calculate_score(table)
+        table['score'], table['val_score'] = self.calculate_score(table)
         print(table.info())
         return table
 
@@ -279,7 +279,7 @@ class Command(BaseCommand):
         result = table['fall_score']*w[0] + table['uci_score']*w[1] + \
             table['incid_score'] * w[2] + table['rt_score']*w[3] + \
             table['posit_score'] * w[4] + table['test_score']*w[5]
-        return pd.cut(result, cut_score, labels=color).astype(int)
+        return pd.cut(result, cut_score, labels=color).astype(int), result
 
     def date_table_factory(self, fechas_orig):
         min_ = fechas_orig.min()
@@ -315,5 +315,6 @@ class Command(BaseCommand):
             # temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
+        table_acum['Rt'] = table_acum['Rt'].astype(float)
         print(table_acum.head())
         return table_acum

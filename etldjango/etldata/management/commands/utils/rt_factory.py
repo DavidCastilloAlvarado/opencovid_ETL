@@ -274,10 +274,14 @@ class Generator_RT(object):
         lows, highs = (total_p > p).nonzero()
 
         # Find the smallest range (highest density)
-        best = (highs - lows).argmin()
+        try:
+            best = (highs - lows).argmin()
 
-        low = pmf.index[lows[best]]
-        high = pmf.index[highs[best]]
+            low = pmf.index[lows[best]]
+            high = pmf.index[highs[best]]
+        except:
+            low = pmf.index[0]
+            high = pmf.index[0]
 
         return pd.Series([low, high],
                          index=[f'Low_{p*100:.0f}',
