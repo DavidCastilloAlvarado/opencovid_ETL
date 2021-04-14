@@ -1,5 +1,7 @@
 # ETL by Django Command
 
+### Python 3.6.9
+
 ## **Installation:**
 
 1.  Clone this repo

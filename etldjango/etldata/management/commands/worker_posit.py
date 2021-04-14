@@ -175,7 +175,7 @@ class Command(BaseCommand):
         assert len(alldata.loc[alldata.str.contains(
             contain)]) > 0, "Table not found"
 
-    def extracting_table_from_pdf(self, filename, page=3, area=(80, 10, 500, 1000)):
+    def extracting_table_from_pdf(self, filename, page=3, area=(80, 5, 500, 1000)):
         # Extract data
         self.print_shell('Extracting table from pdf... ')
         table = tabula.read_pdf(filename,
@@ -188,6 +188,7 @@ class Command(BaseCommand):
         table = table.apply(pd.to_numeric, errors='ignore')
         assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
         table.reset_index(inplace=True)
+        # print(table)
         return table
 
     def formating_table(self, table, fecha):

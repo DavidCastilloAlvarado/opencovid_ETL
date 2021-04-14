@@ -78,7 +78,7 @@ class Command(BaseCommand):
         self.save_table(table, DB_rt, mode)
         self.print_shell("Work Done!")
 
-    def load_data_from_db(self, months_before=12):
+    def load_data_from_db(self, months_before=6):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
         query = DB_positividad.objects
@@ -131,7 +131,7 @@ class Command(BaseCommand):
         table.to_csv('temp/' + self.temp_file, index=False)
 
     def filter_data_by_date(self, table, mode, months):
-        months = 1 if not months else months
+        months = 6 if not months else months
         min_date = str(datetime.now().date() -
                        timedelta(days=int(months*30)))
         if mode == 'full':

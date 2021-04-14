@@ -17,26 +17,27 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# API key json
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
-aut_file = "opencovid-proyect-1473eb408618.json"
+# API key json
+aut_file = config('KEY_JSON_FILE')
 BASE_DIR = Path(__file__).resolve().parent.parent
 GOOGLE_APPLICATION_CREDENTIALS = pathdir.join(
     BASE_DIR, "API", aut_file)
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+if DEBUG:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
 # Project ID GCP
-GCP_PROJECT_ID = 'opencovid-proyect-306820'
+GCP_PROJECT_ID = config('GCP_PROJECT_ID')
 # Bucket name
-BUCKET_NAME = 'opencovid-databank'
-BUCKET_ROOT = 'raw_data'
+BUCKET_NAME = config('BUCKET_NAME')
+BUCKET_ROOT = config('BUCKET_ROOT')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '20*4m(g-t8t(%k#fd7yl$rc0erzjt+kdaah2po)h+uky-en@-u'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = []
 

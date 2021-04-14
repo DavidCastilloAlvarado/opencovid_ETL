@@ -21,3 +21,6 @@ share/
 **.ipynb
 **.ipynb_checkpoints
 **.csv**
+proxisql
+.env
+*.json
