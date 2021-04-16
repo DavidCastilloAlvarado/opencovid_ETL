@@ -5,6 +5,12 @@ from django.contrib.gis.geos import Point
 
 
 class DB_uci(models_gis.Model):
+    """
+    Utilidad: Tabla que alamacena la información de los centros de salud,
+    con sus datos geo y su estado de camas UCI y de hospitalización.
+    Lectura: se toma la tabla completa
+    Escritura: cada actualización es una sobre escritura completa de la tabla
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_corte = models.DateTimeField()
     nombre = models.CharField(max_length=200)
@@ -38,6 +44,11 @@ class DB_uci(models_gis.Model):
 
 
 class DB_oxi(models_gis.Model):
+    """
+    Utilidad: La tabla contiene los datos de negocio de los proveedores de oxigeno a nivel nacional. 
+    Lectura: La tabla se lee completa recogiendo los puntos más cercanos al usuario.
+    Escritura: La tabla se actualiza en su totalidad con cada rutina de actualización.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     nombre = models.CharField(max_length=200)
     direccion = models.CharField(max_length=200)
@@ -61,6 +72,11 @@ class DB_oxi(models_gis.Model):
 
 
 class DB_sinadef(models.Model):
+    """
+    Utilidad: La tabla contiene los records de todas las muertes regristradas por el sinadef, solo las no violentas
+    Escritura: La tabla se actualiza diariamente* con todos los nuevos registros en el sinadef.
+    Lectura: La tabla se lee completamente o usando intervalos de tiempo, la REGION PERÚ se ha calculado como un dato agregado total.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=100)
@@ -80,6 +96,11 @@ class DB_sinadef(models.Model):
 
 
 class DB_resumen(models.Model):
+    """
+    Utilidad: La tabla contiene solo datos agregados calculados cada día.
+    Escritura: se actualiza por día usando las tablas existentes en el sistema. 
+    Lectura: se lee solo el último record, el cuál contiene el último resumen.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fallecidos_minsa = models.DecimalField(null=True,
                                            decimal_places=2,
@@ -109,6 +130,11 @@ class DB_resumen(models.Model):
 
 
 class Logs_extractor(models.Model):
+    """
+    Utilidad: La tabla contiene información de uso interno para registrar las descargas y subidas
+    Escritura: Se escribe el evento de cada carga y descarga de datos de la red, incluso se registra el estado final. 
+    Lectura: NO se lee como servicio, es solo de uso de backend para ubicar la dirección de la última descarga válida y debuging en caso de error.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     e_name = models.CharField(max_length=100)
     url = models.URLField(max_length=300)
@@ -124,6 +150,11 @@ class Logs_extractor(models.Model):
 
 
 class DB_positividad(models.Model):
+    """
+    Utilidad: Almacena los datos crudos obtenidos de los pdf del minsa, datos acumulados de pruebas totales y positivos.
+    Escritura: Se actualiza con cada pdf descargado desde el minsa.
+    Lectura: No se lee como servicio. Sirve como record para alimentar otras tablas, por si sola no tiene utilidad en frontend.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -164,6 +195,11 @@ class DB_positividad(models.Model):
 
 
 class DB_positividad_relativa(models.Model):
+    """
+    Utilidad: Sirve como registro de pruebas positivas diarias obtenidas desde la tabla de datos del minsa, actualmente no tiene utilidad directa, solo se almacena
+    Escritura: se actualiza con los últimos records de la tabla de casos positivos del minsa.
+    Lectura: NO se lee como servicio, es solo de uso de backend para tenerlo como referencia de casos positivos.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -184,6 +220,11 @@ class DB_positividad_relativa(models.Model):
 
 
 class DB_rt(models.Model):
+    """
+    Utilidad: Almacena los calculos del RT
+    Escritura: Se actualiza con los últimos calculos del RT, cada calculo se corre con 6 meses de cola.
+    Lectura: Se lee en su totalidad o por ventanas de tiempo en función a la región.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     date = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -213,6 +254,11 @@ class DB_rt(models.Model):
 
 
 class DB_movilidad(models.Model):
+    """
+    Utilidad: COntiene los datos de movilidad entregados por google, segmentados por el tipo de espacio exterior.
+    Escritura: Se actualiza utilizando los últimos records agregados de la tabla de google. 
+    Lectura: Se lee por ventanas de tiempo o consultado por región tiempo.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -247,6 +293,11 @@ class DB_movilidad(models.Model):
 
 
 class DB_capacidad_hosp(models.Model):
+    """
+    Utilidad: COntiene los datos resumidos de la capacidad hospitalaria para camas UCI y camas covid.
+    Escritura: Se actualiza con los últimos records obtenidos.
+    Lectura: se lee toda la tabla o usando ventanas de tiempo por cada región o capturando todos almismo tiempo. Existe la REGION PERÚ la cuál es un resumen de todas las regiones.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_corte = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -275,6 +326,11 @@ class DB_capacidad_hosp(models.Model):
 
 
 class DB_capacidad_oxi(models.Model):
+    """
+    Utilidad: COntiene los datos agregados de oxigeno de las ipress, consumidos y producidos
+    Escritura: Se actualiza utilizando los últimos records calculados.
+    Lectura: Se lee los datos en su totalidad, o por ventanas de tiempo región.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_corte = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -319,6 +375,11 @@ class DB_capacidad_oxi(models.Model):
 
 
 class DB_minsa_muertes(models.Model):
+    """
+    Utilidad: Contiene los datos agregados de fallecidos registrados por el minsa, por región y día, ademas de una media movil.
+    Escritura: Se actualiza con los últimos datos obtenidos.
+    Lectura: Se lee por ventanas de tiempo region o todos las regiones al mismo tiempo.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -339,6 +400,11 @@ class DB_minsa_muertes(models.Model):
 
 
 class DB_vacunas(models.Model):
+    """
+    Utilidad: Contiene los datos agregados de los vacunados a la fecha.
+    Escritura: Se actualiza con los últimos datos obtenidos.
+    Lectura: Se lee por ventanas de tiempo region o todos las regiones al mismo tiempo.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)
@@ -361,6 +427,11 @@ class DB_vacunas(models.Model):
 
 
 class DB_epidemiologico(models.Model):
+    """
+    Utilidad: Contiene los datos agregados epidemiológicos, agregados y score.Datos semanales.
+    Escritura: Se actualiza con los últimos datos obtenidos.
+    Lectura: Cada record contiene los datos agregados de toda una semana. Leer las últimas 4 semanas.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     n_week = models.IntegerField(null=True, default=None, blank=True,)
     fecha = models.DateTimeField()
@@ -408,6 +479,11 @@ class DB_epidemiologico(models.Model):
 
 
 class DB_positividad_salida(models.Model):
+    """
+    Utilidad: Contiene los datos diarios de positividad, tanto los totales de pruebas por día como los positivos.
+    Escritura: Se actualiza usando las tablas de positividad acumulada, obtenida de la tabla que almacena los datos de los pdf.
+    Lectura: Se lee por ventanas de tiempo regioon o todas las regiones al mismo tiempo.
+    """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
     region = models.CharField(max_length=50)

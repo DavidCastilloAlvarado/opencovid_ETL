@@ -1,8 +1,0 @@
-IP_SERVER=35.224.198.36
-PASSWORD=admin1234@@**
-NAME=opencoviddb
-USER_NAME=postgres
-GCP_PROJECT_ID=opencovid-proyect-306820
-BUCKET_NAME=opencovid-databank
-BUCKET_ROOT=raw_data
-KEY_JSON_FILE=opencovid-proyect-1473eb408618.json
