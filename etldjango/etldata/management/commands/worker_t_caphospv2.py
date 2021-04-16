@@ -70,31 +70,62 @@ class Command(BaseCommand):
         # Downloading data from bucket
         self.downloading_data_from_bucket(file_name=self.file_name_uci)
         # Transform UCI
-        table = self.read_raw_uci_table(filename=self.file_name_uci)
+        table, colsvals = self.read_raw_uci_table(filename=self.file_name_uci)
         table = self.filter_uci_by_date(table, mode)
-        table = self.format_columns_drop_duplicates(table)
+        table = self.format_columns_drop_duplicates(table, colsvals)
         table = self.transform_uci(table)
         self.save_table(table, DB_capacidad_hosp, mode)
         self.print_shell("Work Done!")
 
     def read_raw_uci_table(self, filename):
-        columns_ext = ["FECHA_CORTE",
+        columns_ext = ["FECHACORTE",
                        "CODIGO",
                        "REGION",
                        "PROVINCIA",
-                       "CAMAS_ZNC_OCUPADOS",
-                       "CAMAS_ZNC_DISPONIBLE",
-                       "CAMAS_ZNC_TOTAL",
-                       "CAMAS_ZC_TOTAL",
-                       "CAMAS_ZC_DISPONIBLES",
-                       "CAMAS_ZC_OCUPADOS",
                        ]
+        columns_measure = ["ZC_UCI_AACT_CAM_TOTAL",
+                           "ZC_UCI_AACT_CAM_TOT_DISP",
+                           "ZC_UCI_AACT_CAM_TOT_OCUP",
+                           #
+                           "ZC_UCI_ADUL_CAM_TOTAL",
+                           "ZC_UCI_ADUL_CAM_TOT_DISP",
+                           "ZC_UCI_ADUL_CAM_TOT_OCUP",
+                           #
+                           "ZC_UCI_NEONATAL_CAM_TOTAL",
+                           "ZC_UCI_NEONATAL_CAM_TOT_DISP",
+                           "ZC_UCI_NEONATAL_CAM_TOT_OCUP",
+                           #
+                           "ZC_UCI_PEDIA_CAM_TOTAL",
+                           "ZC_UCI_PEDIA_CAM_TOT_DISP",
+                           "ZC_UCI_PEDIA_CAM_TOT_OCUP",
+                           # Camas covid ## No UCI
+                           "ZC_HOSP_ADUL_CAM_TOTAL",
+                           "ZC_HOSP_ADUL_CAM_TOT_DISP",
+                           "ZC_HOSP_ADUL_CAM_TOT_OCUP",
+                           #
+                           "ZC_EMER_ADUL_CAM_TOTAL",
+                           "ZC_EMER_ADUL_CAM_TOT_DISP",
+                           "ZC_EMER_ADUL_CAM_TOT_OCUP",
+                           #
+                           "ZC_UCIN_CIA_CAM_TOTAL",
+                           "ZC_UCIN_CIA_CAM_TOT_DISP",
+                           "ZC_UCIN_CIA_CAM_TOT_OCUP",
+                           #
+                           "ZC_UCIN_CIP_CAM_TOTAL",
+                           "ZC_UCIN_CIP_CAM_TOT_DISP",
+                           "ZC_UCIN_CIP_CAM_TOT_OCUP",
+                           #####
+                           ]
         # usecols=columns_ext)
-        uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
+        uci_table = pd.read_csv('temp/'+filename, sep="|",
+                                usecols=columns_ext+columns_measure)
         uci_table.columns = [normalizer_str(label).replace(
-            " ", "_").lower() for label in uci_table.columns.tolist()]
-        uci_table.rename(columns={"fechacorte": "fecha_corte"}, inplace=True)
-        return uci_table
+            " ", "_") for label in uci_table.columns.tolist()]
+        uci_table.rename(columns={"FECHACORTE": "fecha_corte",
+                                  "CODIGO": 'codigo',
+                                  "REGION": 'region',
+                                  "PROVINCIA": 'provincia'}, inplace=True)
+        return uci_table, columns_measure
 
     def filter_uci_by_date(self, table, mode, min_date="2020-04-01"):
         table.fecha_corte = table.fecha_corte.apply(
@@ -109,16 +140,40 @@ class Command(BaseCommand):
             table = table.loc[(table.fecha_corte >= min_date)]
         return table
 
-    def format_columns_drop_duplicates(self, table):
+    def format_columns_drop_duplicates(self, table, colsvals):
         table.drop_duplicates(inplace=True)
-        table.rename(columns={
-            'camas_zc_disponibles': "uci_zc_cama_disp",
-            'camas_zc_ocupados': "uci_zc_cama_ocup",
-            'camas_zc_total': "uci_zc_cama_total",
-            'camas_znc_ocupados': 'uci_znc_cama_ocup',
-            'camas_znc_disponible': 'uci_znc_cama_disp',
-            'camas_znc_total': 'uci_znc_cama_total',
-        }, inplace=True)
+        table[colsvals] = table[colsvals].fillna(0)
+        table['uci_zc_cama_disp'] = table['ZC_UCI_AACT_CAM_TOT_DISP'] +\
+            table['ZC_UCI_ADUL_CAM_TOT_DISP'] +\
+            table['ZC_UCI_NEONATAL_CAM_TOT_DISP'] +\
+            table['ZC_UCI_PEDIA_CAM_TOT_DISP']
+
+        table['uci_zc_cama_ocup'] = table['ZC_UCI_AACT_CAM_TOT_OCUP'] +\
+            table['ZC_UCI_ADUL_CAM_TOT_OCUP'] +\
+            table['ZC_UCI_NEONATAL_CAM_TOT_OCUP'] +\
+            table['ZC_UCI_PEDIA_CAM_TOT_OCUP']
+
+        table['uci_zc_cama_total'] = table['ZC_UCI_AACT_CAM_TOTAL'] +\
+            table['ZC_UCI_ADUL_CAM_TOTAL'] +\
+            table['ZC_UCI_NEONATAL_CAM_TOTAL'] +\
+            table['ZC_UCI_PEDIA_CAM_TOTAL']
+
+        table['uci_znc_cama_ocup'] = table['ZC_HOSP_ADUL_CAM_TOT_OCUP'] +\
+            table['ZC_EMER_ADUL_CAM_TOT_OCUP'] +\
+            table['ZC_UCIN_CIA_CAM_TOT_OCUP'] +\
+            table['ZC_UCIN_CIP_CAM_TOT_OCUP']
+
+        table['uci_znc_cama_disp'] = table['ZC_HOSP_ADUL_CAM_TOT_DISP'] +\
+            table['ZC_EMER_ADUL_CAM_TOT_DISP'] +\
+            table['ZC_UCIN_CIA_CAM_TOT_DISP'] +\
+            table['ZC_UCIN_CIP_CAM_TOT_DISP']
+
+        table['uci_znc_cama_total'] = table['ZC_HOSP_ADUL_CAM_TOTAL'] +\
+            table['ZC_EMER_ADUL_CAM_TOTAL'] +\
+            table['ZC_UCIN_CIA_CAM_TOTAL'] +\
+            table['ZC_UCIN_CIP_CAM_TOTAL']
+
+        table.drop(columns=colsvals, inplace=True)
         return table
 
     def transform_uci(self, table,):

@@ -72,9 +72,10 @@ class Command(BaseCommand):
         self.downloading_data_from_bucket(file_name=self.file_name_uci)
         self.downloading_data_from_bucket(file_name=self.file_name_oxi)
         # Transform UCI
-        table_uci = self.read_raw_uci_table(filename=self.file_name_uci)
+        table_uci, dropcols = self.read_raw_uci_table(
+            filename=self.file_name_uci)
         table_uci = self.filter_uci_by_date(table_uci)
-        table_uci = self.format_uci_drop_duplicates(table_uci)
+        table_uci = self.format_uci_drop_duplicates(table_uci, dropcols)
         table_uci = self.transform_uci(table_uci)
         # Transform OXI
         table_oxi = self.read_raw_oxi_table(filename=self.file_name_oxi)
@@ -92,12 +93,10 @@ class Command(BaseCommand):
             "CODIGO",
         ]
 
-        columns_val_oxi = ["VOL_DISPONIBLE",
-                           "PRODUCCION_DIA_OTR",
-                           "PRODUCCION_DIA_GEN",
-                           "PRODUCCION_DIA_ISO",
-                           "PRODUCCION_DIA_CRIO",
-                           "PRODUCCION_DIAPLA"]
+        columns_val_oxi = ["CIL_VOL_DISP_M3_DU24",
+                           "PLAN_OPER_PROD_DIA_M3",
+                           "CON_PROM_PROD_DIA_ANT",
+                           "TAN_OPER_CI_VOL_TOT_M3"]
 
         o2_table = pd.read_csv('temp/'+filename,
                                sep="|",
@@ -130,19 +129,37 @@ class Command(BaseCommand):
         return table
 
     def read_raw_uci_table(self, filename):
-        columns_ext = ["FECHA_CORTE",
+        columns_ext = ["FECHACORTE",
                        "CODIGO",
-                       "CAMAS_ZNC_DISPONIBLE",
-                       "CAMAS_ZNC_TOTAL",
-                       "CAMAS_ZC_TOTAL",
-                       "CAMAS_ZC_DISPONIBLES",
                        ]
+        columns_measure = ["ZC_UCI_AACT_CAM_TOTAL",
+                           "ZC_UCI_AACT_CAM_TOT_DISP",
+                           "ZC_UCI_ADUL_CAM_TOTAL",
+                           "ZC_UCI_ADUL_CAM_TOT_DISP",
+                           "ZC_UCI_NEONATAL_CAM_TOTAL",
+                           "ZC_UCI_NEONATAL_CAM_TOT_DISP",
+                           "ZC_UCI_PEDIA_CAM_TOTAL",
+                           "ZC_UCI_PEDIA_CAM_TOT_DISP",
+                           #################
+                           "ZC_HOSP_ADUL_CAM_TOTAL",
+                           "ZC_HOSP_ADUL_CAM_TOT_DISP",
+                           "ZC_EMER_ADUL_CAM_TOTAL",
+                           "ZC_EMER_ADUL_CAM_TOT_DISP",
+                           #
+                           "ZC_UCIN_CIA_CAM_TOTAL",
+                           "ZC_UCIN_CIA_CAM_TOT_DISP",
+                           "ZC_UCIN_CIP_CAM_TOTAL",
+                           "ZC_UCIN_CIP_CAM_TOT_DISP",
+                           #####
+                           ]
         # usecols=columns_ext)
-        uci_table = pd.read_csv('temp/'+filename, sep="|", usecols=columns_ext)
+        uci_table = pd.read_csv('temp/'+filename, sep="|",
+                                usecols=columns_ext+columns_measure)
         uci_table.columns = [normalizer_str(label).replace(
-            " ", "_").lower() for label in uci_table.columns.tolist()]
-        uci_table.rename(columns={"fechacorte": "fecha_corte"}, inplace=True)
-        return uci_table
+            " ", "_") for label in uci_table.columns.tolist()]
+        uci_table.rename(columns={"FECHACORTE": "fecha_corte",
+                                  'CODIGO': 'codigo', }, inplace=True)
+        return uci_table, columns_measure
 
     def filter_uci_by_date(self, table):
         table.fecha_corte = table.fecha_corte.apply(
@@ -152,14 +169,30 @@ class Command(BaseCommand):
         table = table.loc[table.fecha_corte >= min_date]
         return table
 
-    def format_uci_drop_duplicates(self, table):
+    def format_uci_drop_duplicates(self, table, dropcols):
         table.drop_duplicates(inplace=True)
-        table.rename(columns={
-            'camas_zc_disponibles': "serv_uci_left",
-            'camas_zc_total': "serv_uci_total",
-            'camas_znc_disponible': 'serv_nc_left',
-            'camas_znc_total': 'serv_nc_total',
-        }, inplace=True)
+        table[dropcols] = table[dropcols].fillna(0)
+        table['serv_uci_left'] = table['ZC_UCI_AACT_CAM_TOT_DISP'] + \
+            table['ZC_UCI_ADUL_CAM_TOT_DISP']
+        # table['ZC_UCI_NEONATAL_CAM_TOT_DISP'] + \
+        # table['ZC_UCI_PEDIA_CAM_TOT_DISP']
+
+        table['serv_uci_total'] = table['ZC_UCI_AACT_CAM_TOTAL'] + \
+            table['ZC_UCI_ADUL_CAM_TOTAL']
+        # table['ZC_UCI_NEONATAL_CAM_TOTAL'] + \
+        # table['ZC_UCI_PEDIA_CAM_TOTAL']
+
+        table['serv_nc_left'] = table['ZC_EMER_ADUL_CAM_TOT_DISP'] +\
+            table['ZC_HOSP_ADUL_CAM_TOT_DISP'] +\
+            table['ZC_UCIN_CIA_CAM_TOT_DISP'] +\
+            table['ZC_UCIN_CIP_CAM_TOT_DISP']
+
+        table['serv_nc_total'] = table['ZC_HOSP_ADUL_CAM_TOTAL'] +\
+            table['ZC_EMER_ADUL_CAM_TOTAL'] +\
+            table['ZC_UCIN_CIA_CAM_TOTAL'] +\
+            table['ZC_UCIN_CIP_CAM_TOTAL']
+
+        table.drop(columns=dropcols, inplace=True)
         return table
 
     def transform_uci(self, table):
@@ -204,7 +237,10 @@ class Command(BaseCommand):
             lambda x: Point(x['longitude'], x['latitude']), axis=1)
         total_table.drop(columns=['longitude', 'latitude'], inplace=True)
         print(total_table.info())
-        # Loading to dataBase
-        #self.save_table(total_table, DB_uci, init)
+        print(total_table.loc[total_table.direccion != total_table.direccion])
+        print(total_table['serv_uci_total'].sum())
+        print(total_table['serv_uci_left'].sum())
+        print(total_table['serv_nc_total'].sum())
+        print(total_table['serv_nc_left'].sum())
         self.print_shell("Records oxi + uci: {}".format(total_table.shape))
         return total_table

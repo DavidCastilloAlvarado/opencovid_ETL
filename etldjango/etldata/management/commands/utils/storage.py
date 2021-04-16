@@ -89,7 +89,7 @@ class GetBucketData(Bucket_handler):
         # Downloading GEO data for every Ipress
         if ipress:
             self.download_blob(bucket_name=BUCKET_NAME,
-                               source_blob_name="data_source/geo_ipress.csv",
+                               source_blob_name="data_source/geo_ipressv2.csv",
                                destination_file_name="temp/geo_ipress.csv")
         # Loading links and names to donwload from bucket
         #self.handler = Data_Extractor(csv_urls="temp/datos_fuentes.csv")

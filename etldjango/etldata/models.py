@@ -9,6 +9,7 @@ class DB_uci(models_gis.Model):
     fecha_corte = models.DateTimeField()
     nombre = models.CharField(max_length=200)
     codigo = models.IntegerField()
+    ubigeo = models.IntegerField()
     direccion = models.CharField(max_length=400)
     location = models_gis.PointField(blank=True,
                                      srid=4326)  # default=Point(0, 0),
@@ -89,6 +90,9 @@ class DB_resumen(models.Model):
     vacunados = models.DecimalField(null=True,
                                     decimal_places=2,
                                     max_digits=9,)
+    totalvacunados1 = models.DecimalField(null=True,
+                                          decimal_places=2,
+                                          max_digits=9,)
     camas_uci_disp = models.DecimalField(null=True,
                                          decimal_places=2,
                                          max_digits=9,)
@@ -258,10 +262,6 @@ class DB_capacidad_hosp(models.Model):
                                             decimal_places=2, max_digits=8, blank=True,)
     uci_znc_cama_total = models.DecimalField(null=True, default=None,
                                              decimal_places=2, max_digits=8, blank=True,)
-    uci_zc_vent_ocup = models.DecimalField(null=True, default=None,
-                                           decimal_places=2, max_digits=8, blank=True,)
-    uci_zc_vent_total = models.DecimalField(null=True, default=None,
-                                            decimal_places=2, max_digits=8, blank=True,)
 
     class Meta:
         ordering = ['-fecha_corte']

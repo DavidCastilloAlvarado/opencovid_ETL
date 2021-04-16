@@ -27,7 +27,7 @@ class Command(BaseCommand):
         self.update_hospital_capacity(mode)
         self.update_minsa_deaths(mode)
         self.update_sinadef_deaths(mode)
-        # self.update_oxi_statistics(mode)
+        self.update_oxi_statistics(mode)
         self.update_UCI_geo()
         self.update_vacunas_record(mode)
         self.update_epidemiological_score(mode)
@@ -76,8 +76,8 @@ class Command(BaseCommand):
 
     def update_hospital_capacity(self, mode):
         out = StringIO()
-        args = ['last']
-        call_command('worker_t_caphospv2', verbosity=0, *args, stdout=out)
+        args = ['full']
+        call_command('worker_t_caphosp', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 
     def update_minsa_deaths(self, mode):
@@ -95,13 +95,13 @@ class Command(BaseCommand):
     def update_oxi_statistics(self, mode):
         out = StringIO()
         args = [mode]
-        call_command('worker_t_oxistatv2', verbosity=0, *args, stdout=out)
+        call_command('worker_t_oxistat', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 
     def update_UCI_geo(self):
         out = StringIO()
         args = ['full']
-        call_command('worker_t_uci_geov2', verbosity=0, *args, stdout=out)
+        call_command('worker_t_uci_geo', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 
     def update_vacunas_record(self, mode):

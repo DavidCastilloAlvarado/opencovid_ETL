@@ -13,10 +13,16 @@ class Command(BaseCommand):
     help = 'This command download in local and then upload the raw data to our bucket in GCP'
     bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'version', type=str, help="v1, v2, ...; full, load: the whole dataset, last: only the latest dates")
+
     def handle(self, *args, **options):
+        version = options["version"]
+        assert 'v' in version, "Error in --version argument"
         os.system("mkdir temp")  # Creating temp folder
         self.create_bucket()
-        self.downloading_source_csv()
+        self.downloading_source_csv(version)
         self.print_shell('Downloading files from gobernment\'s servers  ... ')
         self.extracting_data_from_gob_origin()
         self.print_shell('Uploading files to Bucket ... ')
@@ -27,7 +33,7 @@ class Command(BaseCommand):
         self.print_shell('Creating bucket if doesn\' exist ... ')
         self.bucket.create_bucket(BUCKET_NAME)
 
-    def downloading_source_csv(self):
+    def downloading_source_csv(self, version):
         """
         Function to download the csv file which contain all the url and standar names
         for the the data from the goberment, then 
@@ -35,7 +41,7 @@ class Command(BaseCommand):
         """
         self.print_shell('Downloading url and filenames ... ')
         self.bucket.download_blob(bucket_name=BUCKET_NAME,
-                                  source_blob_name="data_source/datos_fuentes.csv",
+                                  source_blob_name='data_source/datos_fuentes_'+version+'.csv',
                                   destination_file_name="temp/datos_fuentes.csv")
         self.handler = Data_Extractor(csv_urls="temp/datos_fuentes.csv")
         self.print_shell('url and names downloaded')

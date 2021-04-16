@@ -55,7 +55,8 @@ class Command(BaseCommand):
                                                            deaths_after,
                                                            deaths_before_d_std)
         self.deaths_minsa = self.query_deaths_minsa(DB_minsa_muertes)
-        self.vaccinated = self.query_vaccinated_first_dosis(DB_vacunas)
+        self.vaccinated, self.allvacc = self.query_vaccinated_first_dosis(
+            DB_vacunas)
         self.camas_uci_disp = self.query_camas_uci_disponible(DB_uci)
         self.active_cases = self.query_active_cases(DB_positividad_relativa)
         self.save_resume(DB_resumen)
@@ -69,6 +70,7 @@ class Command(BaseCommand):
         data = dict(fallecidos_sinadef=self.deaths_sinadef,
                     fallecidos_minsa=self.deaths_minsa,
                     vacunados=self.vaccinated,
+                    totalvacunados1=self.allvacc,
                     camas_uci_disp=self.camas_uci_disp,
                     active_cases=self.active_cases,)
         print(data)
@@ -138,11 +140,13 @@ class Command(BaseCommand):
         query = query.values('fecha')
         # dosis=1,
         query = query.annotate(Sum('cantidad'))
-        query = query.order_by('-fecha')[:7]
+        query_last = query.order_by('-fecha')[:7]
         #query = query.order_by('-fecha')
-        query = query.aggregate(Avg('cantidad__sum'))
-        print(query)
-        return query['cantidad__sum__avg']
+        query_last = query_last.aggregate(Avg('cantidad__sum'))
+        query_all = db.objects.filter(dosis=1)
+        query_all = query_all.aggregate(Sum('cantidad'))
+        print(query_all)
+        return query_last['cantidad__sum__avg'], query_all['cantidad__sum']
 
     def query_camas_uci_disponible(self, db):
         """
