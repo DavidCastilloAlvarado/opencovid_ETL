@@ -93,6 +93,17 @@ class Command(BaseCommand):
         print(query.info())
         return query
 
+    def drop_bad_records(self, table):
+        cols = table.columns.tolist()
+        for _ in range(3):
+            temp = table.diff()
+            table = table.join(temp, rsuffix='_diff')
+            table = table.applymap(
+                lambda x: np.nan if x < 0 else x)
+            table.dropna(inplace=True)
+            table = table[cols]
+        return table[cols]
+
     def date_table_factory(self, fechas_orig):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
@@ -105,13 +116,21 @@ class Command(BaseCommand):
         table_total = pd.DataFrame()
         for region in table:
             temp = region[1].sort_values(by="fecha")
+            temp = temp.set_index(['fecha', 'region'])
+            temp = self.drop_bad_records(temp)
+            temp = temp.reset_index()
             totaldatelist = self.date_table_factory(temp.fecha)
             temp = totaldatelist.merge(temp.set_index("fecha"),
                                        on=["fecha"],
                                        how="outer")
             # print(temp.tail())
-            temp = temp.groupby(["fecha", "region"]).last()
-            temp = temp.sort_values(by="fecha")
+            #temp = temp.groupby(["fecha", "region"]).last()
+            temp = temp.set_index(['fecha', 'region'])
+            #temp = temp.sort_values(by="fecha")
+            temp = temp.apply(pd.to_numeric, errors='ignore')
+            temp = temp.interpolate(method='linear',
+                                    limit_direction='forward',
+                                    axis=1)
             temp = temp.diff()
             temp = temp.applymap(lambda x: np.nan if x < 0 else x)
             temp = temp.fillna(method="ffill")
@@ -120,7 +139,7 @@ class Command(BaseCommand):
             temp = temp.join(temp_roll, rsuffix='_roll')
             temp = temp.reset_index()
             temp = temp.dropna()
-            # print(temp.tail())
+            # print(temp.tail(30))
             # temp = temp.reset_index()
             # temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_total = table_total.append(temp, ignore_index=True)

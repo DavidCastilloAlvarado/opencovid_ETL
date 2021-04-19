@@ -50,15 +50,20 @@ class DB_oxi(models_gis.Model):
     Escritura: La tabla se actualiza en su totalidad con cada rutina de actualización.
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-    nombre = models.CharField(max_length=200)
-    direccion = models.CharField(max_length=200)
+    nombre = models.CharField(max_length=400)
+    place_id = models.CharField(max_length=200)
+    rating = models.DecimalField(null=True,
+                                 decimal_places=2,
+                                 max_digits=4,)
+    n_users = models.IntegerField()
+    direccion = models.CharField(null=True, max_length=200)
     location = models_gis.PointField(blank=True,
                                      srid=4326)  # default=Point(0, 0),
-    institucion = models.CharField(max_length=100)
-    distrito = models.CharField(max_length=100)
-    serv_oxi = models.BooleanField()
-    telefono = models.CharField(max_length=20)
-    paginaweb = models.URLField(max_length=300)
+    telefono = models.CharField(null=True, max_length=20)
+    paginaweb = models.URLField(null=True, max_length=300)
+    venta = models.BooleanField(null=True,)
+    alquiler = models.BooleanField(null=True,)
+    recarga = models.BooleanField(null=True,)
 
     class Meta:
         ordering = ['-fecha_creacion']

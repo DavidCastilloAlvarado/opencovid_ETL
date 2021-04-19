@@ -95,8 +95,9 @@ class Command(BaseCommand):
 
         columns_val_oxi = ["CIL_VOL_DISP_M3_DU24",
                            "PLAN_OPER_PROD_DIA_M3",
-                           "CON_PROM_PROD_DIA_ANT",
-                           "TAN_OPER_CI_VOL_TOT_M3"]
+                           "TAN_OPER_CI_VOL_TOT_M3",
+                           "TAN_OPER_COI_VOL_TOT_M3",
+                           "CON_PROM_PROD_DIA_ANT", ]
 
         o2_table = pd.read_csv('temp/'+filename,
                                sep="|",

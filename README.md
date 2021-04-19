@@ -6,61 +6,78 @@
 
 1.  Clone this repo
 
-        $git clone https://github.com/DavidCastilloAlvarado/opencovid_ETL.git
+```bash
+git clone https://github.com/DavidCastilloAlvarado/opencovid_ETL.git
 
-        $cd opencovid_ETL
+cd opencovid_ETL
+```
 
-2.  Install and active the environment (power shell)
+2.  Install and active the environment
 
-        $python -m pip install --user virtualenv
-        $python -m venv .
-        $source ./Scripts/activate
+```bash
+python -m pip install --user virtualenv
+python -m venv .
+source ./bin/activate #./Scripts/activate
+```
 
 3.  Download all required libraries
 
-        $pip install -r requirements.txt
+```bash
+pip install -r requirements.txt
+```
 
 ## **Quickstart**
 
 1. Setup your own json apikey on API folder
 
-2. Set your own database credential Postgresql
+2. Set your own credential for postgres and GCP services in your enviorment
 
 In `etldjango/settings.py`:
 
-```python
-
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'opencoviddb',
-        'USER': 'datacrew',
-        'PASSWORD': 'admin1234',
-        'HOST': '127.0.0.1',
-        'DATABASE_PORT': ' 5432',
-        'TEST': {
-            'NAME': 'mytestdatabase',
-        },
-
-    },
+```bash
+IP_SERVER=************  #postgres
+PASSWORD=************   #postgres
+NAME=************       #database name
+USER_NAME=************  #postgres username
+GCP_PROJECT_ID=************
+BUCKET_NAME=************
+BUCKET_ROOT=************ # folder in your bucket
+KEY_JSON_FILE=************.json
+KEY_MAPS_API =************ # Key googlemaps api
 ```
 
 2.  Make all migrations before to run
 
-        $python manage.py makemigrations
-        $python manage.py migrate
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
 
 ## **Using**
 
 ### _Management commands_
 
-All the commands could be executed independently in any time. They download its own data from the bucket. Before run any command the first command has to be executed to have data in the bucket.
-
-1. Download all the raw data from the gobernment
+1. Initializing our bucket container - run it just one time
 
 ```bash
-python manage.py worker_extractor
-
+python manage.py worker_init_bucket
 ```
+
+1.1 Update all reports to initialize - run it just one time
+
+```bash
+python manage.py worker_extractor v1
+python manage.py worker_update_all_init full
+```
+
+1.2 Update all reports - **daily update** <- run it every day or regularly to update everything.
+
+```bash
+python manage.py worker_extractor v2
+python manage.py worker_update_all last
+```
+
+# Individual updates
 
 2. Calculate Movility - center roller mean 7 days
 

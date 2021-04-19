@@ -136,8 +136,11 @@ class Command(BaseCommand):
             table_roll = table_roll.append(region[1]
                                            .sort_values(by="fecha")
                                            .fillna(method="backfill")
-                                           .rolling(n_roll, center=True).mean()
-                                           .dropna())
+                                           # .rolling(n_roll, center=True).mean()
+                                           .dropna()
+                                           )
         table_roll = table_roll.reset_index()
+        print(table_roll.info())
         print(table_roll.head())
+        print(table_roll.isnull().sum())
         return table_roll

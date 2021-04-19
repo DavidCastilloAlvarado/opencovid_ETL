@@ -82,25 +82,21 @@ class Command(BaseCommand):
             "FECHACORTE",
             "CODIGO",
             "REGION",
-            "PROVINCIA"
+            "PROVINCIA",
         ]
-
-        columns_val_oxi = ["VOL_DISPONIBLE",
-                           "PRODUCCION_DIA_OTR",
-                           "PRODUCCION_DIA_GEN",
-                           "PRODUCCION_DIA_ISO",
-                           "PRODUCCION_DIA_CRIO",
-                           "PRODUCCION_DIAPLA",
-                           "VOL_CONSUMO_DIA",
-                           "CONSUMO_DIA_CRIO",
-                           "CONSUMO_DIA_PLA",
-                           "CONSUMO_DIA_ISO",
-                           "CONSUMO_DIA_GEN",
-                           "CONSUMO_DIA_OTR"]
+        self.disponible = ['CIL_VOL_DISP_M3_DU24',
+                           'PLAN_OPER_PROD_DIA_M3',
+                           'TAN_OPER_CANT_REC_DIA_M3',
+                           ]
+        self.consumo = ['CIL_NU_CIL_CONSUM_CU24',
+                        'PLAN_OPER_CONS_DIA_M3',
+                        'TAN_OPER_CONS_DIA_M3',
+                        'CON_PROM_PROD_DIA_ANT',
+                        ]
         # usecols=columns_ext)
         table = pd.read_csv('temp/'+filename,
                             sep="|",
-                            usecols=columns_ext+columns_val_oxi)
+                            usecols=columns_ext+self.disponible+self.consumo)
 
         table.rename(columns={"FECHACORTE": "fecha_corte"}, inplace=True)
         return table
@@ -125,25 +121,26 @@ class Command(BaseCommand):
             'CODIGO': 'codigo',
             'REGION': 'region',
             'PROVINCIA': 'provincia',
-            "VOL_DISPONIBLE": 'vol_tk_disp',
-            "PRODUCCION_DIA_OTR": 'prod_dia_otro',
-            "PRODUCCION_DIA_GEN": 'prod_dia_generador',
-            "PRODUCCION_DIA_ISO": 'prod_dia_iso',
-            "PRODUCCION_DIA_CRIO": 'prod_dia_crio',
-            "PRODUCCION_DIAPLA": 'prod_dia_planta',
-            "VOL_CONSUMO_DIA": 'consumo_vol_tk',
-            "CONSUMO_DIA_CRIO": 'consumo_dia_crio',
-            "CONSUMO_DIA_PLA": 'consumo_dia_pla',
-            "CONSUMO_DIA_ISO": 'consumo_dia_iso',
-            "CONSUMO_DIA_GEN": 'consumo_dia_gen',
-            "CONSUMO_DIA_OTR": 'consumo_dia_otro',
+            # CONSUMO
+            "CIL_VOL_DISP_M3_DU24": 'vol_tk_disp',
+            # "": 'prod_dia_otro',
+            # "": 'prod_dia_generador',
+            # "": 'prod_dia_iso',
+            "TAN_OPER_CANT_REC_DIA_M3": 'prod_dia_crio',
+            "PLAN_OPER_PROD_DIA_M3": 'prod_dia_planta',
+            # CONSUMO
+            "CIL_NU_CIL_CONSUM_CU24": 'consumo_vol_tk',
+            "TAN_OPER_CONS_DIA_M3": 'consumo_dia_crio',
+            "PLAN_OPER_CONS_DIA_M3": 'consumo_dia_pla',
+            # "": 'consumo_dia_iso',
+            "CON_PROM_PROD_DIA_ANT": 'consumo_dia_gen',
+            # "": 'consumo_dia_otro',
         }, inplace=True)
-        self.disponible = ['vol_tk_disp', 'prod_dia_otro',
-                           'prod_dia_generador', 'prod_dia_iso',
+        self.disponible = ['vol_tk_disp',
                            'prod_dia_crio', 'prod_dia_planta', ]
         self.consumo = ['consumo_vol_tk', 'consumo_dia_crio',
-                        'consumo_dia_pla', 'consumo_dia_iso',
-                        'consumo_dia_gen', 'consumo_dia_otro', ]
+                        'consumo_dia_pla',
+                        'consumo_dia_gen', ]
         return table
 
     def transform_oxi(self, table,):
