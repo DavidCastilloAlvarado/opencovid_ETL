@@ -417,7 +417,7 @@ class DB_vacunas(models.Model):
     provincia = models.CharField(max_length=50)
     grupo_riesgo = models.CharField(max_length=50)
     cantidad = models.DecimalField(null=True, default=None,
-                                   decimal_places=2, max_digits=6, blank=True,)
+                                   decimal_places=2, max_digits=9, blank=True,)
     dosis = models.IntegerField(null=True, default=None, blank=True,)
 
     class Meta:

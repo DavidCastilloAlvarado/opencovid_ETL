@@ -68,10 +68,11 @@ class Command(BaseCommand):
 
     def update_rt_score(self, mode):
         out = StringIO()
-        if mode == 'last':
-            args = ['last', '--m', '6']
-        elif mode == 'full':
-            args = ['full']
+        args = ['full']
+        # if mode == 'last':
+        #     args = ['last', '--m', '6']
+        # elif mode == 'full':
+        #     args = ['full']
         call_command('worker_rt', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 

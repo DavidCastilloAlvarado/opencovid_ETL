@@ -81,8 +81,10 @@ class Command(BaseCommand):
     def load_data_from_db(self, months_before=6):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
+        max_date = str(datetime.now().date() -
+                       timedelta(days=2))
         query = DB_positividad.objects
-        query = query.filter(fecha__gt=min_date)
+        query = query.filter(fecha__gt=min_date, fecha__lt=max_date)
         query = query.annotate(total_posit=F(
             'pcr_pos') + F('pr_pos') + F('ag_pos'))
         query = pd.DataFrame.from_records(query

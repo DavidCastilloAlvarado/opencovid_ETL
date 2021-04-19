@@ -129,7 +129,7 @@ class Command(BaseCommand):
         for region in table:
             temp = region[1].sort_values(by="fecha")
             temp = temp.fillna(method="backfill")
-            temp["n_muertes_roll"] = temp.rolling(n_roll, center=True).mean()
+            temp["n_muertes_roll"] = temp.rolling(n_roll, center=False).mean()
             temp = temp.dropna()
             table_roll = table_roll.append(temp)
         table_roll.reset_index(inplace=True)
