@@ -20,7 +20,9 @@ lib64
 share/
 **.ipynb
 **.ipynb_checkpoints
-**.csv**
+!**/data_source/*.csv
+**/temp/*.csv
+**/etldjango/*.csv
 proxisql
 .env**
 *.json

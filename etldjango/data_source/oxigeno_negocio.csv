@@ -1,0 +1,261 @@
+place_id,name,rating,user_ratings_total,formatted_address,formatted_phone_number,website,venta,alquiler,recarga,latitude,longitude
+ChIJ0aUcZmYQSpARmnsaPoxYQj8,Cruz Roja Peruana,5.0,1,"Los Nogales, Piura 20002, Peru",,,True,False,False,-5.1899555,-80.6149527
+ChIJ0biIvQXIBZERWyELyRHTXv8,Oxygenate and Derivatives SRL,4.5,16,"Av. República de Panamá 5603, Miraflores 15048, Peru",(01) 4466018,http://www.oxigenoyderivados.com.pe/,True,True,True,-12.119906,-77.018073
+ChIJ0bvA8JbiEJERK82mibnCa1w,"Clínica en Ica, San Martín",4.8,4,"Av San Martin 598, Ica 11000, Peru",(056) 224064,http://www.clinicasanmartin.pe/,True,False,False,-14.06978,-75.728899
+ChIJ0cGk_5PtTJARKWIr3HRv3i0,Mifarma,4.0,3,"Ramón Castilla, Pomalca 14013, Peru",,http://www.mifarma.com.pe/,True,False,False,-6.7039478,-79.9025106
+ChIJ0euTJz7zZ5ERhObGDO5dgnU,Ortopedia La Muleta,5.0,1,"Jirón, 7 De Junio N° 416, Juliaca 21100, Peru",924 993 402,https://web.facebook.com/Ortopedialamuleta/,True,True,False,-15.4970853,-70.1325908
+ChIJ0xD-K5n4rZERd6ZVpmOvm7Y,MiFarma,5.0,1,"Jr. Grau 805, Cajabamba 06351, Peru",,http://mifarma.com.pe/,True,False,False,-7.623931100000001,-78.0455714
+ChIJ1-4VpN28o5ERYuG4_x7qAx0,"Botica ""Señor de Burgos""",0.0,0,"Callao 155, Pucallpa 25006, Peru",,,True,False,False,-8.370633600000001,-74.53797829999999
+ChIJ1TIAXeDVbZERYUIses2oYZs,CIMA Medical Center,4.1,47,"Av. Pardo Paseo de los Héroes 978, Cusco 08002, Peru",(084) 255550,http://www.cima-clinic.com/,True,False,False,-13.5249043,-71.9739829
+ChIJ1ZOG5MvIBZERa_z3uE6BhzE,Kiar Oxygen S.A.C.,0.0,0,"Stand 125, Avenida Emancipación 549, Cercado de Lima 15001, Peru",968 105 956,http://kiaroxygen.com.pe/,True,False,True,-12.0464372,-77.0381299
+ChIJ1fhsCEJKQpERgkj-Jru0sLY,San Juan de Dios Clinic,3.5,52,"Av. Ejercito 1020, Cayma 04017, Peru",958 958 124,http://www.sanjuandediosarequipa.com/,True,False,False,-16.3882301,-71.55008649999999
+ChIJ1zNGypqXBZERcah7gtuJt_g,Air Products,0.0,0,"Lurin 15823, Peru",,,True,True,False,-12.2551817,-76.81740599999999
+ChIJ24dTSErJBZER2q05tUTjldA,Atlas Copco,4.0,1,"Av. Argentina 6380, Cercado de Lima 07006, Peru",,http://atlascopco.com/,False,True,False,-12.0473087,-77.0817816
+ChIJ292bkYplEJERH3Ld9_MmoIA,Mi Farma,4.3,8,"Jose De San Martin 123, Pisco 11601, Peru",,https://www.mifarma.com.pe/,True,False,False,-13.7100075,-76.2038271
+ChIJ2SlLRZo9rZERjiz2wOu4zh0,ROMER TRUJILLO S.A.C.,4.5,4,"Salaverry 427 - Urb, Trujillo 13007, Peru",957 479 916,https://www.romer.com.pe/,True,False,False,-8.1074823,-79.03417089999999
+ChIJ2UihyD3vTJARm5sBbPxpr4o,Doxisol Sac,0.0,0,"Av Augusto B. Leguia 1425, Chiclayo 14009, Peru",996 511 637,https://doxisol-sac.ueniweb.com/?utm_campaign=gmb,True,False,False,-6.7618,-79.8471754
+ChIJ2Y9TfH4QSpARsZG7Ge5dvBs,Mifarma,3.6,9,"Jr. Arequipa 796, Piura 20001, Peru",955 215 862,http://www.mifarma.com.pe/delivery,True,False,False,-5.1961319,-80.6276251
+ChIJ2YF_NovLBZERYxgr2MJ1CD4,Linde,4.1,90,"carr, Carr. Nestor Gambetta 280, Callao 07001, Peru",(01) 4132000,http://www.linde-gas.com.pe/,True,False,False,-12.04902,-77.12581709999999
+ChIJ2YFgLkg9rZER3UsO6Oafpcw,Sanna / Clínica Sánchez Ferrer,5.0,1,"Los Laureles 436, Trujillo 13009, Peru",(044) 601050,http://www.sanna.pe/,True,False,False,-8.1300375,-79.0394851
+ChIJ2_Br2_HzZ5ERWd-e87l37bE,Materno Infantil,2.5,2,"Juliaca 21104, Peru",950 027 096,,True,False,False,-15.4996879,-70.12965299999999
+ChIJ2cU7aAr7NZARvhJFWMXlVa8,Omnilife Sullana,0.0,0,"Sucre Cuadra 11, Sullana 20100, Peru",995 756 735,,True,False,False,-4.8930472,-80.6891686
+ChIJ36LPbRrFWpERadlv8MncK_c,Hospital Essalud Tacna,3.2,37,"Tacna 23000, Peru",(052) 583060,http://www.essalud.gob.pe/,True,False,False,-17.9792059,-70.2039985
+ChIJ388xGzHPBZERuiQJoQOZo_E,Gases Industriales San Felipe (GISF),3.9,8,"Av. Alfredo Mendiola 5483, Los Olivos 15304, Peru",968 475 378,https://gases-industriales-san-felipe.negocio.site/,True,True,False,-11.971744,-77.0676067
+ChIJ38Kt4O3HBZERhWNrKspX0GI,Master Medic S.A.,0.0,0,"Int 301 Urb Santiago de Surco, Lima 33, Av. Caminos del Inca 257, Lima 15038, Peru",(01) 2566000,http://www.mastermedic.com.pe,True,True,False,-12.1137266,-76.9916871
+ChIJ3_lE7xW7BZERUxZQecmX26E,Oxitesa,5.0,2,"Avenida Antigua Panamericana, Cercado de Lima 15841, Peru",(01) 2483592,http://peru.oxitesa.com/servicios/gases-medicinales-1/oxigeno-medicinal-2,True,False,False,-12.2514774,-76.92849199999999
+ChIJ3air_4XvTJARuxSuuUW9Wq8,Dr. Américo Villena Pérez,0.0,0,"1er Piso, Av. Luis Gonzáles 476, Lambayeque 14001, Peru",(074) 608060,https://www.paginasamarillas.com.pe/empresas/dr-americo-villena-perez/chiclayo-593629,False,True,False,-6.773684100000001,-79.8423777
+ChIJ3bvnrK07rZER8nGt9cEb_84,León Market,5.0,3,"Av. Cerrito de la Virgen Mz 3 Lote 6, Mirador, Huanchaco 13000, Peru",910 979 159,https://web.facebook.com/bodegabazarlibreria,True,False,False,-8.0791723,-79.1165115
+ChIJ3x3Msbaa1ZER_54pbgIQxkM,Oxymedical,0.0,0,"Av. Brasil N47-351, Quito 170104, Ecuador",(02) 600-4641,,False,True,False,-0.1517048,-78.4927536
+ChIJ47LjdD1LQpERdXDcEQxrJVY,UNIMEDICA,0.0,0,"URB. SANTA ROSA N-11, Arequipa 04017, Peru",(054) 273100,http://www.unimedica.com.pe/,True,False,False,-16.3836513,-71.5542202
+ChIJ4Yhk48vIBZER41wgcRHcsE8,JC Medical Supplies,0.0,0,"Av. Emancipación 601 Cercado de Lima 15001 Av. Emancipación 640 Cercado de Lima 15001 Emancipación 549 int 133-134, Cercado de Lima 15001, Peru",950 485 112,https://www.jcmedicalsupplies.com/,True,False,False,-12.045485,-77.0387049
+ChIJ4cwMdgartpERd9tf5M7ZufI,Mifarma,4.3,3,"Jr. Ortiz Arriet 534, Chachapoyas 01001, Peru",,http://www.mifarma.com.pe/,True,False,False,-6.2294404,-77.87291429999999
+ChIJ55wFnk_HBZERsaRSObr6SbA,Concentrador de oxigeno portatil,4.9,7,"Hurtado 138, Santa Anita 15008, Peru",959 355 604,https://publicidadcosersa.wixsite.com/productos,True,False,False,-12.0519003,-76.97497899999999
+ChIJ5WVHXvjIBZERLvd-H5Xo4tw,Medic Import,5.0,5,"Avenida aviacion 3944 Oficinas 1301 - 1302, Surquillo 15038, Peru",(01) 6853177,http://medicimport.pe/,True,True,False,-12.1149019,-76.999658
+ChIJ5ZXukouZ1ZER_RewkC3TPTQ,Imedox Oxígeno Medicinal,0.0,0,"Paute, y, Quito 170603, Ecuador",(02) 265-5512,https://www.paginas-amarillas.com.ec/empresas/imedox/quito-16169836?ad=27406455,False,True,False,-0.2385933,-78.5122844
+ChIJ61m7nGC4BZERU_OQgl_zWrM,CORPORACION INDUSTRIAL ROMERO,0.0,0,"Av. Defensores de Lima 601, San Juan de Miraflores 15803, Peru",(01) 2851901,,True,False,False,-12.1490107,-76.9683495
+ChIJ6UXm-Km5BZERm7KhK8oNjzA,MCM gases industriales,5.0,3,"Calle 5, Cercado de Lima 15037, Peru",933 689 186,https://mcmgasesindustriales.es.tl/,True,False,False,-12.206313,-76.93174359999999
+ChIJ6ViDOlDPBZERHMRK_yreX50,Inversiones Oximax SAC,4.2,13,"Av Gerardo Unger 1093, Lima 15102, Peru",997 141 543,https://www.inversionesoximax.com/,True,False,False,-12.0142767,-77.052466
+ChIJ6Vt9uIW9BZERiIXF0S1vG_U,"Indugaser S.A.C.- OXIGENO INDUSTRIAL, OXIGENO MEDICINAL",2.0,6,"Car. Antigua Panamericana Sur. Km38.5, Los Claveles Mz-B, Cercado de Lima 15823, Peru",981 023 238,http://www.indugaser.com/,True,True,True,-12.0262709,-76.9283785
+ChIJ6XWGBpSpWpERlRtF6prmeZg,Farmacia Urgencia,3.5,2,"Cristóbal Colón 511, Arica, Arica y Parinacota, Chile",(58) 223 2155,,True,False,False,-18.4775666,-70.31788089999999
+ChIJ6YhRNFxtLZARsTMG7huX0tA,"MEDIGAS - Alquiler de Oxigeno Medicinal, Recarga de Oxigeno Medicinal Guayaquil, Venta Reguladores Medicinales, Cilindros y/o Tanques de 0.7, 6 y 10 m3 completo, Ing German Avila.",2.9,8,"Sufragio Libre, Guayaquil 090514, Ecuador",099 187 2085,https://www.aiyellow.com/medigas/,True,True,False,-2.1779403,-79.88936609999999
+ChIJ6fL03-4XrZERCSdYRT1C-HA,Oxigeno 24 Horas Perú,5.0,2,"Lucio Seneca 468, Trujillo 13007, Peru",965 182 621,https://www.facebook.com/Oxigeno24horas.peru,True,False,False,-8.1018857,-79.0079354
+ChIJ6yzpccrHBZERf6TeH_UulAQ,Novobaric Eirl,0.0,0,"Pasaje San Luis 188, Cercado de Lima 15087, Peru",989 685 132,https://novobaric.weebly.com/,True,False,False,-12.0895435,-77.0851969
+ChIJ70cfLD6XDpERfS87mlo4vgw,Infra Medica Perú,0.0,0,"JIRON San LORENZO 220, Huancayo 12001, Peru",964 834 631,,True,True,False,-12.0590296,-75.2043041
+ChIJ74odl_NLQpERDcc0E8NOerY,OXIGENO A DOMICILIO JK,5.0,2,"Jiron Buenos Aires MzR' Lote 1 La Tomilla Cayma, Arequipa 04013, Peru",(054) 668763,https://www.paginasamarillas.com.pe/empresas/oxigeno-a-domicilio-jk/arequipa-80629069,True,True,False,-16.3624683,-71.54748959999999
+ChIJ7SWk1nA-rZERn4HxzIHHjYs,Oxigeno Narva E.I.R.L,4.0,18,"Av José Gabriel Condorcanqui, Av. Condorcanqui 2247 La Esperanza, Trujillo 13013, Peru",969 779 955,http://www.oxigenonarva.com/,True,False,False,-8.0678968,-79.0508684
+ChIJ7XLJaighX5ERbmXkU9skOzE,Todo Oxigeno,4.0,1,"Av. Buenos Aires #1543, La Paz, Bolivia",76726190,,True,True,False,-16.5164459,-68.14277070000001
+ChIJ7elMbtx_bpERDc21vVbPdi4,PROHEALTH PERU,0.0,0,"Parque Industrial, Republica De Uruguay A-1, Cusco 08002, Peru",933 857 784,http://bit.ly/FacebookProhealthPeru,True,False,False,-13.5313632,-71.9501229
+ChIJ7xo3C2HvTJARI1rW5EaRByE,Chiclayo 5,0.0,0,"Av. Luis Gonzáles, Chiclayo 14001, Peru",,,True,False,False,-6.7705768,-79.8423114
+ChIJ84M7bghIy5ERbG4JpD0OtoM,Medic Ventas,0.0,0,"Loja, Ecuador",(07) 257-8060,,True,False,False,-3.9870123,-79.2018679
+ChIJ90jS7U3IBZER1Ouri6bUQJM,SANNA \ Clínica El Golf,3.6,195,"Av. Aurelio Miró Quesada 1030, San Isidro 15073, Peru",(01) 6355000,https://www.sanna.pe/clinicas/el-golf-lima/informacion-general/,False,True,False,-12.0989153,-77.05138889999999
+ChIJ9xWn8Eo9rZERMCzM9ovVWCk,OXIGENO NARVA GASES EIRL,3.0,2,"Av América Sur 4171, Trujillo 13008, Peru",981 329 006,http://www.oxigenonarva.com/,False,True,False,-8.1227065,-79.0395936
+ChIJ9yp0C5I9rZERN_pYW8mCdJQ,Baltodano Doctrina Medica,5.0,6,"N°2000 Urb., Av. América Nte., Trujillo 13001, Peru",(044) 220362,,True,False,False,-8.0986265,-79.0308823
+ChIJA1LPm8nIBZERGQSBEUTFY44,Equipment Medical Import Sac,5.0,1,"Av. N°315|, Avenida Emancipación, Cercado de Lima 15001, Peru",(01) 4272998,http://www.meditechsac.com/,True,False,False,-12.0475595,-77.0357365
+ChIJAQAAbPHIBZERDafbuHNj75w,Hospital Nacional Edgardo Rebagliati Martins,3.6,628,"Av Edgardo Rebagliati 490, Jesús María 15072, Peru",(01) 2654901,http://www.essalud.gob.pe/,False,True,False,-12.0780012,-77.0402132
+ChIJAQDA8SHIBZERx-8kZ7PmzcU,Clinica Good Hope,3.8,603,"Malecón Balta 956, Miraflores 15039, Peru",(01) 6107300,http://www.goodhope.org.pe/,True,False,False,-12.1254255,-77.0343473
+ChIJAYgzOYQaSpARcasCOLRQDxw,Boticas Fasa,3.7,3,"Int. CC Plaza de la Luna, Piura 20001, Peru",,https://www.mifarma.com.pe/,True,False,False,-5.1924636,-80.6399891
+ChIJAZ95zybvTJARcMxWbvv0fE4,Clínica Del Pacífico,3.2,43,"Av José Leonardo Ortiz 420, Chiclayo 14009, Peru",(074) 228585,http://clinicadelpacifico.com.pe/web/,True,False,False,-6.774752299999999,-79.8458138
+ChIJB9ivWSDPBZERfkU563J8hxU,Cayetano Heredia National Hospital,3.5,218,"1 CV Zac, Av. Honorio Delgado 262, San Martín de Porres 15102, Peru",(01) 4820402,http://www.hospitalcayetano.gob.pe/,False,True,False,-12.022498,-77.0553495
+ChIJBT0E4_7VbZERJz6sSTTVCQc,REDICUSCO,5.0,3,"Frente al Hosp.Regional Costado Clínica MAC SALUD, Av. de La Cultura 1416, Cusco 08008, Peru",(084) 225051,,True,True,False,-13.5248971,-71.9550908
+ChIJBXdHW0NKQpERzIhYIR65Vso,Mifarma,0.0,0,"Avenida Emmel 115-117, Yanahuara 04001, Peru",,http://www.mifarma.com.pe/,True,False,False,-16.392657,-71.5434042
+ChIJBbsxwnvvTJAR41U-OV9rNRM,Mi Farma,0.0,0,"Elias Aguirre 157, Chiclayo 14001, Peru",(074) 225046,https://www.mifarma.com.pe/locales/,True,False,False,-6.7712251,-79.843871
+ChIJC-PnpuXCp5ERjLVeW79E02A,Level II Hospital EsSalud Huanuco,2.8,28,"18A, Huánuco 10002, Peru",(062) 591000,http://www.essalud.gob.pe/,False,True,False,-9.9372551,-76.2394027
+ChIJC6ymP2x145MRUeIUrAFAiCI,HP MEDICAL SRL,0.0,0,"Carlos de la Torre Park 0997, Almost corner, Av Aniceto Arce, Cochabamba, Bolivia",4 4500748,http://www.hpmedical.com.bo/,True,False,False,-17.3873413,-66.1480674
+ChIJCW0ar1VKQpERFlP6R4CwEJE,Mifarma,0.0,0,"AVENIDA SIGLO XX, 235 CERCADO AREQUIPA, AREQUIPA, Cercado de Lima 04001, Peru",(01) 6125000,http://www.mifarma.com.pe/locales/,True,False,False,-16.4013281,-71.5283765
+ChIJCYzmdRcWrZERosJGsaNeanc,Mifarma,4.0,2,"266, Mz. M Lt. 1 El Sol de Chacarero El Porvenir, Trujillo 13006, Peru",(044) 299900,https://www.mifarma.com.pe/,True,False,False,-8.0911826,-79.00690329999999
+ChIJCdO-snEQSpARei33nmjK6hs,Clínica San Camilo de Piura,5.0,2,"Mza A lote 1 -Castilla,, Los Rubies, Piura 20002, Peru",959 357 260,,True,True,False,-5.1854935,-80.6235774
+ChIJDZno0QdLQpERjP2YxQHGwwg,OXIMIX GASES EIRL,4.0,4,"Av. Mariscal Castilla 903, Arequipa 04006, Peru",981 807 000,http://www.oximix.com.pe/,True,True,False,-16.4045877,-71.5135591
+ChIJE3py4_7VbZER4vc8egjunak,Clinica MacSalud,2.9,33,"F2GV+3V, 3S 1410, Cusco 08200, Peru",(084) 582060,https://www.macsalud.com/,True,False,False,-13.5248125,-71.95531249999999
+ChIJE3vR4s2XDpERKSc2Iq9qGtQ,Mifarma,3.0,1,"Sta Beatriz, Huancayo 12002, Peru",(064) 218517,http://www.mifarma.com.pe/,True,False,False,-12.0492505,-75.19545939999999
+ChIJE4NhJpZbspERggr1EJpDK4M,Epo gases INDUSTRIALES y Medicinales,0.0,0,"Jr, Los Próceres 377, Cajamarca 06003, Peru",957 945 668,https://epogases.com/,True,True,False,-7.1682165,-78.5050893
+ChIJE69aiPTJBZER3ahXY2YnM5w,Oxinsa Gases S.A.C.,0.0,0,"Interior A, Av. Oscar R. Benavides 1907, Cercado de Lima 15082, Peru",922 230 210,https://www.paginasamarillas.com.pe/empresas/oxinsa-gases-sac/lima-80627591,False,True,False,-12.048874,-77.06626659999999
+ChIJEXaEIxaWDpERJpX2URg_Ebw,MiFarma,3.0,1,"Av. Huancavelica 2007, Huancayo 12006, Peru",,https://www.mifarma.com.pe/locales/,True,True,False,-12.0540357,-75.22505629999999
+ChIJEXi9-svIBZERxydlartv5as,Garely'S Service Medical E.R.I.L.,5.0,1,"Int. 103, Jirón Chancay 627, Cercado de Lima 15001, Peru",(01) 3327241,,True,False,False,-12.0460931,-77.0386101
+ChIJF06eGGRPe5ERD5Sls3DNUpY,Seytu omnilife nutribelleza Rosalia,5.0,2,"Lambayeque 500, Puerto Maldonado 17001, Peru",956 740 607,https://portal.omnilife.com/registro?distributor_code=51419786TQR&country_code=PER&lang=es,True,False,False,-12.5928968,-69.1836105
+ChIJF0qFj5G9o5ER_2GBulWDWB8,Clínica dental señor de Burgos,5.0,2,"Masisea, Pucallpa 25004, Peru",945 955 355,,True,False,False,-8.3839971,-74.5700438
+ChIJF4JC65NpXZERRgM7Q1uLDUw,Regional Hospital Manuel Nunez Butron,3.4,17,"Av. El Sol 1022, Puno 21002, Peru",(051) 369696,,True,False,False,-15.8424965,-70.02193640000002
+ChIJF6DHWU7NBZERwpiUn4VQp5A,Praxair,3.8,9,"Av. Alejandro Bertello Bollati 160, Callao 07036, Peru",960 500 579,,True,False,False,-12.017084,-77.102728
+ChIJFTfrOC7GBZER9CURepXyois,🚑 AMBULANCIAS MEDICALENFER,4.8,31,"Av San Luis N° 991, San Luis 15021, Peru",994 096 334,http://www.medicalenfer.com/,True,True,False,-12.0769046,-76.9998715
+ChIJFW5wgMzIBZERM6KbYBQiuNM,SALUD & SUPERACIÓN E.I.R.L.,0.0,0,"Jr. Huancavelica 760, Cercado de Lima 15001, Peru",(01) 7640715,https://www.saludysuperacion.com/,True,True,False,-12.0438974,-77.03930059999999
+ChIJG-Dn3m0Q6pERt4Sj0u3maPc,Oftálmica Amazonas,0.0,0,"Brasil 364, Iquitos 16001, Peru",(065) 234643,,False,True,False,-3.7521643,-73.2472788
+ChIJGb1wwsgbSpARdXdEKnifH9w,ASESORIA OMNILIFE Y SEYTU,5.0,1,"Piura 20004, Peru",957 392 625,https://empresario.omnilife.com/pe/piura/piura/piura/helber-lazo-cordova/omnilife/,True,False,False,-5.2080622,-80.63805099999999
+ChIJGcp-akDvTJAR-hXXSAAhyw0,Stock Medical,3.5,2,"Av Sáenz Peña 877, Chiclayo 14001, Peru",(074) 232269,,True,True,False,-6.770897499999999,-79.8362345
+ChIJGw8PmaLRBZERkHiODXX0yN0,Oxigeno Medicinal,0.0,0,"Calle 48 634, Comas 15316, Peru",984 627 385,,True,True,False,-11.9113383,-77.05173889999999
+ChIJGyY_U_7VbZERRrty0lGh78I,Hospital Regional del Cusco,3.1,40,"Cusco 08003, Peru",(084) 231131,,False,True,False,-13.5238262,-71.954768
+ChIJHXgB4MPPBZERJSkxq-MXHBc,PENTA GAS S.A.C.,4.9,32,"Jr, Urb. Industrial Infantas, El Estaño 5714, Los Olivos 15311, Peru",(01) 5281905,http://www.penta-gas.com/,True,False,False,-11.9644043,-77.0635489
+ChIJI3sAcofIBZERE6D3iYdaiDY,SALUD INTEGRAL PERUANA S.A.C.,5.0,2,"Av. Sta. Catalina N° 227, Lima 15034, Peru",(01) 6526729,http://www.sainpesac.com/contacto/,True,True,True,-12.0838602,-77.0183055
+ChIJI6lt4kSWDpERbN2Hn1AbNI0,Geria Salud,0.0,0,"Jirón Tacna 146, Huancayo 12001, Peru",(064) 213300,http://www.geriasalud.com/,False,True,False,-12.0700361,-75.2159011
+ChIJIXLv89vRBZERuH3CZQEiswg,Oxígeno Christian,4.2,33,"Avenida Trapiche 744 Urbanizacion El Alamo, Comas, Lima 15316, Peru",(01) 5519082,,True,True,False,-11.920921,-77.06175
+ChIJIbcHS_paspEROhf7-k-8VAg,HOSPITAL SIMON BOLÍVAR,4.3,6,"Avenida Mario Urteaga 451, Cajamarca 06002, Peru",,,True,False,False,-7.155876399999999,-78.5136686
+ChIJIea-R8RvLZARPGkwgioTmG4,INDUGAS ZONE - Venta Alquiler Recarga de Tanques de Oxigeno Medicinal Guayaquil Venta de Tanques de Gases Industriales Ecuador,5.0,5,"Urbanización La Saiba Mz H Villa 1 A 3 calles del Mi Comisariato de la, Sur de Guayaquil, Av. Domingo Comín, Guayaquil 090150, Ecuador",096 844 8645,https://indugaszone.com/,True,True,False,-2.2260893,-79.89262889999999
+ChIJJ1kiSYDIBZERb23lS_NhkY4,Atlas Copco Peru SAC,4.4,93,"Av Los Frutales 115, Ate 15012, Peru",(0800) 77877,https://www.atlascopco.com/es-pe,True,True,False,-12.0575248,-76.9674622
+ChIJJ9rbn1m3BZER135hLT6QXzE,Enfedomi,0.0,0,"Esteves Mz c9 lote 32, Urbanización de villa Los Cedros, Chorrillos 15067, Peru",996 186 721,http://enfedomi.com/,False,True,False,-12.2053046,-77.01473849999999
+ChIJJVxifEvvTJARZ25PBdWPO20,Centro De Terapia Fisiomedic,0.0,0,"Calle Paul Harris 1557, La Victoria 14007, Peru",978 160 179,,False,True,False,-6.7971148,-79.83195669999999
+ChIJJZhMfYe9o5ER8zGWThLu5xA,Oxigeno Loreto srl,0.0,0,"Jiron Antonio Raimondi 1066, Pucallpa 25001, Peru",,,True,True,False,-8.389662099999999,-74.5336841
+ChIJJzPwYAnIBZERe_L74vNIZA0,Mm Equipos y Gases S.A.C.,2.5,2,"Av. Angamos 1628, Surquillo 15048, Peru",(01) 2429774,,True,True,False,-12.112941,-77.01458
+ChIJK0bOmGK9o5ERuq47ks9TECU,Clínica Santa Anita Pucallpa,0.0,0,"Número 737, Saenz Peña, Pucallpa 25000, Peru",965 916 040,https://www.paginasamarillas.com.pe/empresas/clinica-santa-anita-pucallpa/pucallpa-80638662,True,True,False,-8.376249699999999,-74.5348568
+ChIJK6gCKeVKQpEROHEbQOs7B_I,Mifarma,0.0,0,"Clorinda Matto de Turner B-62, Cercado De Arequipa 04001, Peru",(054) 202044,http://www.mifarma.com.pe/,True,False,False,-16.4159363,-71.5340547
+ChIJK8gIjtx145MROwCXorL5jhg,Equivid,5.0,3,"Av Melchor Pérez de Olguín, Cochabamba, Bolivia",4724772,,True,True,False,-17.3773357,-66.1761434
+ChIJK_mp0MtLQpERHBAJfuiZ4yI,OXYTEX SAC,0.0,0,"Jirón Santa Catalina Manzana 29 Lote 8, Arequipa 04001, Peru",(054) 445243,https://www.paginasamarillas.com.pe/empresas/oxytex-sac/arequipa-80620677,True,True,False,-16.3981581,-71.5308508
+ChIJKcqawvFaspERQ8K6t-j0th0,Mifarma,3.9,7,"Av Hoyos Rubio, Cajamarca 06001, Peru",976 267 193,http://www.mifarma.com.pe/,True,False,False,-7.149095,-78.5101425
+ChIJL3HEmsnIBZERSCC1h88m-Ww,Medicdan Import EIRL,0.0,0,"Avenida Emancipación 334, Cercado de Lima 15001, Peru",,,True,False,False,-12.0472727,-77.03575459999999
+ChIJLU1MFVxKQpERJxa90wO2Ta8,J K,0.0,0,"Av. Garaycochea 210, Yanahuara 04013, Peru",979 764 927,,True,True,False,-16.3979557,-71.5441469
+ChIJLf2u1ChPe5ERCf4XfcjQvm0,OMNILIFE PUERTO MALDONADO,4.0,9,"Av. Leon Velarde 345, Puerto Maldonado 17001, Peru",926 171 571,,True,False,False,-12.5947609,-69.1774646
+ChIJMSBZrXPHBZERMpOfs8kdY8g,Oxigeno Yata E.I.R.L.,4.5,2,"Sta Rosa N°585, Ate 15022, Peru",998 790 116,,True,False,False,-12.0689584,-76.980211
+ChIJMWbiLm7JBZERamfEs_UtKIY,Jedissa Distribuidora Medica,5.0,1,"Interior 301, Jirón Moquegua 628, Cercado de Lima 15001, Peru",(01) 4238952,http://www.jedissa.com.pe/,True,True,False,-12.0464772,-77.0393986
+ChIJMynfVv_JBZERwxbLTW9UBtk,Boston Medical Group,0.0,0,"Calle Fray, Calle Martin de Murúa N° 150, San Miguel 15088, Peru",(01) 7070334,https://bostonmedical.com.pe/,True,False,False,-12.076369,-77.0910773
+ChIJNQ5_R9SUTJARQCe6m7xfJDs,Mifarma,2.5,2,"Carmona, Ferreñafe 14311, Peru",,https://www.mifarma.com.pe/,True,False,False,-6.6395129,-79.7885282
+ChIJNWhEDwLFBZERJiqW_z6Oc_E,Centro de salud ancieta baja,0.0,0,"Precursores 181, Cercado de Lima 15006, Peru",,,False,True,False,-12.03189,-77.00759409999999
+ChIJN_Vcx-hPe5ERRsowCb_L5Js,Mifarma,4.7,3,"2 De Mayo 749, Puerto Maldonado 17001, Peru",,http://www.mifarma.com.pe/,True,False,False,-12.5926288,-69.18260769999999
+ChIJO48zEuDuTJARu0GPlDk16Bc,OMNILIFE,4.3,78,"Av. Salaverry 760, Chiclayo 14009, Peru",(074) 223744,http://www.omnilife.com/,True,False,False,-6.7700982,-79.8528576
+ChIJORezBu5LQpER-tpqcdb2vHg,Omnilife & Seytu Distribuidor independiente Autorizado,0.0,0,"Salaverry 113, Arequipa 04001, Peru",928 953 068,https://portal.omnilife.com/registro-cliente?distributor_code=511102934MBM&country_code=MEX&lang=es,True,False,False,-16.4070958,-71.5389323
+ChIJOw5CSZ8SqZERPlPsJgvkHEI,Hospital II Huaraz (Essalud),2.9,18,"Sarita Colonia, Huaraz 02002, Peru",(043) 422940,http://www.essalud.gob.pe/,True,False,False,-9.4934694,-77.53811689999999
+ChIJOxCHChFLQpEREJyz-YBbcoc,OMNILIFE SEDE AYACUCHO,1.0,1,"Av. Javier Pérez de Cuéllar 348, Jacobo Hunter 04011, Peru",,https://portal.omnilife.com/cedis/ayacucho,True,False,False,-16.4245469,-71.5445864
+ChIJOzET8lvFBZERLFmccmeQgQs,Hospital San Juan de Lurigancho,3.2,88,"Av. Canto Grande, San Juan de Lurigancho 15423, Peru",(01) 3886513,http://www.hospitalsjl.gob.pe/,False,True,False,-11.9662383,-77.00351979999999
+ChIJP-wa4oTJBZERyPJRoOBdp78,Alquimedic,3.8,4,"Alfredo Novoa Cava 253, San Miguel 15088, Peru",916 928 252,http://alquimed.blogspot.pe/,True,True,True,-12.0738748,-77.091047
+ChIJPU0mtJYWrZER3XYse7sQNgQ,Hospital De Laredo,3.3,3,"Antenor Orrego, Laredo 13101, Peru",,,True,False,False,-8.0859659,-78.9570756
+ChIJPZIJcpriEJERfywwwErUW1M,Clinica De Ica del Dr Julio Tataje Barriga,3.5,15,"Av Conde de Nieva 360, Ica 11001, Peru",(056) 601224,http://www.indicaperu.com/Empresas.php?IDE=1050&IDC=11&IDSC=2&IDSCS=0,True,False,False,-14.0734598,-75.7248839
+ChIJQRKCJQjWbZERCkAEG8uALvg,OMNILIFE SEDE CUSCO,4.6,17,"Av. de La Cultura 700, B 08000, Peru",971 096 187,http://www.omnilife.com/,True,False,False,-13.5215417,-71.96604959999999
+ChIJQUhUh-edRJERu_JpJFbkw1k,MEDICAL MOQUEGUA,5.0,1,"18001, Moquegua 18001, Peru",949 176 264,,True,False,False,-17.1861246,-70.932389
+ChIJQXX4cw-5BZER3hgd5-E31YI,Dafi Salud,3.5,18,"Loma De Las Amarilis 117, Santiago de Surco 15039, Peru",955 950 996,,False,True,False,-12.1478658,-76.98444959999999
+ChIJQ_j1UJ09rZERNuK4eLTd6BE,Mi Farma,2.0,2,"Av. España 24, Trujillo 13001, Peru",,http://www.mifarma.com.pe/,True,False,False,-8.1160931,-79.0257981
+ChIJQzmdH4TOBZERpc7BPQeRBJM,OXÍGENO Y SERVICIOS LIMA NORTE S.A.C,1.0,2,"Av. Bocanegra, San Martín de Porres 15108, Peru",991 898 215,,True,True,True,-12.0047819,-77.0953459
+ChIJRzbVBVKWDpERTqAFkUqYT-8,Mifarma,0.0,0,"Jr. Cajamarca 262, Huancayo 12000, Peru",,https://www.mifarma.com.pe/locales/,True,True,False,-12.0716995,-75.2065155
+ChIJS2LI3UPHBZERB7zwTeQzDuU,Dade Medical Peru S.A.C.,3.0,1,"Quito 193, La Molina 15026, Peru",993 153 442,http://www.dademedicalperu.com/,True,False,False,-12.0708329,-76.94035559999999
+ChIJS7JCaCADbZER6WysXce34lU,Centro Médico San Borja,3.5,2,"Jr. Huancavelica, Abancay 03001, Peru",(083) 322560,,True,True,False,-13.6312336,-72.8773101
+ChIJS8GC2sHiEJERtm_wLa4tm7w,ECOMEDICA 4D,1.0,1,"Av. José Matias Manzanilla # 830, Ica 11004, Peru",(056) 232368,,True,False,False,-14.0664566,-75.7407899
+ChIJSQfkBlBKQpERVgn5tHh6a4s,Omnilife Arequipa Dist. Independiente,4.3,4,"Ibanez 208, Arequipa 04001, Peru",955 580 581,https://empresario.omnilife.com/pe/arequipa/arequipa/arequipa/eder-choquehuayta-cayllahua/omnilife,True,False,False,-16.4098789,-71.5384282
+ChIJSROdnnoQSpARSBebVno8atE,Clínica Galeno,4.0,2,"20002, Peru",,,True,False,False,-5.1883291,-80.62328219999999
+ChIJSSi4kURKQpERaqcr_9sxtxU,Omnilife,4.0,110,"Av. Ejercito 298, Yanahuara 04017, Peru",(061) 452000,http://www.omnilife.com/,True,False,False,-16.391616,-71.5415764
+ChIJST0AHuXRBZERE42ni66Zd9I,Hospimedica International S.A.C.,0.0,0,"Av. Virgen del Carmen 388, Lomas De San Diego, Lima 15113, Peru",(01) 5400120,http://www.hospimedicaperu.com/,True,False,False,-11.948352,-77.0887602
+ChIJSUm1x3a5BZERz2FXybKVd9w,Plantas de Oxígeno Oxicab,0.0,0,"Av. Solidaridad No. 140, Villa EL Salvador 15816, Peru",947 358 852,https://www.facebook.com/PlantasDeOxigeno.Oxicab,True,False,False,-12.1904775,-76.94111540000002
+ChIJSZ2Vg0_JBZERCrQM2zFiVdo,Meditronic Corporation SRL,0.0,0,"Jr. Emilio Althaus 109, Lince 15046, Peru",(01) 2655631,http://meditronic.net/,True,False,False,-12.0807558,-77.0359977
+ChIJSf6ghMnIBZERpQk1oE4TOYk,Kendal Import Sac,1.3,3,"JR, Manoa 244, Breña 15082, Peru",(01) 7481020,,True,False,False,-12.0471323,-77.03593959999999
+ChIJSyoWXDfOBZERrlHXFfwXL_c,Clinicor,4.5,22,"Av. Alfredo Mendiola 5515, Cercado de Lima 15304, Peru",999 000 203,https://clinicaclinicor.com/,True,False,False,-11.9709889,-77.06764299999999
+ChIJT0YvbBIOM5ARVI8L4-_fYRk,Equipos Medicos y Suministros,0.0,0,"Calle Chile, Machala, Ecuador",099 974 8182,http://www.equimedicosec.com/,True,False,False,-3.2769998,-79.9379975
+ChIJT36-t6YZSpARbcVj9cFW10M,Clinica Villa Salud - Catacaos,5.0,1,"Alejandro Taboada 329, Catacaos 20006, Peru",,,False,True,False,-5.2667965,-80.6728109
+ChIJT4j0IRM9rZER831aFmJw6AQ,Universidad César Vallejo,4.2,168,"Av. Larco 1770, Trujillo 13001, Peru",(044) 485000,https://www.ucv.edu.pe/,True,False,False,-8.1293904,-79.0433213
+ChIJTRI5cLnJBZERKh8JcJyPvM0,Oxitecni SAC,3.0,2,"Av Maximo Abril 506, Lince 15072, Peru",998 339 578,https://www.paginasamarillas.com.pe/empresas/oxitecni-sac/jesus-maria-598478,True,True,False,-12.0701285,-77.03949209999999
+ChIJTUPFKOjPBZERN4uXDzFc0fU,OXIGENO VIDA NOVA,0.0,0,"jr. cusco 3687 san martin de porres Gobierno Regional de Lima LIMA, San Martín de Porres 31, Peru",960 314 150,,True,True,False,-12.0348862,-77.0895817
+ChIJU4DcPtl145MRWBUTi_XUj_c,Medismath,5.0,1,"Calle Venezuela # 760 entre Antezana y, 16 de Julio, Cochabamba, Bolivia",78331056,,True,True,False,-17.388246,-66.1523891
+ChIJUS4FPe5LQpERKgRI1baWk1w,Oxisalud,0.0,0,"Calle, Malecón Zolezzi 379, B 04006, Peru",941 622 996,,True,True,False,-16.40158,-71.5138874
+ChIJUUFyzNUNqZEROUXSIzI4ICY,Mifarma,4.0,1,"Av. Mariscal Toribio de Luzuriaga 591, Huaraz 02001, Peru",929 498 334,https://www.mifarma.com.pe/,True,False,False,-9.527889499999999,-77.52887369999999
+ChIJUXeDMZE9rZERm4gCAuwM96A,Tienda Omnilife,4.4,96,"Av. Nicolás de Piérola 844, urb, Trujillo 13007, Peru",(044) 208662,,True,False,False,-8.1016313,-79.03578329999999
+ChIJUcdrln3PBZER6gyud8OD5AE,Global Business Healthcare SAC,0.0,0,"12 De Octubre con, San Martín de Porres 15108, Peru",965 695 895,http://www.gbh.com.pe/,True,True,False,-11.9959913,-77.0930502
+ChIJUf9QqvnvTJARMhfArMxatt8,Mundo Clinico SRL,5.0,1,"Av Sáenz Peña 853, Chiclayo 14001, Peru",(074) 491712,,True,True,False,-6.771057099999999,-79.8362846
+ChIJVQipSbw9rZERQ9Zvj_BzK1A,Mifarma,4.0,1,"Av Mansiche 500, Trujillo 13001, Peru",,http://www.mifarma.com.pe/,True,False,False,-8.1018476,-79.0452307
+ChIJVSIgCOttLZAR6raK2LfrZAQ,Glomedical,0.0,0,"Las Vitrinas, 10, Piso:1 090512, Guayaquil 090512, Ecuador",(04) 239-8751,http://www.glomedicalecuador.com/,False,True,False,-2.1730457,-79.90032269999999
+ChIJVV_71-_IBZERZJ8_RhJ5i3Q,Hospital a Domicilio,4.4,25,"Av Cuba 690, Jesús María 15072, Peru",(01) 3322996,http://www.hospitaladomicilio.com/,True,True,False,-12.0748586,-77.04268929999999
+ChIJVe4f9TXP-5MRwy4IAGiaSMQ,IMPORTADORA TAMIVA SUC - SUCRE,1.0,1,"Loa, Sucre, Bolivia",66453000,http://www.importamiva.com/,True,False,False,-19.045943,-65.26177969999999
+ChIJW3oNpId9EpERbQi5DptJPZM,Mi farma,0.0,0,"Portal Constitucion 3, Ayacucho 05003, Peru",,https://www.mifarma.com.pe/locales/,True,False,False,-13.1606184,-74.2263704
+ChIJWdpaZiXvTJARPtSZ1FC6vQg,CLINICA NOA S.A.C.,5.0,2,"La Florida 348, Chiclayo 14008, Peru",(074) 233065,https://www.facebook.com/yeny.noa,False,True,False,-6.780268,-79.8414937
+ChIJWzHoiojJBZERERkpGu-1j5g,ETRAMED IMPORT S.A.C.,0.0,0,"Jr, Jirón Ucayali 536, Cercado de Lima 15001, Peru",997 387 458,http://www.etramedimport.com/,True,True,False,-12.0452128,-77.0380807
+ChIJX7sgYt1LQpERiRNygDy0Qsk,Boston Medical Group,4.6,9,"Avenida Lima 100 Esquina con Avenida Ejército Oficina 504 – Edificio Nasya II Arequipa, Yanahuara 04013, Peru",(01) 7070334,http://bostonmedical.com.pe/,True,False,False,-16.3924078,-71.5410983
+ChIJXyVHTP9bspER9vJDIwS7lwE,OXICAX,3.5,2,"Calle Sta. Beatriz 185, Cajamarca 06003, Peru",,,True,False,False,-7.180700899999999,-78.49152529999999
+ChIJYUCkbCXvTJAREbC2sMBbWA8,CLINICA CHICLAYO,3.6,12,"La Av. Sta. Victoria Consultorio N°02 GineSalud-Flebolsalud Dr. Henry Romero H, Florida 225, Chiclayo 14008, Peru",(074) 209590,,True,True,False,-6.7799144,-79.8422166
+ChIJYd7GPRsNqZERUfK3XUAifnw,Victor Ramos Guardia Hospital,3.0,30,"Av. Mariscal Toribio Luzuriaga 1248, Huaraz 02001, Peru",(043) 487120,https://hospitalvrg-hz.negocio.site/,True,False,False,-9.5345435,-77.529338
+ChIJZ5CRzeRKQpERsK2tPb25hKs,General Hospital Honorio Delgado Espinoza,3.2,28,"Alcides Carrión, Arequipa 04002, Peru",(054) 234597,http://www.hrhdaqp.gob.pe/,True,False,False,-16.415557,-71.533022
+ChIJZYflZzhbspERCc5dDMF64jc,Regional Hospital of Cajamarca,3.7,45,"Av Larry Jhonson, Cajamarca 06003, Peru",(076) 822414,http://www.minsa.gob.pe/,True,False,False,-7.183354599999999,-78.48782609999999
+ChIJZwUcZtHVbZERYqMYetskwe0,Punto Azul Av. Garcilaso,4.8,5,"Av. Garcilaso 420, Cusco 08002, Peru",(084) 260032,http://www.representacionespuntoazul.com/,True,False,False,-13.5228187,-71.9701158
+ChIJZzSgE9juTJARi_SG5_NV8DE,Mi Farma,4.3,3,"Vicente de la Vega 556, Chiclayo 14001, Peru",(074) 205419,http://www.mifarma.com.pe/,True,False,False,-6.770311599999999,-79.84203049999999
+ChIJ_6fumdfFBZER7Q5VIZ-4jQ8,MONTOYA GASES S.A.C.,0.0,0,"Gobierno Regional de, Av. Malecón Checa Lote 5, San Juan de Lurigancho LIMA 36, Peru",987 658 244,http://www.montoyagases.com/,True,True,False,-12.0245157,-76.9733676
+ChIJ_Yp7FRzJBZERfeU_ZnY8Xzc,Grupo Ingeniería Médica,0.0,0,"Tienda 319, Centro Comercial Bolívar, Av. Simón Bolivar 850, Pueblo Libre 15084, Peru",,http://www.hyperlifegroup.com/,False,True,True,-12.0713829,-77.0607869
+ChIJ_dUGLXnjEJERNvT5zUQ9ksE,Clinica Medica San Martin,0.0,0,"Av San Martin con, Ica 11000, Peru",,,True,False,False,-14.0695014,-75.72925300000001
+ChIJ_fhLjv_IBZERstxsnHAOniQ,Clinica San Felipe,3.8,141,"Av. Gregorio Escobedo 650, Jesús María 15072, Peru",(01) 2190000,https://www.clinicasanfelipe.com/,False,True,False,-12.0859785,-77.0544583
+ChIJa0PN4MvIBZERXpoZKCSB0ZM,J & S Importaciones Medilab E.I.R.L.,0.0,0,"Avenida Emancipación 531, Cercado de Lima 15001, Peru",(01) 4246278,,True,False,False,-12.0463337,-77.0378714
+ChIJa8ZRT0fzZ5ERaPh7zIp6udo,ZOE MEDIC S.A.C.,0.0,0,"Jr. 9 de Diciembre # 254, Juliaca 21102, Peru",930 965 988,https://zoe-medic-sac.negocio.site/?utm_source=gmb&utm_medium=referral,True,True,False,-15.4963261,-70.1324226
+ChIJaYK1iEysKIQR16PgF_Thd_U,OxiHome,4.0,16,"Av Patria 3135, Rinconada de la Calma, 45080 Zapopan, Jal., Mexico",33 3632 9910,https://oxihome.com.mx/,True,False,False,20.6308916,-103.4075401
+ChIJad_x2sq5BZERxF5lODHErcc,G&K Medical Oxigen,0.0,0,"Ariadna 180, Santiago de Surco 15054, Peru",990 090 553,https://gkmedicaloxigen.wixsite.com/gkmedicaloxigen,True,True,True,-12.1620504,-76.994535
+ChIJby8KGIvJBZERu80ohsG-ylY,Oxigeno Alva Natur,0.0,0,"Jr. Pilcomayo 631, Cercado de Lima 15083, Peru",(01) 3301955,http://www.oxigenoalvanaturperu.com/,True,False,True,-12.0588522,-77.05601460000001
+ChIJcbsp63vJBZERAsEMUu8N6XQ,Oximedic SAC,3.8,5,"Av. Rafael Escardó 193, Lima 15087, Peru",(01) 5780646,http://oximedic.com/,True,True,False,-12.0816184,-77.09537
+ChIJcyIq6oQ9rZERjvblfb5K5W4,GRUPO BIOMEDICA,0.0,0,"Jirón Miguel Grau 345, Trujillo 13007, Peru",933 023 557,http://www.grupobiomedica.com.pe/,True,False,False,-8.1158475,-79.0268263
+ChIJcyQwm-AhX5ERlYznEBKdd9A,VISION MEDICA Rayos X ; Oxigeno Medicinal,5.0,5,"Miraflores, Edif Campanini1602, Av. Pasoskanki esquina Cuba, La Paz, Bolivia",2 2224790,https://vision-medica-rayos-x-oxigeno-medicinal.negocio.site/,True,False,False,-16.4978644,-68.1203264
+ChIJcz5ffKfJBZER-BhzaygojeA,La PeluQuequería,4.6,10,"Jirón Arequipa 301, Magdalena del Mar 15086, Peru",994 412 404,https://www.facebook.com/lapeluquequeriavip/,False,True,False,-12.0875823,-77.0715175
+ChIJd4d8qfXGBZER1IonNPrwZgU,Oxitec S.A.C.,1.0,1,"Urb. Industrial El Artesano, Los Ebanistas Nº 162, Ate 15023, Peru",999 040 234,http://www.oxitecsac.com/contactenos/,True,False,False,-12.0622261,-76.96362719999999
+ChIJdcO5DOzFBZERy9Xpj2qJ5fM,"MEDIGASES CORONA, Venta y Recarga de Oxigeno Medicinal, Balones de oxigeno, Humidificador de oxigeno, oximetro",1.0,1,"int. 8, Av. Proceres de la Independencia 2800, San Juan de Lurigancho 15431, Peru",987 216 770,https://sites.google.com/d/1M8UZ6sgzTuKRa82oM3EDYEz9UgAANsG5/p/1Y7x4mLTurqJ161ogjoHDp6Rp10T115Zd/edit,True,True,True,-11.9847184,-77.00651730000001
+ChIJe-FNhWDJBZERy5c8bkdlQPo,oxigeno hinostroza,0.0,0,"Av. Miguel Grau, El Agustino 15003, Peru",998 346 089,,True,False,True,-12.0578231,-77.0212363
+ChIJe2ynWbtyLZARfsPPwDU3mYE,OXIGENO S.A,3.0,2,"MERCADO, Guayaquil 090605, Ecuador",(04) 226-0090,,False,True,False,-2.1262873,-79.9313183
+ChIJe5v963BLQpERfvHbHMjEPoI,S.S.I. Industrial,5.0,1,"Francisco Mostajo 502, Yanahuara 04017, Peru",940 186 389,https://www.paginasamarillas.com.pe/empresas/ssi-industrial/arequipa-80643815,True,False,False,-16.3886929,-71.5447314
+ChIJeW7UTgY9rZEREZhRoSrPZWQ,Boston Medical Group,5.0,4,"Av. Víctor Larco Herrera N° 475, Ed. Larco Urb, Trujillo 13008, Peru",(01) 7070334,https://bostonmedical.com.pe/,True,False,False,-8.1193787,-79.03415749999999
+ChIJewuVEnkXrZERj9Tf_zMb_wM,Consultorio Médico López Marquina,0.0,0,"Calle Manuel Ubalde 1116, Distrito de Víctor Larco Herrera 13006, Peru",(044) 402036,,True,False,False,-8.087302,-79.0044472
+ChIJeyc_DvRHy5ERL_5kmlvUx5Y,Oxiwest Oxygen Factory,4.0,4,"Loja, Ecuador",(07) 272-1720,,True,False,False,-3.9933654,-79.1816784
+ChIJf1y6vkaWDpERKEP_g4LAdn0,INKAFARMA,4.0,1,"AV. HUANCAVELICA NRO. 398 (CERCADO, Huancayo 12004, Peru",,http://www.inkafarma.pe/,True,False,False,-12.0652847,-75.2175879
+ChIJfWeoiV6XDpERTt9G9hrNkZ0,Mifarma,0.0,0,"Pj Andalucita 106, Huancayo 12000, Peru",,https://www.mifarma.com.pe/locales/,True,True,False,-12.0709962,-75.2043084
+ChIJfeO6H8DFBZERIOEh8ZcZ2B8,OXIGENOS CAMPOY SAC,0.0,0,"Leoncio Prado, Cercado de Lima 15007, Peru",987 658 244,https://es-la.facebook.com/oxigenocampoy/,True,False,False,-12.0359064,-76.9946446
+ChIJg70EswIRSpARsw0MFuPrxd8,Boston Medical Group Piura,5.0,3,"Av. Ramón Mujica N° 108 Of. 606 Urb. El Chipe - Centro Empresarial Paseo Mega Urb. El Chipe Centro Empresarial Paseo Mega, Piura 20009, Peru",(01) 7070334,http://www.bostonmedical.com.pe/,True,False,False,-5.1812001,-80.6311928
+ChIJgcS0NPJKQpERZSGiEEBPMyA,Atlas Copco POWER,4.8,4,"Psje. Martinetti 129, Arequipa 04001, Peru",(054) 211312,http://www.power.com.pe/,True,False,False,-16.4132572,-71.54461429999999
+ChIJgfAN03B045MRV8UYPZa_zPQ,IMPORTADORA TAMIVA CBBA,5.0,2,"Villa De Oropeza, Cochabamba, Bolivia",4 4408271,http://www.importamiva.com/,True,False,False,-17.3873834,-66.17475739999999
+ChIJgzEfnBANqZER82C_4tIALe8,CENTRO DE MEDICINA ESTÉTICA PENARANDA - LASER LIPOESCULTURA,1.0,2,"Jirón 28 de Julio 333, Huaraz 02001, Peru",(043) 423719,http://www.amarillasinternet.com/esteticapenaranda,True,False,False,-9.5305705,-77.5314435
+ChIJhcGNjnzXbZEReL0rMH1A95c,MiFarma,0.0,0,"Mantas 132, Cusco 08002, Peru",,http://mifarma.com.pe/,True,False,False,-13.5177214,-71.9791034
+ChIJi4rrskNKQpERdtO9yYAsKDs,Mifarma,1.0,1,"Av. Ejercito 700, Yanahuara 04013, Peru",(054) 202044,https://www.mifarma.com.pe/,True,False,False,-16.3901893,-71.5455731
+ChIJiXXRc3M9rZERHOpcUYiJdr8,OxÍgeno Narva Gases,5.0,1,"Av América Sur 4171, Trujillo 13001, Peru",(044) 271892,,True,False,False,-8.1227065,-79.0395936
+ChIJiaJP93sQSpAR3M1nsniMsqE,Mifarma,3.8,5,"1B, Piura 20001, Peru",955 215 862,https://www.mifarma.com.pe/,True,False,False,-5.193010900000001,-80.626401
+ChIJj7TSuP41QpERxCtAgJlP-5U,Praxair,2.5,6,"cementerio cerca de, Los Jardines, Arequipa 04017, Peru",,,True,False,False,-16.3671567,-71.57688399999999
+ChIJjQyjzUC4BZER1MZPVvwPFDo,Alquimedic Sac,4.6,38,"Calle los Girasoles 58 Mz f lote 33, San Juan de Miraflores 15056, Peru",983 734 380,https://alquimedic.pe/,True,True,False,-12.1611206,-76.98348349999999
+ChIJk4cDgME9rZERiZpu4QU6osE,Aba-C Oxígeno E.I.R.L.,0.0,0,"Urb. Huerta Grande, Mz J – Lt 14, Trujillo 13006, Peru",(044) 250750,https://www.paginasamarillas.com.pe/empresas/aba-c-oxigeno-eirl/la-libertad-80628685,True,True,False,-8.102360599999999,-79.0257718
+ChIJkS2izbzHBZERGVqWlUt1-Ao,Boston Medical Group,0.0,0,"Calle Los Tulipanes 147 Of 901 Urb, Santiago de Surco 15023, Peru",(01) 7070334,https://bostonmedical.com.pe/,True,False,False,-12.1003609,-76.9706459
+ChIJkV_YzVBKQpERKoZ37W1N388,Botica Dental,0.0,0,"Of. 102, Calle Jerusalén 132-B, Cercado De Arequipa 04001, Peru",(054) 283203,,True,False,False,-16.3981526,-71.5346881
+ChIJka9V_Iqa1ZER6k8KI8cTJuw,Glomedical,3.7,3,"Manuela Saenz N34-259 y, Quito 170509, Ecuador",099 195 1725,http://glomedicalecuador.com/,False,True,False,-0.1810093,-78.49561510000001
+ChIJkci9TQnHBZERaBMmSaVVofE,Oxigeno Medicinal - Alquiler,0.0,0,"Sarto 272, Surquillo 15038, Peru",985 645 153,,True,True,True,-12.1137537,-76.99701209999999
+ChIJl3yfrjQhX5ERHyS9p3_6ypU,OXIMED,0.0,0,"Calle 21 8446, La Paz, Bolivia",2 2917565,http://www.oximedbolivia.com.bo/,True,True,False,-16.5441134,-68.07707959999999
+ChIJl6CMwifEBZER-ScNEsAnd1I,Clinica Municipal De Santa Anita,3.2,60,"Jirón San Pablo S/N, Santa Anita 15011, Peru",(01) 6371438,http://www.munisantanita.gob.pe/,False,True,False,-12.0355346,-76.9518306
+ChIJlRg4YLXWBZERqOvbYnfITZU,Hospital Carlos Lanfranco La Hoz,3.4,52,"Av. Sáenz Peña s/n, Puente Piedra 15118, Peru",(01) 5482010,http://www.hcllh.gob.pe/,False,True,False,-11.8628121,-77.0793757
+ChIJlRlaIVmpWpERDGK3x86B9bI,North Kine Centro Kinésico,5.0,2,"Av. Senador Luis Valente Rossi 2463, Arica, Arica y Parinacota, Chile",(58) 227 7892,http://www.northkine.cl/,True,False,False,-18.4926767,-70.29144029999999
+ChIJlUS2EMdLQpERwj_PnrTCwp4,Mifarma,0.0,0,"5, Elías Aguirre 304, Miraflores 15074, Peru",,https://www.mifarma.com.pe/,True,False,False,-16.4014333,-71.5166478
+ChIJldMWeoEaSpARRakt-UuEJuc,Apoyo Medico,3.7,82,"Av. Grau 1078, Piura 20001, Peru",939 379 637,http://apoyomedico.pe/,True,True,False,-5.194003899999999,-80.6357909
+ChIJm72_dOjVbZERyZElZf2SFjM,Traveler's Medical Clinic O2 Network,3.9,77,"Calle Bellavista C-11 Residencial, Huancaro, Cusco 08000, Peru",(084) 221213,http://www.o2medicalnetwork.com/,True,False,False,-13.534035,-71.974099
+ChIJmRZ0b8zIBZERkj_XfQO4YTE,Ind. Gamboa S.R.L.,5.0,1,"Avenida Emancipación 781, Cercado de Lima 15001, Peru",(01) 3307995,,True,False,False,-12.0451781,-77.04023889999999
+ChIJmzfhggQ7t5ERlXWT3nYpJiE,Mifarma,5.0,2,"Jiron Alonso de Alvarado 780, Moyobamba 22001, Peru",,http://www.mifarma.com.pe/,True,False,False,-6.031712499999999,-76.9732181
+ChIJn4bZ1sARSpARG-LdRKwzNdU,Elvi Cosmetic,0.0,0,"Urb el bosque Manzana Ch Lote 20, 20002, Peru",942 185 086,https://www.facebook.com/Elvi-Cosmetic-416269972251745/,False,True,False,-5.1871847,-80.612577
+ChIJnSfX80iXDpERiaue4EUFfcU,EMERGER,0.0,0,"Av. Ferrocarril 873, 12003, Peru",923 676 289,https://www.facebook.com/clinicaemergerhuancayo,False,True,False,-12.0847235,-75.2128577
+ChIJo9IdU9XVbZERJA6u0sdHO4Y,Diagnos Cusco,0.0,0,"A. de la cultura Nº1320 Frente al hospital Regional, Cusco 08000, Peru",944 326 208,https://diagnoscusco.com/,False,True,False,-13.5247292,-71.95605309999999
+ChIJo9qilPzVbZERIMtGbk1Qqh8,Oxicusco,3.3,31,"Av. Huayruropata 1222, Cusco 08002, Peru",(084) 253434,http://www.oxicusco.com/,True,False,False,-13.5261168,-71.96206430000001
+ChIJoVO7g-LPBZERv7d8l2bHn20,Clinica María,4.3,6,"Conray Grande 4844, Los Olivos 15304, Peru",(01) 5233553,,False,True,False,-11.9794925,-77.0804888
+ChIJoanV69NLQpERoLdmdB0NT3A,Clínica del Dolor AQP&OZONOTERAPIA MÉDICA,0.0,0,"Av. José Abelardo Quiñones, Arequipa 04013, Peru",953 776 212,,True,False,False,-16.3973726,-71.5467141
+ChIJowypuSbvTJARAbXGG3_9yBU,Oncorad,5.0,2,"Av José Leonardo Ortiz 423, Chiclayo 14001, Peru",(074) 225437,http://unidadoncologica.com/,False,True,False,-6.7753782,-79.84551499999999
+ChIJp5dJIAKQ1ZERc3RojgEdsU0,Oxi Salud Cía. Ltda.,1.0,1,"Parkenor bodega # 99, Av. Galo Plaza Lasso N 69-24, Quito 170307, Ecuador",(02) 248-2707,http://www.oxisalud.com.ec/,True,False,False,-0.1095334,-78.4774012
+ChIJpewMdrlpXZERrbvze40TwmI,Ortopedia La Muleta,5.0,1,"Juli N° 201, C 21000, Peru",924 993 402,https://web.facebook.com/Ortopedialamuleta/,True,True,False,-15.8414371,-70.0211644
+ChIJq3JfCzohX5ERfhLGtnTZ3uI,Oxivitalsur,5.0,1,"Av. Montenegro #1448, Edificio La Promotora, San Miguel - Calacoto, La Paz, Bolivia",2 2793973,http://www.oxivitalsur.com/,True,True,False,-16.540656,-68.079183
+ChIJq4DMXCjvTJARIo8d7uy_FOg,Auna Servimédicos,3.9,25,"Manuel María Izaga 621, Chiclayo 05174, Peru",(074) 221945,http://auna.pe/servimedicos/,True,True,False,-6.7730846,-79.83930769999999
+ChIJq4YI0PGdRJERs6w5HVXxNlI,OMNILIFE SEYTÚ,5.0,2,"Mz i Lt 6, Moquegua 18001, Peru",950 311 109,http://empresario.omnilife.com/pe/moquegua/ilo/950311109/hiwett-mamani-cutipa/omnilife/,True,False,False,-17.1893876,-70.9408409
+ChIJq6l9GcJLQpEREe8EDKGY-Ek,Linde,0.0,0,"Pje Tupac Amaru, Arequipa 04004, Peru",(044) 241452,http://www.linde-gas.pe/es/contact/contact.html,True,False,False,-16.3722586,-71.5020273
+ChIJq6o61wPIBZER-waY4BgROAQ,Medical & Health,4.0,2,"Av. Alfredo Benavides 1579, Miraflores 15048, Peru",965 768 524,http://www.medicalvisaperu.com/,True,True,False,-12.1262406,-77.0164585
+ChIJqVEiX3cgX5ER0QsfY532g3o,Oximed,4.3,4,"76522595, Calle Boqueron 591-2) 2-484992 2-491279, Calle Boquerón, La Paz, Bolivia",2 2484992,http://www.oximedbolivia.com.bo/,True,False,False,-16.5035547,-68.13773069999999
+ChIJqYIPZrjJBZERwFnXiHkD3hg,Femesa Oxigeno Medicinal,4.6,5,"Jr. Uchuzama MZ.A – LT 3 Lima, Cercado de Lima 15018, Peru",(01) 4748797,https://www.paginasamarillas.com.pe/empresas/femesa-oxigeno-medicinal/lima-80631612,True,False,False,-12.057872,-77.013555
+ChIJqZBVxbpmEJERj8XBE9HHLt4,Praxair,5.0,3,"Carr. Panamericana Sur 6, Buena Vista 11600, Peru",,,True,False,False,-13.7839283,-76.1660385
+ChIJrQ2Qm-Y9rZERNibD21k4FPA,LabPeru Health Eirl,0.0,0,"OF 206, Av Antenor Orrego MZ C LT 1, Trujillo 13001, Peru",918 190 360,https://www.facebook.com/labperuhealth,True,False,False,-8.1169195,-79.0448469
+ChIJrxh2YHK4BZERt4DCdBej8YI,Clinica Caminos Del Inca,4.2,6,"Avenida Caminos Del Inca, 2600 Santiago De Surco, Distrito de Lima 15039, Peru",(01) 2780054,,False,True,False,-12.1378834,-76.9843497
+ChIJs-G0WD7FBZERF-5R0eHMpd0,Oxihen-Oxigeno-Equipos,1.0,1,"Angamos, Cercado de Lima 15438, Peru",923 982 287,,True,True,False,-11.9799108,-76.98985979999999
+ChIJs2eoOPzVbZERCMIoN6LuXHs,HOSPITAL ADOLFO GUEVARA VELASCO - ESSALUD,3.7,61,"direccion exacta, Cusco 08002, Peru",(084) 234724,http://www.essalud.gob.pe/hospital-nacional-adolfo-guevara-velasco-del-cusco-celebra-29-anos-de-creacion/,False,True,False,-13.5254125,-71.9597694
+ChIJs5O1dmkYzZERGkRry4KW0ss,Glomedical,3.7,3,"Work Center, 503, 5, Avenida Paucarbamba, Las Chirimoyas, 1 043, Cuenca 010204, Ecuador",(07) 288-8909,http://www.glomedicalecuador.com/,True,True,False,-2.9090674,-78.9998531
+ChIJsTp3KgyXDpERCs9Uu9SQWpM,Quiropractico San Carlos,0.0,0,"San Antonio, Huancayo 12001, Peru",964 680 784,,True,True,False,-12.0514118,-75.19529109999999
+ChIJseh-gRepWpER_Oj3MMwa88I,Centro Ortopedico Astor,5.0,3,"Benjamin Vicuña Mackenna 518, Arica, Arica y Parinacota, Chile",9 6902 5969,https://centro-ortopedico-astor.negocio.site/?utm_source=gmb&utm_medium=referral,True,False,False,-18.482219,-70.31271149999999
+ChIJt1__kQ6rtpER-U1qkKVTv_4,"Hospital Regional ""Virgen de Fátima"" - Chachapoyas",3.9,50,"Triunfo, Chachapoyas 01001, Peru",(041) 477092,http://www.hospitalvirgendefatima.gob.pe,True,True,False,-6.2312296,-77.8663838
+ChIJt1xa1EmWDpERH6ptgy1486s,Sodimac - Huancayo,3.8,1057,"Av. Ferrocarril N° 146-150 CC Open Plaza, Huancayo 12001, Peru",(01) 2030420,http://www.sodimac.com.pe/sodimac-pe/,True,False,False,-12.0621309,-75.2096174
+ChIJt8IehgnHBZERlOsjDP7N9TQ,Oxigeno y Equipos Medicos,0.0,0,"Mz B, Villa María del Triunfo 15023, Peru",969 702 650,http://www.oxigenoyequiposmedicos.com/index.php?route=information/contact,True,True,False,-12.0987775,-76.96216799999999
+ChIJtZKTvAfEBZERMINrn-llBPs,Hospital de Vitarte - MINSA,3.4,59,"Carr. Central 506, Ate 15491, Peru",(01) 4178042,,False,True,False,-12.0263229,-76.9199496
+ChIJtyKR9CfvTJARQAg9tispffQ,Mifarma,3.0,2,"Av, San Jose 399, Chiclayo 14001, Peru",,http://www.mifarma.com.pe/,True,False,False,-6.7714695,-79.84216459999999
+ChIJu9eZvyQWrZER2UJLJ76WiFo,Oxipur EIRL,5.0,2,"Av. César Vallejo 1640, Trujillo 13007, Peru",(044) 211023,http://www.oxigenonarva.com/,True,True,False,-8.098227699999999,-79.0070934
+ChIJuU2oA1fvTJARkdXeFFgtCsM,Boticas Perú,0.0,0,"Av, Elias Aguirre 250, Chiclayo 14001, Peru",(01) 2067000,http://www.boticasperu.com.pe/,True,False,False,-6.771510999999999,-79.842871
+ChIJvQ_ViI09rZERl2QpzI4FcRQ,Clinica Nor Peruana Trujillo,0.0,0,"Av. América Nte., Trujillo 13001, Peru",,,True,False,False,-8.0980876,-79.03025869999999
+ChIJvSXk15EbSpARffM42hcLXZw,Mifarma,0.0,0,"Prol Miguel Grau 1705, Piura 20001, Peru",955 215 862,https://www.mifarma.com.pe/,True,False,False,-5.1916077,-80.6439692
+ChIJvZhkzWia1ZERuYfMgE9ITQE,Danmartmedical conentradores y tanques de oxigeno Quito Ecuador,3.0,2,"y, Blvd. 9 de Octubre, Av. Quito &, Durán 090312, Ecuador",099 994 5445,http://www.danmartmedical.com/,False,True,False,-0.1940926,-78.4923701
+ChIJvfrNbCXvTJARRMUiemMIGTw,Oxigen and Life - Cámaras Hiperbáricas CHICLAYO,0.0,0,"Clinica Chiclayo, Av. Sta. Victoria 371, Chiclayo 14008, Peru",(074) 231524,https://www.facebook.com/C%C3%A1maras-Hiperb%C3%A1ricas-Chiclayo-Oxigen-and-Life-323177288594560/,False,True,False,-6.779987299999999,-79.8422598
+ChIJw0J2Ftw9rZERq4QsolYJgsE,Clinical Mother of Christ,4.1,20,"Av José Gabriel Condorcanqui N 1397, La Esperanza 13012, Peru",(044) 272955,http://www.clinicamadredecristo.pe/,True,False,False,-8.0798003,-79.0462134
+ChIJw1Q0bpBvLZARUkat5SkllZw,"Oxigeno Medicinal Castillo Alquiler Venta de Oxigeno Medicinal, Recarga de Oxigeno Medicinal Guayaquil, Gases Industriales Ecuador, Venta Reguladores Medicinales, Insumos Médicos, Veronica Castillo",5.0,2,"Ciudadela La Saiba Mz H Villa 1 Sur de Guayaquil, a 3 cuadras del Mi Comisariato de la, Av. Domingo Comín, Guayaquil 090150, Ecuador",098 650 1921,https://ventadeoxigenomedicinalguayaquil.negocio.site/?utm_source=gmb&utm_medium=referral,True,True,False,-2.226091,-79.89262579999999
+ChIJw7v_iFFKQpERhPEwgj3MJmk,Atradisurperu,0.0,0,"Calle Peral 533, Cercado De Arequipa 04001, Peru",987 965 333,,True,False,False,-16.3944662,-71.5310439
+ChIJwQojDkyXDpERNka9e6amFPI,Dr. Edward V. Sarmiento Loayza,0.0,0,"Jr. Lima 710, Huancayo 12001, Peru",964 660 811,https://www.paginasamarillas.com.pe/empresas/dr-edward-v-sarmiento-loayza/huancayo-80627543,True,True,False,-12.0712179,-75.2133604
+ChIJwcUGibs9rZER0WYNRhg1BS8,Mifarma,0.0,0,"Av. América Oeste, Trujillo 13001, Peru",(044) 299900,https://www.mifarma.com.pe/,True,False,False,-8.1022386,-79.0477473
+ChIJxRlq1_J9EpERZ7TQ2ViKb4c,INKAFARMA,3.5,2,"28 de Julio 246, Ayacucho 05003, Peru",(01) 4261899,http://www.inkafarma.pe/,True,False,False,-13.1627238,-74.2269251
+ChIJxZGLjdGXDpER8D8WUsJVLtE,Dental Spa San Antonio,5.0,2,"Av Calmell del Solar 1067, Huancayo 12001, Peru",954 099 868,,False,True,False,-12.0511742,-75.1976672
+ChIJxw6jw-fFBZER9rNRLtIqdng,Corporacion Oxsatel AGC,4.3,11,"Av. 13 de Enero 1887, Lima 15431, Peru",(01) 3946876,http://www.oxsatel.com/,True,True,False,-12.000572,-77.0047489
+ChIJy1_NG42a1ZERgi_MUNHqn3M,MEDIGAS OXIGENO MEDICINAL,5.0,15,"Pesantesco, Quito 170521, Ecuador",098 666 0840,,True,True,False,-0.175896,-78.4961041
+ChIJy60-HzjFBZERfsCeTbiW_2M,Recarga de oxigeno medicinal,3.5,4,"Los rubies 266, Cercado de Lima 15006, Peru",994 226 413,http://www.cruzverde.pe/,True,True,True,-12.0323269,-77.00164149999999
+ChIJy7b_THPCBZERJFicpv7ONkY,Sales of Oxygen,3.7,36,"Calle Johann Strauss 244, San Borja 15021, Peru",998 388 796,https://concentrador-oxigeno-peru.negocio.site/?utm_source=gmb&utm_medium=referral,True,True,False,-12.0970424,-77.0016378
+ChIJybpmy0iWDpERZw0eCj1ajRE,Omnilife,4.2,76,"Jr Ayacucho 330, Huancayo 12000, Peru",969 750 415,http://www.omnilife.com/,True,False,False,-12.0658596,-75.2110125
+ChIJz4YyRfp9EpER6G3Xyv25DMY,Colegio Medico Ayacucho,2.0,1,"Ayacucho 05001, Peru",,,True,False,False,-13.1501165,-74.22599249999999
+ChIJz4dLOxhTtJER44Bp2LqN9UA,Mi Farma,4.0,1,"Av Héroes del Cenepa, Bagua 01721, Peru",,http://www.mifarma.com.pe/,True,False,False,-5.6386407,-78.53128699999999
+ChIJz8ETVYg1TZARESuP_-xAlZs,DCG Biomedic,0.0,0,"Pacasmayo 286, Chepén 13871, Peru",957 745 935,http://www.dcgbiomedic.com/,True,True,False,-7.230868300000001,-79.4254811
+ChIJzTpqpgVLQpERsOb_eDiotFA,PRAXAIR,3.5,38,"4001, Arequipa 04011, Peru",956 257 999,,True,False,False,-16.4230864,-71.5476248
+ChIJzX0D2rbWBZERIX8YQbaBZ4I,Oxigeno San Felipe,2.0,4,"Puente Piedra 1120, Puente Piedra 15121, Peru",(01) 5480035,http://www.osf.com.pe/,True,True,True,-11.85652,-77.084451
+ChIJzy-SeqpLQpEREp9Kj234ckc,Pulso,2.3,21,"Calle Jorge Polar 301, Arequipa 04001, Peru",957 767 081,http://www.pulsosalud.com/,True,False,False,-16.4016108,-71.5211422
