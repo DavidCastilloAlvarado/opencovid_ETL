@@ -30,9 +30,7 @@ pip install -r requirements.txt
 
 1. Setup your own json apikey on API folder
 
-2. Set your own credential for postgres and GCP services in your enviorment
-
-In `etldjango/settings.py`:
+2. Set your own credential for postgres and GCP services in your enviorment .env
 
 ```bash
 IP_SERVER=************  #postgres
