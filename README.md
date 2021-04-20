@@ -47,6 +47,7 @@ KEY_MAPS_API =************ # Key googlemaps api
 2.  Make all migrations before to run
 
 ```bash
+cd etldjango
 python manage.py makemigrations
 python manage.py migrate
 ```
@@ -77,7 +78,7 @@ python manage.py worker_update_all last
 
 # Individual updates
 
-2. Calculate Movility - center roller mean 7 days
+2. Calculate Movility
 
 ```bash
 # To initialize the data set
@@ -112,7 +113,7 @@ python manage.py worker_posit pdf
 python manage.py worker_posit pdf --day 230321
 ```
 
-5. Command for calculate RT score
+5. Command for calculate RT score (WARNING: the calculation could be wrong, run it manually)
 
 ```bash
 # reboot the db for the last 12months
@@ -129,12 +130,12 @@ python manage.py worker_rt last --m 6
 
 ```bash
 # To initialize the data set
-python manage.py worker_t_caphosp full
+python manage.py worker_t_caphospv2 full
 # to update the last values
-python manage.py worker_t_caphosp last
+python manage.py worker_t_caphospv2 last
 ```
 
-7.  Command for Sinadef table report - center roller mean 7 days
+7.  Command for Sinadef table report - roller mean 7 days
 
 ```bash
 # To initialize the data set
@@ -147,9 +148,9 @@ python manage.py worker_sinadef last
 
 ```bash
 # upload the whole day status and delete the rest
-python manage.py worker_t_uci_geo full
+python manage.py worker_t_uci_geov2 full
 # append the last day calculations in the current table
-python manage.py worker_t_uci_geo last
+python manage.py worker_t_uci_geov2 last
 ```
 
 9. Command for OXI status table by regions
@@ -158,7 +159,7 @@ python manage.py worker_t_uci_geo last
 # upload the whole day status and delete the rest
 python manage.py worker_t_oxistat full
 # append the last day calculations in the current table
-python manage.py worker_t_oxistat last
+python manage.py worker_t_oxistatv2 last
 ```
 
 10. Command for the Vaccine resume table
@@ -197,7 +198,17 @@ python manage.py worker_t_minsamuertes full
 python manage.py worker_t_minsamuertes last
 ```
 
-14. Command for update the resumen table.
+14. Command for update the oxi provider table
+
+```bash
+# Search providers in every local area (high cost in cloud services)
+python manage.py worker_oxi_provider search
+# Load data from a data set in csv format
+python manage.py worker_oxi_provider csv
+
+```
+
+15. Command for update the resumen table.
 
 ```bash
 python manage.py worker_t_resumen

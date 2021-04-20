@@ -93,11 +93,12 @@ class Command(BaseCommand):
         #print(query.loc[query.region == 'PIURA'])
         return query
 
-    def date_table_factory(self, fechas_orig):
+    def date_table_factory(self, fechas_orig,region_name):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
         totaldatelist = pd.date_range(start=min_, end=max_).tolist()
         totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
+        totaldatelist['region'] = region_name
         return totaldatelist
 
     def fix_daily_records(self, table):
@@ -105,12 +106,13 @@ class Command(BaseCommand):
         table = table.groupby(["region", ])
         table_acum = pd.DataFrame()
         for region in table:
+            region_name = region[0]
             temp = region[1].sort_values(by="fecha")
             temp = self.drop_bad_records(temp)
-            totaldatelist = self.date_table_factory(temp.fecha)
-            temp = totaldatelist.merge(temp.set_index("fecha"),
-                                       on=["fecha"],
-                                       how="outer")
+            totaldatelist = self.date_table_factory(temp.fecha,region_name)
+            temp = totaldatelist.merge(temp,
+                                       on=["fecha",'region'],
+                                       how="left")
             temp = temp.sort_values(by="fecha")
             temp["total_posit"] = temp["total_posit"].interpolate(method='linear',
                                                                   limit_direction='forward',
@@ -157,7 +159,7 @@ class Command(BaseCommand):
         return table
 
     def drop_bad_records(self, table):
-        for _ in range(3):
+        for _ in range(4):
             table["diff"] = table["total_posit"].diff()
             table["diff"] = table["diff"].apply(
                 lambda x: np.nan if x < 0 else x)

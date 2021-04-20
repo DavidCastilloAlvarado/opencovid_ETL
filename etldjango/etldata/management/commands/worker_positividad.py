@@ -95,7 +95,7 @@ class Command(BaseCommand):
 
     def drop_bad_records(self, table):
         cols = table.columns.tolist()
-        for _ in range(3):
+        for _ in range(5):
             temp = table.diff()
             table = table.join(temp, rsuffix='_diff')
             table = table.applymap(
@@ -104,37 +104,41 @@ class Command(BaseCommand):
             table = table[cols]
         return table[cols]
 
-    def date_table_factory(self, fechas_orig):
+    def date_table_factory(self, fechas_orig,region_name):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
         totaldatelist = pd.date_range(start=min_, end=max_).tolist()
         totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
+        totaldatelist['region'] = region_name
         return totaldatelist
 
     def getting_daily_data_from_acum_table(self, table, n_roll=7):
         table = table.groupby(["region", ])
         table_total = pd.DataFrame()
         for region in table:
+            region_name = region[0]
+            #print(region_name)
             temp = region[1].sort_values(by="fecha")
             temp = temp.set_index(['fecha', 'region'])
             temp = self.drop_bad_records(temp)
             temp = temp.reset_index()
-            totaldatelist = self.date_table_factory(temp.fecha)
-            temp = totaldatelist.merge(temp.set_index("fecha"),
-                                       on=["fecha"],
-                                       how="outer")
+            totaldatelist = self.date_table_factory(temp.fecha,region_name)
+            temp = totaldatelist.merge(temp,
+                                       on=["fecha",'region'],
+                                       how="left")
             # print(temp.tail())
             #temp = temp.groupby(["fecha", "region"]).last()
+            
             temp = temp.set_index(['fecha', 'region'])
             #temp = temp.sort_values(by="fecha")
             temp = temp.apply(pd.to_numeric, errors='ignore')
             temp = temp.interpolate(method='linear',
                                     limit_direction='forward',
-                                    axis=1)
+                                    axis=0)
             temp = temp.diff()
-            temp = temp.applymap(lambda x: np.nan if x < 0 else x)
-            temp = temp.fillna(method="ffill")
-            temp = temp.dropna()
+            #temp = temp.applymap(lambda x: np.nan if x < 0 else x)
+            #temp = temp.fillna(method="ffill")
+            #temp = temp.dropna()
             temp_roll = temp.rolling(n_roll).mean()
             temp = temp.join(temp_roll, rsuffix='_roll')
             temp = temp.reset_index()

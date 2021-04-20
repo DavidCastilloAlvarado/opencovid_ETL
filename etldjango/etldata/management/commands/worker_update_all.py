@@ -23,7 +23,7 @@ class Command(BaseCommand):
         self.update_records_positivity(mode)
         self.update_acum_positivity_from_pdf(mode)
         self.update_daily_positivity_from_db_acum_table(mode)
-        self.update_rt_score(mode)
+        # self.update_rt_score(mode)
         self.update_hospital_capacity(mode)
         self.update_minsa_deaths(mode)
         self.update_sinadef_deaths(mode)
