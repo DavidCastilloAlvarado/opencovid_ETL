@@ -452,7 +452,7 @@ class DB_epidemiologico(models.Model):
                               decimal_places=2, max_digits=8, blank=True,)
     fall_100 = models.DecimalField(null=True, default=None,
                                    decimal_places=2, max_digits=8, blank=True,)
-    Rt = models.DecimalField(null=True, default=None,
+    rt = models.DecimalField(null=True, default=None,
                              decimal_places=2, max_digits=8, blank=True,)
     fall_score = models.DecimalField(null=True, default=None,
                                      decimal_places=2, max_digits=8, blank=True,)

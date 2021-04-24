@@ -203,7 +203,7 @@ class Command(BaseCommand):
             'total': 'avg_test',
             'total_pos': 'incid_100',
             'n_muertes': 'fall_100',
-            'ml': 'Rt',
+            'ml': 'rt',
             'uci_p': 'uci'
         }, inplace=True)
         return table
@@ -254,7 +254,7 @@ class Command(BaseCommand):
                                       cut_incid,
                                       labels=color,
                                       include_lowest=True).astype(int)
-        table['rt_score'] = pd.cut(table.Rt,
+        table['rt_score'] = pd.cut(table.rt,
                                    cut_rt,
                                    labels=color,
                                    include_lowest=True).astype(int)
@@ -309,12 +309,12 @@ class Command(BaseCommand):
                 'positividad': 'mean',
                 'uci': 'mean',
                 'fall_100': 'sum',
-                'Rt': 'mean',
+                'rt': 'mean',
             })
             temp = temp.reset_index()
             # temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
-        table_acum['Rt'] = table_acum['Rt'].astype(float)
+        table_acum['rt'] = table_acum['rt'].astype(float)
         print(table_acum.head())
         return table_acum

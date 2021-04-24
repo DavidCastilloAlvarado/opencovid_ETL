@@ -237,11 +237,14 @@ class Command(BaseCommand):
         total_table["location"] = total_table.apply(
             lambda x: Point(x['longitude'], x['latitude']), axis=1)
         total_table.drop(columns=['longitude', 'latitude'], inplace=True)
+        print(ipress.info())
         print(total_table.info())
         print(total_table.loc[total_table.direccion != total_table.direccion])
         print(total_table['serv_uci_total'].sum())
         print(total_table['serv_uci_left'].sum())
         print(total_table['serv_nc_total'].sum())
         print(total_table['serv_nc_left'].sum())
+        total_table = total_table.loc[total_table['institucion']!= 0]
+        #print(total_table.loc[total_table['institucion']== 0])
         self.print_shell("Records oxi + uci: {}".format(total_table.shape))
         return total_table
