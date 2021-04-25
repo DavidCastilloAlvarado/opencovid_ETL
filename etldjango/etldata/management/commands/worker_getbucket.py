@@ -9,7 +9,9 @@ from etldata.models import DB_sinadef
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import logging
 # datetime.now(tz=timezone.utc)  # you can use this value
+logger = logging.getLogger('StackDriverHandler')
 
 
 class Command(BaseCommand):
@@ -17,17 +19,20 @@ class Command(BaseCommand):
     bucket = Bucket_handler(project_id=GCP_PROJECT_ID)
 
     def handle(self, *args, **options):
+        logger.info("Getting files from gob - OK")
         os.system("mkdir temp")
         self.print_shell("Downloading from bucket ... ")
         TODAY = str(datetime.now().date())
         try:
             self.get_from_bucket(TODAY)
-        except:
-            self.print_shell("Fail firt chance")
-            self.print_shell("Second chance downloading ...")
-            TODAY = str(datetime.now().date() -
-                        timedelta(days=1))  # a day before
-            self.get_from_bucket(TODAY)
+        except Exception as error:
+            logger.error(
+                'Error downloading files from web and gob. ' + error.args[0])
+            # self.print_shell("Fail firt chance")
+            # self.print_shell("Second chance downloading ...")
+            # TODAY = str(datetime.now().date() -
+            #             timedelta(days=1))  # a day before
+            # self.get_from_bucket(TODAY)
         self.print_shell("Work done! ")
 
     def print_shell(self, text):

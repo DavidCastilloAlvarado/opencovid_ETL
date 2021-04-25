@@ -5,6 +5,8 @@ from os import path as pathdir
 from pathlib import Path
 from etldata.models import Logs_extractor
 from .extractor import Data_Extractor
+import logging
+logger = logging.getLogger('StackDriverHandler')
 
 
 class Bucket_handler(object):
@@ -21,6 +23,8 @@ class Bucket_handler(object):
             bucket = self.storage_client.create_bucket(dataset_name)
             print('Bucket {} created'.format(bucket.name))
         except:
+            logger.warning(
+                'Fail creating Bucket -- ignore if you alredy have the bucket '+dataset_name)
             print('Bucket {} creation FAIL ... check if already exist'.format(
                 dataset_name))
 
@@ -38,6 +42,7 @@ class Bucket_handler(object):
                                'status': status,
                                'mode': 'upload'})
         except:
+            logger.error('Can\'t upload ' + source_file_name)
             status = 'fail'
             print('FAIL: uploading {} to {}.'.format(source_file_name,
                                                      destination_blob_name))
@@ -68,6 +73,7 @@ class Bucket_handler(object):
                                'status': status,
                                'mode': 'download'})
         except:
+            logger.error('Can\'t download ' + source_blob_name)
             print("FAIL: downloading {} to {}.".format(source_blob_name,
                                                        destination_file_name))
             destination, status = destination_file_name, 'fail'

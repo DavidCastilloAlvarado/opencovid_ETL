@@ -4,6 +4,8 @@ from django.core.management.base import BaseCommand, CommandError
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import logging
+logger = logging.getLogger('StackDriverHandler')
 
 
 class Command(BaseCommand):
@@ -17,23 +19,27 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(text))
 
     def handle(self, *args, **options):
-        mode = options["mode"]
-        assert mode in ['full', 'last'], "Error in --mode argument"
-        self.update_movility(mode)
-        self.update_records_positivity(mode)
-        self.update_acum_positivity_from_pdf(mode)
-        self.update_daily_positivity_from_db_acum_table(mode)
-        # self.update_rt_score(mode)
-        self.update_hospital_capacity(mode)
-        self.update_minsa_deaths(mode)
-        self.update_sinadef_deaths(mode)
-        self.update_oxi_statistics(mode)
-        # self.update_oxi_business(mode)
-        self.update_UCI_geo()
-        self.update_vacunas_record(mode)
-        self.update_epidemiological_score(mode)
-        self.update_resumen()
-        self.print_shell("Work Done!")
+        logger.info("Running update - OK")
+        try:
+            mode = options["mode"]
+            assert mode in ['full', 'last'], "Error in --mode argument"
+            self.update_movility(mode)
+            self.update_records_positivity(mode)
+            self.update_acum_positivity_from_pdf(mode)
+            self.update_daily_positivity_from_db_acum_table(mode)
+            # self.update_rt_score(mode)
+            self.update_hospital_capacity(mode)
+            self.update_minsa_deaths(mode)
+            self.update_sinadef_deaths(mode)
+            self.update_oxi_statistics(mode)
+            # self.update_oxi_business(mode)
+            self.update_UCI_geo()
+            self.update_vacunas_record(mode)
+            self.update_epidemiological_score(mode)
+            self.update_resumen()
+            self.print_shell("Work Done!")
+        except Exception as error:
+            logger.error("Error running daily update, " + error.args[0])
 
     def update_movility(self, mode):
         out = StringIO()

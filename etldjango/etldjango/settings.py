@@ -162,3 +162,27 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {'format': '%(levelname)s : %(message)s - [in %(pathname)s:%(lineno)d]'},
+        'short': {'format': '%(message)s'}
+    },
+    'handlers': {
+        'stackdriver': {
+            'formatter': 'standard',
+            'class': 'etldata.log_middleware.StackDriverHandler',
+        },
+    },
+    'loggers': {
+        'StackDriverHandler': {
+            'handlers': ['stackdriver'],
+            'level': "INFO"
+        },
+        'django.request': {
+            'handlers': ['stackdriver']
+        }
+    },
+}
