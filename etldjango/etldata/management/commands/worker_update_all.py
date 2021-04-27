@@ -33,8 +33,10 @@ class Command(BaseCommand):
             self.update_sinadef_deaths(mode)
             self.update_oxi_statistics(mode)
             # self.update_oxi_business(mode)
+            # self.update_drugstore_business(mode)
             self.update_UCI_geo()
             self.update_vacunas_record(mode)
+            self.update_vacunas_resumen(mode)
             self.update_epidemiological_score(mode)
             self.update_resumen()
             self.print_shell("Work Done!")
@@ -116,6 +118,16 @@ class Command(BaseCommand):
         call_command('worker_oxi_provider', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 
+    def update_drugstore_business(self, mode):
+        out = StringIO()
+        # if mode == 'last':
+        #     args = ['seach']
+        # elif mode == 'full':
+        #     args = ['csv']
+        args = ['csv']  # change to search to use googlemaps API - save your money
+        call_command('worker_farmacias', verbosity=0, *args, stdout=out)
+        self.print_shell(out.getvalue())
+
     def update_UCI_geo(self):
         out = StringIO()
         args = ['full']
@@ -126,6 +138,12 @@ class Command(BaseCommand):
         out = StringIO()
         args = [mode]
         call_command('worker_t_vacunas', verbosity=0, *args, stdout=out)
+        self.print_shell(out.getvalue())
+
+    def update_vacunas_resumen(self, mode):
+        out = StringIO()
+        args = [mode]
+        call_command('worker_t_vaccresum', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 
     def update_epidemiological_score(self, mode):

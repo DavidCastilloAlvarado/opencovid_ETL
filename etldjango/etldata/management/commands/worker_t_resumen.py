@@ -135,7 +135,8 @@ class Command(BaseCommand):
         return query['n_muertes__sum__avg']
 
     def vacc_forecast(self):
-        TOTAL_POBLACION = 29381884
+        # x29381884x # 22192700 = Poblacion mayor a 18 años - proyección 2019 CPI - censo 2017
+        TOTAL_POBLACION = 22192700
         days_left = (TOTAL_POBLACION-int(self.allvacc))/self.avg_vacc_day
         days_left = round(days_left)
         vacc_prog = round(int(self.allvacc)/TOTAL_POBLACION*100, 2)

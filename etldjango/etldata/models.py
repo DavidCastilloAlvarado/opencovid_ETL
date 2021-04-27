@@ -76,6 +76,36 @@ class DB_oxi(models_gis.Model):
         return self.nombre
 
 
+class DB_farmacias(models_gis.Model):
+    """
+    Utilidad: La tabla contiene los datos de negocio de los negocios de farmacia a nivel nacional. 
+    Lectura: La tabla se lee completa recogiendo los puntos más cercanos al usuario.
+    Escritura: La tabla se actualiza en su totalidad con cada rutina de actualización.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    nombre = models.CharField(max_length=400)
+    place_id = models.CharField(max_length=200)
+    rating = models.DecimalField(null=True,
+                                 decimal_places=2,
+                                 max_digits=4,)
+    n_users = models.IntegerField()
+    direccion = models.CharField(null=True, max_length=200)
+    location = models_gis.PointField(
+        blank=True, srid=4326)  # default=Point(0, 0),
+    telefono = models.CharField(null=True, max_length=20)
+    paginaweb = models.URLField(null=True, max_length=300)
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+        indexes = [
+            models.Index(fields=['location', ]),
+        ]
+        db_table = 'drugstore_table'
+
+    def __str__(self):
+        return self.nombre
+
+
 class DB_sinadef(models.Model):
     """
     Utilidad: La tabla contiene los records de todas las muertes regristradas por el sinadef, solo las no violentas
@@ -564,3 +594,45 @@ class DB_positividad_salida(models.Model):
 
     def __str__(self):
         return self.region
+
+
+class DB_subscriptores(models_gis.Model):
+    """
+    Utilidad: La tabla contiene los datos de negocio de los proveedores de oxigeno a nivel nacional. 
+    Lectura: La tabla se lee completa recogiendo los puntos más cercanos al usuario.
+    Escritura: La tabla se actualiza en su totalidad con cada rutina de actualización.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    nombre = models.CharField(max_length=200)
+    email = models.EmailField()
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+        indexes = [
+            models.Index(fields=['nombre', ]),
+        ]
+        db_table = 'subscription_table'
+
+    def __str__(self):
+        return self.nombre
+
+
+class DB_vaccine_resum(models.Model):
+    """
+    Utilidad: Almacena los calculos de resumen de las vacunas, solo datos diarios, primera dosis
+    Escritura: Se actualiza con los datos aggregados de la tabla de vacunas
+    Lectura: Se lee en su totalidad o por ventanas de tiempo par mostrar el progreso general de la vacunas y las metas diarias a cumplir para acabar a fin de año 2021.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    diario = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    acum = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    resta = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    meta = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'vaccresum_table'
+        indexes = [
+            models.Index(fields=['-fecha']),
+        ]

@@ -17,6 +17,7 @@ class GetHealthFromGoogleMaps(object):
 
     def __init__(self,):
         self.session = requests.Session()
+        self.id_places = []
 
     def get_location_by_name(self, places_name):
         locations = []
@@ -73,12 +74,11 @@ class GetHealthFromGoogleMaps(object):
             places_all = places_all + places
         return places_all
 
-    def get_drugstore_places_from_points(self, point, radio=50000):
+    def get_drugstore_places_from_points(self, point, radio=50000, country=''):
         """
         Entrega los puntos en donde se encuentran las farmacias
         """
-        queries = ['farmacia', 'boticas', 'mifarma',
-                   'inkafarma', 'boticas y salud', 'arcangel']
+        queries = ['farmacias, ' + country]
         places = self.getting_all_drugstore_from_queries(queries, point, radio)
         places = self.extract_data_from_json(places)
         return places
@@ -107,16 +107,14 @@ class GetHealthFromGoogleMaps(object):
         if request['status'] != 'OK':
             return []
         places_records = request['results']
-        #print('next_page_token' in list(request.keys()))
-        # print(list(request.keys()))
-        # print(request['next_page_token'])
+
         while 'next_page_token' in list(request.keys()):
             # es necesario esperar un entretiempo entre solicitudes, de lo contrario, envía error
             time.sleep(2)
             request = self.get_next_places_query(request['next_page_token'])
             # print(request)
             places_records = places_records + request['results']
-            # break
+            break
         return places_records
 
     def extract_data_from_json(self, places):
@@ -140,9 +138,15 @@ class GetHealthFromGoogleMaps(object):
         fields = 'formatted_phone_number,website,formatted_address'  # price_level
         url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=' + \
             place_id+'&fields='+fields+'&key='+self.KEY_API
-        details = self.get_request_API(url)
-        if details['status'] == 'OK':
-            details = details['result']
+        if not place_id in self.id_places:
+            self.id_places.append(place_id)
+            details = self.get_request_API(url)
+            if details['status'] == 'OK':
+                details = details['result']
+            else:
+                details = {'formatted_phone_number': None,
+                           'website': None,
+                           'formatted_address': None, }
         else:
             details = {'formatted_phone_number': None,
                        'website': None,
