@@ -11,6 +11,7 @@ from matplotlib.patches import Patch
 from scipy import stats as sps
 from scipy.interpolate import interp1d
 from datetime import timedelta
+import logging
 
 
 class Generator_RT(object):
@@ -23,6 +24,7 @@ class Generator_RT(object):
     """
 
     def __init__(self, path="downloads/", name_file="feed_rt.csv", sep=","):
+        self.logger = logging.getLogger('StackDriverHandler')
         self.path = path
         dataset = path+name_file
         states = pd.read_csv(dataset, sep=sep,
@@ -160,9 +162,25 @@ class Generator_RT(object):
             # print(result)
             posteriors = result['posteriors'][max_likelihood_index]
 
-            hdis_90 = self.highest_density_interval(posteriors, p=.9)
+            # hdis_90 = self.highest_density_interval(posteriors, p=.9)
 
-            hdis_50 = self.highest_density_interval(posteriors, p=.5)
+            # hdis_50 = self.highest_density_interval(posteriors, p=.5)
+            try:
+                hdis_90 = self.highest_density_interval(posteriors, p=.9)
+                hdis_50 = self.highest_density_interval(posteriors, p=.5)
+            except:
+                try:
+                    self.logger.warning(
+                        'Exception while running RT score - P downgraded' + str(state_name))
+                    hdis_90 = self.highest_density_interval(posteriors, p=.3)
+                    hdis_50 = self.highest_density_interval(posteriors, p=.05)
+                except:
+                    self.logger.warning(
+                        'Exception while running RT score - ' + str(state_name))
+                    hdis_90 = self.highest_density_interval(
+                        posteriors, p=.9, error=True)
+                    hdis_50 = self.highest_density_interval(
+                        posteriors, p=.5, error=True)
 
             most_likely = posteriors.idxmax().rename('ML')
             result = pd.concat([most_likely, hdis_90, hdis_50], axis=1)
@@ -258,11 +276,11 @@ class Generator_RT(object):
 
         return original, smoothed
 
-    def highest_density_interval(self, pmf, p=.9, debug=False):
+    def highest_density_interval(self, pmf, p=.9, debug=False, error=False):
         # If we pass a DataFrame, just call this recursively on the columns
-        print(pmf)
+        # print(pmf)
         if(isinstance(pmf, pd.DataFrame)):
-            return pd.DataFrame([self.highest_density_interval(pmf[col], p=p) for col in pmf],
+            return pd.DataFrame([self.highest_density_interval(pmf[col], p=p, error=error) for col in pmf],
                                 index=pmf.columns)
 
         cumsum = np.cumsum(pmf.values)
@@ -274,14 +292,19 @@ class Generator_RT(object):
         lows, highs = (total_p > p).nonzero()
 
         # Find the smallest range (highest density)
-        try:
-            best = (highs - lows).argmin()
 
+        if not error:
+            best = (highs - lows).argmin()
             low = pmf.index[lows[best]]
             high = pmf.index[highs[best]]
-        except:
-            low = pmf.index[0]
-            high = pmf.index[0]
+        else:
+            try:
+                best = (highs - lows).argmin()
+                low = pmf.index[lows[best]]
+                high = pmf.index[highs[best]]
+            except:
+                low = pmf.index[0]
+                high = pmf.index[0]
 
         return pd.Series([low, high],
                          index=[f'Low_{p*100:.0f}',

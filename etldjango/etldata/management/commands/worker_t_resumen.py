@@ -55,8 +55,9 @@ class Command(BaseCommand):
                                                            deaths_after,
                                                            deaths_before_d_std)
         self.deaths_minsa = self.query_deaths_minsa(DB_minsa_muertes)
-        self.vaccinated, self.allvacc = self.query_vaccinated_first_dosis(
+        self.avg_vacc_day, self.allvacc = self.query_vaccinated_first_dosis(
             DB_vacunas)
+        self.vacc_prog, self.vacc_end = self.vacc_forecast()
         self.camas_uci_disp = self.query_camas_uci_disponible(DB_uci)
         self.active_cases = self.query_active_cases(DB_positividad_relativa)
         self.save_resume(DB_resumen)
@@ -69,10 +70,13 @@ class Command(BaseCommand):
         """
         data = dict(fallecidos_sinadef=self.deaths_sinadef,
                     fallecidos_minsa=self.deaths_minsa,
-                    vacunados=self.vaccinated,
+                    vacunados=self.avg_vacc_day,
                     totalvacunados1=self.allvacc,
+                    vacc_progress=self.vacc_prog,
+                    vacc_ends=self.vacc_end,
                     camas_uci_disp=self.camas_uci_disp,
-                    active_cases=self.active_cases,)
+                    active_cases=self.active_cases,
+                    )
         print(data)
         _ = db.objects.create(**data)
 
@@ -129,6 +133,14 @@ class Command(BaseCommand):
                                 Count('n_muertes__sum'))
         print(query)
         return query['n_muertes__sum__avg']
+
+    def vacc_forecast(self):
+        TOTAL_POBLACION = 29381884
+        days_left = (TOTAL_POBLACION-int(self.allvacc))/self.avg_vacc_day
+        days_left = round(days_left)
+        vacc_prog = round(int(self.allvacc)/TOTAL_POBLACION*100, 2)
+        vacc_end = datetime.now().date() + timedelta(days=days_left)
+        return vacc_prog, vacc_end
 
     def query_vaccinated_first_dosis(self, db):
         """

@@ -125,6 +125,10 @@ class DB_resumen(models.Model):
     active_cases = models.DecimalField(null=True,
                                        decimal_places=2,
                                        max_digits=9,)
+    vacc_progress = models.DecimalField(null=True,
+                                        decimal_places=2,
+                                        max_digits=5,)
+    vacc_ends = models.DateTimeField()
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -470,6 +474,16 @@ class DB_epidemiologico(models.Model):
                                 decimal_places=2, max_digits=8, blank=True,)
     val_score = models.DecimalField(null=True, default=None,
                                     decimal_places=2, max_digits=8, blank=True,)
+    vacc_acum = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=10, blank=True,)
+    vacc_prog = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=8, blank=True,)
+    poblacion = models.DecimalField(null=True, default=None,
+                                    decimal_places=2, max_digits=10, blank=True,)
+    incid_100_chg = models.DecimalField(null=True, default=None,
+                                        decimal_places=2, max_digits=8, blank=True,)
+    fall_100_chg = models.DecimalField(null=True, default=None,
+                                       decimal_places=2, max_digits=10, blank=True,)
 
     class Meta:
         ordering = ['-fecha']

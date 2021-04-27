@@ -4,7 +4,7 @@ from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
 from .utils.unicodenorm import normalizer_str
-from etldata.models import DB_minsa_muertes, DB_positividad_salida, DB_capacidad_hosp, DB_minsa_muertes, DB_rt, DB_epidemiologico
+from etldata.models import DB_minsa_muertes, DB_positividad_salida, DB_capacidad_hosp, DB_minsa_muertes, DB_rt, DB_epidemiologico, DB_vacunas
 from django.contrib.gis.geos import Point
 # from django.utils import timezone
 from django.db.models import F, Sum, Avg, Count, StdDev, Max, Q
@@ -69,6 +69,8 @@ class Command(BaseCommand):
         # Downloading data from bucket
         self.downloading_source_csv()
         self.load_poblacion_table_popu()
+        table_vacc = self.query_vacunados(DB_vacunas, weeks)
+        #
         table_pos = self.query_test_positivos(DB_positividad_salida, weeks)
         table_pos = self.normalizer_100k_population(table_pos,
                                                     ['total', 'total_pos'])
@@ -77,19 +79,22 @@ class Command(BaseCommand):
         table_minsa = self.normalizer_100k_population(table_minsa,
                                                       ['n_muertes'])
         table_rt = self.query_rt_score(DB_rt, weeks)
-        table = self.merge_tables(table_pos, table_uci, table_minsa, table_rt)
+        table = self.merge_tables(
+            table_pos, table_uci, table_minsa, table_rt, table_vacc)
         table = self.aggregate_avg_by_week(table)
+        table = self.calc_vacc_progress(table)
         table = self.scoring_variables(table)
+        table = self.last_week_comparation(table)
         self.save_table(table, DB_epidemiologico, mode)
         self.print_shell('Work Done!')
 
     def get_weeks_from_args(self, mode, weeks):
         if weeks:
-            return weeks + 1
+            return weeks + 2
         elif mode == 'full':
             return 6
         elif mode == 'last':
-            return 2
+            return 4
 
     def downloading_source_csv(self):
         """
@@ -204,24 +209,37 @@ class Command(BaseCommand):
             'total_pos': 'incid_100',
             'n_muertes': 'fall_100',
             'ml': 'rt',
-            'uci_p': 'uci'
+            'uci_p': 'uci',
+            'vacc_acum': 'vacc_acum',
         }, inplace=True)
         return table
 
-    def merge_tables(self, posit, uci, minsa, rt):
-        total = posit.merge(uci.set_index("fecha"),
+    def merge_tables(self, posit, uci, minsa, rt, table_vacc):
+        total = posit.merge(uci,
                             on=["fecha", "region"],
                             how="outer")
-        total = total.merge(minsa.set_index("fecha"),
+        total = total.merge(minsa,
                             on=["fecha", "region"],
                             how="outer")
-        total = total.merge(rt.set_index("fecha"),
+        total = total.merge(rt,
                             on=["fecha", "region"],
                             how="outer")
-        total['n_week'] = total.fecha.apply(lambda x: x.isocalendar()[1])
+        total = total.merge(table_vacc,
+                            on=["fecha", "region"],
+                            how="outer")
+        total = total.merge(self.table_popu,
+                            on=['region'],
+                            how='outer')
+        total['n_week'] = total.fecha.apply(lambda x: (x).isocalendar()[1])
+        # total['n_week'] = total.fecha.apply(
+        #     lambda x: (x+timedelta(days=1)).isocalendar()[1])
+        # total['n_week'] =
         # the current week never process
-        total = total.loc[(total.n_week < total.n_week.max()) &
-                          (total.n_week > total.n_week.min())]
+        curr_week = (datetime.now()).isocalendar()[1]
+        print('current week ', curr_week)
+        total = total.loc[(total['n_week'] > total['n_week'].min())
+                          & (total['n_week'] < curr_week)
+                          ]
         total = self.rename_total_table_columns(total)
         print(total.isnull().sum())
         cols = total.columns.tolist()
@@ -268,12 +286,12 @@ class Command(BaseCommand):
                                      include_lowest=True).astype(int)
 
         table['score'], table['val_score'] = self.calculate_score(table)
-        print(table.info())
+        print(table.describe())
         return table
 
     @ staticmethod
     def calculate_score(table):
-        cut_score = [0, 17, 27, 30, 1e7]
+        cut_score = [0, 31, 38, 43, 1e7]
         color = [1, 2, 3, 4]
         w = [4, 3, 2.5, 2, 1.5, 1]
         result = table['fall_score']*w[0] + table['uci_score']*w[1] + \
@@ -281,26 +299,29 @@ class Command(BaseCommand):
             table['posit_score'] * w[4] + table['test_score']*w[5]
         return pd.cut(result, cut_score, labels=color).astype(int), result
 
-    def date_table_factory(self, fechas_orig):
+    def date_table_factory(self, fechas_orig, region_name):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
         totaldatelist = pd.date_range(start=min_, end=max_).tolist()
         totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
+        totaldatelist['region'] = region_name
         return totaldatelist
 
     def aggregate_avg_by_week(self, table):
         table = table.groupby(["region", ])
         table_acum = pd.DataFrame()
         for region in table:
+            region_name = region[0]
             temp = region[1].sort_values(by="fecha")
-            totaldatelist = self.date_table_factory(temp.fecha)
-            temp = totaldatelist.merge(temp.set_index("fecha"),
-                                       on=["fecha"],
+            totaldatelist = self.date_table_factory(temp.fecha, region_name)
+            temp = totaldatelist.merge(temp,
+                                       on=["fecha", 'region'],
                                        how="outer")
 
             temp = temp.sort_values(by="fecha")
             temp = temp.reset_index(drop=True)
             temp = temp.fillna(method="ffill")
+            temp = temp.fillna(method="bfill")
             temp = temp.dropna()
             temp = temp.groupby(["n_week", "region"]).agg({
                 'fecha': 'first',
@@ -310,11 +331,59 @@ class Command(BaseCommand):
                 'uci': 'mean',
                 'fall_100': 'sum',
                 'rt': 'mean',
+                'vacc_acum': 'max',
+                'poblacion': 'last',
             })
             temp = temp.reset_index()
             # temp.fecha = temp.fecha.apply(lambda x: x.date())
             table_acum = table_acum.append(temp, ignore_index=True)
         # print(table_acum.info())
         table_acum['rt'] = table_acum['rt'].astype(float)
-        print(table_acum.head())
+        # print(table_acum.head())
+        # print(table_acum.tail(12))
+        # print(table_acum.head(12))
         return table_acum
+
+    def calc_vacc_progress(self, table):
+        table['vacc_prog'] = table.vacc_acum/table.poblacion*100
+        print(table.info())
+        return table
+
+    def query_vacunados(self, db, weeks):
+        fecha_max = self.get_fecha_max(db,)
+        fecha_min = fecha_max - timedelta(days=8*weeks)
+        # Records diarios por region
+        query = db.objects
+        query = query.filter(dosis=1)
+        histo = query.values('fecha', 'region')
+        histo = histo.annotate(vacc_acum=Sum('cantidad'))
+        histo = histo.order_by('fecha', 'region')
+        histo = pd.DataFrame.from_records(histo)
+        # .groupby(level=0).cumsum()
+        histo = histo.groupby(['region', 'fecha']).sum().astype(float)\
+            .groupby(level=0).cumsum()
+        histo = histo.reset_index()
+        histo['fecha2'] = histo.fecha.apply(lambda x: x.date())
+        histo = histo.loc[histo.fecha2 > fecha_min]
+        print(histo.columns)
+        histo.drop(columns=['fecha2', ], inplace=True)
+        # Cantidad total por region
+        # # Generando el total
+        # print(histo.tail())
+        # print(histo.info())
+        return histo
+
+    def last_week_comparation(self, table):
+        table = table.set_index(['region', 'n_week', 'fecha'])
+        temp = table[['incid_100', 'fall_100']]
+        temp = temp.groupby(['region', 'n_week', 'fecha']).sum()\
+            .groupby(level=0).diff()
+        temp.rename(columns={
+            'incid_100': 'incid_100_chg',
+            'fall_100': 'fall_100_chg',
+        }, inplace=True)
+        table = table.join(temp)
+        table = table.dropna()
+        table = table.reset_index()
+        print(table.tail())
+        return table
