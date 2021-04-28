@@ -23,6 +23,7 @@ DEBUG = True
 # API key json
 aut_file = config('KEY_JSON_FILE')
 KEY_MAPS_API = config('KEY_MAPS_API')
+URL_OXIPERU2 = config('URL_OXIPERU2')
 BASE_DIR = Path(__file__).resolve().parent.parent
 GOOGLE_APPLICATION_CREDENTIALS = pathdir.join(
     BASE_DIR, "API", aut_file)

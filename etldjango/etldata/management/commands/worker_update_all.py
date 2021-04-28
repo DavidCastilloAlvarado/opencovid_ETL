@@ -114,7 +114,8 @@ class Command(BaseCommand):
         #     args = ['seach']
         # elif mode == 'full':
         #     args = ['csv']
-        args = ['csv']  # change to search to use googlemaps API - save your money
+        # change to search to use googlemaps API - save your money
+        args = ['oxiperu']
         call_command('worker_oxi_provider', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
 

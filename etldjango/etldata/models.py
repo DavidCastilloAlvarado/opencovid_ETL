@@ -51,19 +51,27 @@ class DB_oxi(models_gis.Model):
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     nombre = models.CharField(max_length=400)
-    place_id = models.CharField(max_length=200)
+    place_id = models.CharField(max_length=200, null=True, blank=True,)
+    efectivo = models.BooleanField(null=True, blank=True,)
+    tarjeta = models.BooleanField(null=True, blank=True,)
+    transferencia = models.BooleanField(null=True, blank=True,)
+    horario = models.CharField(max_length=200, null=True, blank=True,)
+    precio_m3 = models.CharField(max_length=200, null=True, blank=True,)
     rating = models.DecimalField(null=True,
                                  decimal_places=2,
                                  max_digits=4,)
-    n_users = models.IntegerField()
-    direccion = models.CharField(null=True, max_length=200)
-    location = models_gis.PointField(blank=True,
+    n_users = models.IntegerField(null=True, blank=True,)
+    direccion = models.CharField(null=True, max_length=500)
+    location = models_gis.PointField(blank=True, null=True,
                                      srid=4326)  # default=Point(0, 0),
-    telefono = models.CharField(null=True, max_length=20)
-    paginaweb = models.URLField(null=True, max_length=300)
-    venta = models.BooleanField(null=True,)
-    alquiler = models.BooleanField(null=True,)
-    recarga = models.BooleanField(null=True,)
+    telefono = models.CharField(null=True, blank=True, max_length=100)
+    paginaweb = models.URLField(null=True, blank=True, max_length=300)
+    venta = models.BooleanField(null=True, blank=True,)
+    alquiler = models.BooleanField(null=True, blank=True,)
+    departamento = models.CharField(max_length=200, null=True, blank=True,)
+    recarga = models.BooleanField(null=True, blank=True,)
+    concent_venta = models.BooleanField(null=True, blank=True,)
+    concent_alquiler = models.BooleanField(null=True, blank=True,)
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -621,7 +629,7 @@ class DB_vaccine_resum(models.Model):
     """
     Utilidad: Almacena los calculos de resumen de las vacunas, solo datos diarios, primera dosis
     Escritura: Se actualiza con los datos aggregados de la tabla de vacunas
-    Lectura: Se lee en su totalidad o por ventanas de tiempo par mostrar el progreso general de la vacunas y las metas diarias a cumplir para acabar a fin de año 2021.
+    Lectura: Se lee en su totalidad o por ventanas de tiempo para mostrar el progreso general de las vacunas y las metas diarias a cumplir para acabar a fin de año 2021.
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()

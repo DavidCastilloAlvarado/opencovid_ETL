@@ -152,3 +152,18 @@ class GetHealthFromGoogleMaps(object):
                        'website': None,
                        'formatted_address': None, }
         return details
+
+    def get_gps(self, text):
+        text = text + ', Perú'
+        text = text.replace(' ', '%20')
+        url = 'https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=' + \
+            text+'&inputtype=textquery&fields=geometry&key='+self.KEY_API
+        request = self.get_request_API(url)
+        # print(request)
+        if request['status'] == 'OK':
+            request = request['candidates'][0]
+            location = request['geometry']
+            location = location['location']
+            return location
+        else:
+            return {}
