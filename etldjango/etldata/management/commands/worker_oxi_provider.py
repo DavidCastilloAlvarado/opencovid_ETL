@@ -315,19 +315,31 @@ class Command(BaseCommand):
             horario = horario.replace('V:', 'Vie:')
             return horario
 
+        def precio_m3(x):
+            text = {}
+            if x['min_price_m3'] == x['min_price_m3']:
+                if x['min_price_m3'] == 0:
+                    text.update({"m3": "GRATIS"})
+                else:
+                    text.update({"m3": x['min_price_m3']})
+            if x['max_price_m3'] == x['max_price_m3']:
+                text.update({"balon10": x['max_price_m3']})
+            # print(text)
+            return pd.Series(data=[json.dumps(text)], index=['precio_m3'])
         #data = dataorig.copy()
-        data = data.drop(
-            columns=['updated_at', 'company_id', 'id', 'min_price_m3'])
+
         data = data.join(data.apply(get_services, axis=1))
         data = data.drop(columns=['service'])
         data = data.join(data.apply(get_coordinates, axis=1))
         data = data.drop(columns=['point'])
         data = data.join(data.apply(get_phone, axis=1))
         data = data.drop(columns=['mobile_phone'])
+        data = data.join(data.apply(precio_m3, axis=1))
         data.rename(columns={'address': 'direccion',
                              'company_name': 'nombre',
-                             'day_service': 'horario',
-                             'max_price_m3': 'precio_m3', }, inplace=True)
+                             'day_service': 'horario', }, inplace=True)
+        data = data.drop(columns=['updated_at', 'company_id',
+                                  'id', 'min_price_m3', 'max_price_m3'])
         data.nombre = data.nombre.apply(lambda x: x.capitalize())
         data.horario = data.horario.apply(lambda x: horario_homog(x))
         data["location"] = data.apply(
