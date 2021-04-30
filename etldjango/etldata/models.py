@@ -72,6 +72,7 @@ class DB_oxi(models_gis.Model):
     recarga = models.BooleanField(null=True, blank=True,)
     concent_venta = models.BooleanField(null=True, blank=True,)
     concent_alquiler = models.BooleanField(null=True, blank=True,)
+    observacion = models.TextField(max_length=2000, null=True, blank=True,)
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -93,15 +94,15 @@ class DB_farmacias(models_gis.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     nombre = models.CharField(max_length=400)
     place_id = models.CharField(max_length=200)
-    rating = models.DecimalField(null=True,
+    rating = models.DecimalField(null=True, blank=True,
                                  decimal_places=2,
                                  max_digits=4,)
-    n_users = models.IntegerField()
-    direccion = models.CharField(null=True, max_length=200)
+    n_users = models.IntegerField(null=True, blank=True,)
+    direccion = models.CharField(null=True, blank=True, max_length=200)
     location = models_gis.PointField(
-        blank=True, srid=4326)  # default=Point(0, 0),
-    telefono = models.CharField(null=True, max_length=20)
-    paginaweb = models.URLField(null=True, max_length=300)
+        null=True, blank=True, srid=4326)  # default=Point(0, 0),
+    telefono = models.CharField(null=True, blank=True, max_length=20)
+    paginaweb = models.URLField(null=True, blank=True, max_length=300)
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -125,10 +126,28 @@ class DB_sinadef(models.Model):
     region = models.CharField(max_length=100)
     n_muertes = models.DecimalField(null=True,
                                     decimal_places=2,
-                                    max_digits=6,)
+                                    max_digits=7,)
+    age0_20 = models.DecimalField(null=True,
+                                  decimal_places=2,
+                                  max_digits=7,)
+    age20_30 = models.DecimalField(null=True,
+                                   decimal_places=2,
+                                   max_digits=7,)
+    age30_50 = models.DecimalField(null=True,
+                                   decimal_places=2,
+                                   max_digits=7,)
+    age50_70 = models.DecimalField(null=True,
+                                   decimal_places=2,
+                                   max_digits=7,)
+    age70_79 = models.DecimalField(null=True,
+                                   decimal_places=2,
+                                   max_digits=7,)
+    age79_m = models.DecimalField(null=True,
+                                  decimal_places=2,
+                                  max_digits=7,)
     n_muertes_roll = models.DecimalField(null=True,
                                          decimal_places=2,
-                                         max_digits=6,)
+                                         max_digits=7,)
 
     class Meta:
         ordering = ['-fecha']

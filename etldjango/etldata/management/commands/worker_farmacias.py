@@ -69,7 +69,7 @@ class Command(BaseCommand):
         ubigeo2 = pd.read_csv('temp/' + self.ubigeo)
         ubigeo2['location'] = ubigeo2['location'].apply(
             lambda x: json.loads(x.replace("\'", "\"")))
-        ubigeo2 = ubigeo2.groupby('NOMBDEP').first().reset_index()
+        #ubigeo2 = ubigeo2.groupby('NOMBDEP').first().reset_index()
         ubigeo2.head()
         return ubigeo2
 
@@ -85,7 +85,7 @@ class Command(BaseCommand):
         with tqdm(total=len(ubigeo)) as pbar:
             for location, departamento in zip(ubigeo.location, ubigeo.NOMBDEP):
                 places_list = self.googleapi.get_drugstore_places_from_points(
-                    location, 2000, 'Perú')
+                    location, 8000, 'Perú')
                 #_ = [place.update({'departamento': departamento}) for place in places_list]
                 whole_places = whole_places + places_list
                 pbar.update(1)
@@ -117,6 +117,7 @@ class Command(BaseCommand):
         return df
 
     def format_table(self, table):
+
         table.rename(columns={
             'place_id': 'place_id',
             'name': 'nombre',
@@ -126,6 +127,7 @@ class Command(BaseCommand):
             'formatted_phone_number': 'telefono',
             'website': 'paginaweb',
         }, inplace=True)
+        table['n_users'] = table['n_users'].apply(lambda x: 0 if x != x else x)
         table["location"] = table.apply(
             lambda x: Point(x['longitude'], x['latitude']), axis=1)
         table.drop(columns=['longitude', 'latitude'], inplace=True)

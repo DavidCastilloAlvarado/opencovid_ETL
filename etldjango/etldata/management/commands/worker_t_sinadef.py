@@ -79,6 +79,8 @@ class Command(BaseCommand):
             "DEPARTAMENTO DOMICILIO",
             "PROVINCIA DOMICILIO",
             "MUERTE VIOLENTA",
+            'TIEMPO EDAD',
+            'EDAD',
             "FECHA",
         ]
         sinadef = pd.read_csv("temp/"+self.file_name,
@@ -92,13 +94,14 @@ class Command(BaseCommand):
 
     def filter_date_and_deads(self, table, mode, min_date="2018-01-01"):
         list_ = ["NO SE CONOCE", 'SIN REGISTRO']
+        max_date = table.FECHA.max() - timedelta(days=1)
         # Filtros
         if mode == 'full':
             # max_date = str(datetime.now().date() - timedelta(days=30)) # test only
             table = table.loc[(table.FECHA >= min_date) &
+                              (table.FECHA <= max_date) &
                               (table["MUERTE VIOLENTA"].isin(list_))]
         elif mode == 'last':
-            max_date = table.FECHA.max() - timedelta(days=1)
             min_date = str(datetime.now().date() - timedelta(days=30))
             table = table.loc[(table.FECHA >= min_date) &
                               (table.FECHA <= max_date) &
@@ -109,33 +112,54 @@ class Command(BaseCommand):
         table.rename(columns={
             'DEPARTAMENTO DOMICILIO': 'region',
             'PROVINCIA DOMICILIO': 'provincia',
+            'EDAD': 'edad',
+            'TIEMPO EDAD': 'tiempo',
             'FECHA': 'fecha',
         }, inplace=True)
         return table
 
     def transforma_sinadef_table(self, table):
         table = self.getting_lima_region_and_metropol(table)
+        edad_cut = [0, 20, 30, 50, 70, 79, 130]
+        self.labels_age = ['age0_20', 'age20_30', 'age30_50',
+                           'age50_70', 'age70_79', 'age79_m']
+        table['tiempo'] = table['tiempo'].apply(
+            lambda x: normalizer_str(x).lower())
+        table['edad'] = pd.to_numeric(table['edad'], errors='coerce')
+        print(table.head())
+        table['edad'] = table.apply(
+            lambda x: x['edad'] if x['tiempo'] == 'años' else 1, axis=1)
+        table['edad'] = pd.cut(table['edad'], edad_cut,
+                               labels=self.labels_age, include_lowest=True)
         table["n_muertes"] = 1
-        table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
+        table = pd.pivot_table(table, values='n_muertes', index=['region', 'fecha'],
+                               columns='edad', aggfunc=np.sum).fillna(0)
+        table.columns = self.labels_age
+        table['n_muertes'] = table[self.labels_age].sum(1)
+        # table.reset_index(inplace=True)
+        #table = table.groupby(by=['region', 'fecha']).sum().fillna(0)
         table.sort_values(by='fecha', inplace=True)
+        # print(table.head())
         return table
 
     def transform_sinadef_roller_deads_total(self, table, n_roll=7):
         table = table.groupby(["region", ])
         table_roll = pd.DataFrame()
+        cols_roll_after = self.labels_age + ['n_muertes']
+        cols_roll_before = self.labels_age + ["n_muertes_roll"]
         # Roller mean for every region
         for region in table:
             temp = region[1].sort_values(by="fecha")
             temp = temp.fillna(method="backfill")
-            temp["n_muertes_roll"] = temp.rolling(n_roll, center=False).mean()
+            temp[cols_roll_before] = temp[cols_roll_after].rolling(
+                n_roll, center=False).mean()
             temp = temp.dropna()
             table_roll = table_roll.append(temp)
         table_roll.reset_index(inplace=True)
         # Roller mean for the whole country
-        temp = table_roll.groupby(["fecha"]).agg({
-            "n_muertes": 'sum',
-            "n_muertes_roll": 'sum',
-        }).reset_index()
+        temp = table_roll.copy()
+        temp.drop(columns=['region'], inplace=True)
+        temp = temp.groupby(["fecha"]).agg('sum').reset_index()
         temp["region"] = "PERU"
         table_roll = table_roll.append(temp, ignore_index=True)
 

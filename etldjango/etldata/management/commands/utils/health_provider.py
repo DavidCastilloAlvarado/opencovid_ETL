@@ -167,3 +167,14 @@ class GetHealthFromGoogleMaps(object):
             return location
         else:
             return {}
+
+    def get_details(self, URL, id_loc):
+        url = URL+str(id_loc)
+        request = self.get_request_API(url)
+        # print(request)
+        try:
+            request = request['results']
+            request = request[0]
+            return request['note']
+        except:
+            return ''

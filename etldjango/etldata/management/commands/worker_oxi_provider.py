@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT, URL_OXIPERU2
+from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT, URL_OXIPERU2, URL_OXIPERU2_DT
 from .utils.storage import GetBucketData
 from .utils.health_provider import GetHealthFromGoogleMaps
 from .utils.extractor import Data_Extractor
@@ -29,7 +29,8 @@ class Command(BaseCommand):
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     googleapi = GetHealthFromGoogleMaps()
     URL_OXIPERU2 = URL_OXIPERU2
-    URL_OXIGENOPERU = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQyh_QKdlSqO_x6oaNtQ5bFtsqKO4P_lcY1LxO7knnyMI7gsZDvzxgWF2dalzYyP9u2NBKGOxTAhgLl/pub?output=xlsx'
+    #URL_OXIGENOPERU = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQyh_QKdlSqO_x6oaNtQ5bFtsqKO4P_lcY1LxO7knnyMI7gsZDvzxgWF2dalzYyP9u2NBKGOxTAhgLl/pub?output=xlsx'
+    URL_OXIGENOPERU = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTW3H40DbJl5EPSaznmXeyIhKOPPt2AAvsR7p8gGryRzgMFcSQt3PkScV9uCfvmSAp6KxbfPoRRF3j8/pub?output=xlsx'
     filename_oxiperu = 'temp/oxigenoperu.xlsx'
     oxi_pre_loaded = 'oxigeno_negocio.csv'
     ubigeo = 'ubigeo_gps.csv'
@@ -70,7 +71,7 @@ class Command(BaseCommand):
             self.download_from_oxigeno_peru()
             table = self.raw_data_form_xlsx_oxigeno_peru()
             table = self.format_columns_oxigeno_peru(table)
-            table = self.adding_gps_point_oxigeno_peru(table)
+            #table = self.adding_gps_point_oxigeno_peru(table)
             table = self.format_table_oxigeno_peru(table)
         elif mode == 'oxiperu2':
             table = self.load_data_oxiperu2()
@@ -172,11 +173,11 @@ class Command(BaseCommand):
         columns = ['Nombre', 'Efectivo', 'Tarjeta', 'Transferencia',
                    'Horario', 'Telefono', 'Precio por m3',
                    'Venta', 'Alquiler', 'Recarga', 'Venta.1', 'Alquiler.1',
-                   'Direccion']
+                   'Direccion', 'latitude', 'longitude', 'Observacion']
         columns_lima = ['Nombre', 'Efectivo', 'Tarjeta', 'Transferencia',
                         'Horario', 'Telefono', 'Precio por m3',
                         'venta', 'alquiler', 'recarga', 'Venta', 'Alquiler',
-                        'Direccion']
+                        'Direccion', 'latitude', 'longitude', 'Observacion']
         data = pd.DataFrame()
         for departamento in tqdm(departamentos):
             if departamento == 'Lima':
@@ -199,40 +200,40 @@ class Command(BaseCommand):
 
     def format_columns_oxigeno_peru(self, table):
         table.columns = [col.lower() for col in table.columns.tolist()]
-        columns = ['nombre', 'efectivo', 'tarjeta', 'transferencia',
-                   'horario', 'telefono', 'precio por m3',
-                   'venta', 'alquiler', 'recarga', 'venta.1', 'alquiler.1',
-                   'direccion']
+        # columns = ['nombre', 'efectivo', 'tarjeta', 'transferencia',
+        #            'horario', 'telefono', 'precio por m3',
+        #            'venta', 'alquiler', 'recarga', 'venta.1', 'alquiler.1',
+        #            'direccion']
         table.rename(columns={'precio por m3': 'precio_m3',
                               'venta.1': 'concent_venta',
-                              'alquiler.1': 'concent_alquiler'},
+                              'alquiler.1': 'concent_alquiler',
+                              'Observacion': 'observacion', },
                      inplace=True)
         print(table.info())
         return table
 
-    def adding_gps_point_oxigeno_peru(self, table):
-        def get_gps(x, self):
-            if x['direccion'] == x['direccion']:
-                len_words = len(x['direccion'].split(' '))
-                if len_words > 1:
-                    point = self.googleapi.get_gps(
-                        str(x['direccion']) + ', ' + x['departamento'])
-                else:
-                    point = {}
-            else:
-                point = {}
-            if len(point) == 0:
-                point = self.googleapi.get_gps(
-                    x['nombre'] + ', ' + x['departamento'])
-            print(point)
-            return pd.Series(point)
-
-        temp = table.apply(get_gps, args=(self,), axis=1)
-        print(temp)
-        table = table.join(temp)
-        print(table.head())
-        print(table.info())
-        return table
+    # def adding_gps_point_oxigeno_peru(self, table):
+    #     def get_gps(x, self):
+    #         if x['direccion'] == x['direccion']:
+    #             len_words = len(x['direccion'].split(' '))
+    #             if len_words > 1:
+    #                 point = self.googleapi.get_gps(
+    #                     str(x['direccion']) + ', ' + x['departamento'])
+    #             else:
+    #                 point = {}
+    #         else:
+    #             point = {}
+    #         if len(point) == 0:
+    #             point = self.googleapi.get_gps(
+    #                 x['nombre'] + ', ' + x['departamento'])
+    #         print(point)
+    #         return pd.Series(point)
+    #     temp = table.apply(get_gps, args=(self,), axis=1)
+    #     print(temp)
+    #     table = table.join(temp)
+    #     print(table.head())
+    #     print(table.info())
+    #     return table
 
     def format_table_oxigeno_peru(self, table):
         bool_cols = ['venta', 'alquiler', 'recarga',
@@ -249,14 +250,32 @@ class Command(BaseCommand):
                     return False
             return False
 
+        def price_handler(x):
+            text = {}
+            if x == x and not x is None:
+                x = str(x).split('/')[-1]
+                if 'GRAT' in x:
+                    text['m3'] = 'GRATIS'
+                elif '-' in x:
+                    text['m3'] = x
+                else:
+                    if float(x) > 200:
+                        text['bal10'] = float(x)
+                    else:
+                        text['m3'] = float(x)
+            return json.dumps(text)
+
         table[bool_cols] = table[bool_cols].applymap(
             lambda x: change_to_bool(x))
         table = table.applymap(lambda x: None if x == '-' or x == 'nan' else x)
+        table['precio_m3'] = table['precio_m3'].apply(
+            lambda x: price_handler(x))
         table.to_csv('temp/oxigeno_peru.csv', index=False)
         table["location"] = table.apply(
-            lambda x: Point(x['lng'], x['lat']) if x['lng'] == x['lng'] else None, axis=1)
-        table.drop(columns=['lng', 'lat'], inplace=True)
+            lambda x: Point(x['longitude'], x['latitude']) if x['longitude'] == x['longitude'] else None, axis=1)
+        table.drop(columns=['longitude', 'latitude'], inplace=True)
         print(table.info())
+        print(table['precio_m3'])
         return table
 
     def load_data_oxiperu2(self, ):
@@ -327,7 +346,8 @@ class Command(BaseCommand):
             # print(text)
             return pd.Series(data=[json.dumps(text)], index=['precio_m3'])
         #data = dataorig.copy()
-
+        data['observacion'] = data['id'].apply(
+            lambda x: self.googleapi.get_details(URL_OXIPERU2_DT, x))
         data = data.join(data.apply(get_services, axis=1))
         data = data.drop(columns=['service'])
         data = data.join(data.apply(get_coordinates, axis=1))
