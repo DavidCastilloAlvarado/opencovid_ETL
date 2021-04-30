@@ -82,7 +82,7 @@ class Command(BaseCommand):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
         max_date = str(datetime.now().date() -
-                       timedelta(days=2))
+                       timedelta(days=3))
         query = DB_positividad.objects
         query = query.filter(fecha__gt=min_date, fecha__lt=max_date)
         query = query.annotate(total_posit=F(
@@ -93,7 +93,7 @@ class Command(BaseCommand):
         #print(query.loc[query.region == 'PIURA'])
         return query
 
-    def date_table_factory(self, fechas_orig,region_name):
+    def date_table_factory(self, fechas_orig, region_name):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
         totaldatelist = pd.date_range(start=min_, end=max_).tolist()
@@ -109,9 +109,9 @@ class Command(BaseCommand):
             region_name = region[0]
             temp = region[1].sort_values(by="fecha")
             temp = self.drop_bad_records(temp)
-            totaldatelist = self.date_table_factory(temp.fecha,region_name)
+            totaldatelist = self.date_table_factory(temp.fecha, region_name)
             temp = totaldatelist.merge(temp,
-                                       on=["fecha",'region'],
+                                       on=["fecha", 'region'],
                                        how="left")
             temp = temp.sort_values(by="fecha")
             temp["total_posit"] = temp["total_posit"].interpolate(method='linear',

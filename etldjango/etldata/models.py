@@ -127,22 +127,22 @@ class DB_sinadef(models.Model):
     n_muertes = models.DecimalField(null=True,
                                     decimal_places=2,
                                     max_digits=7,)
-    age0_20 = models.DecimalField(null=True,
+    age0_19 = models.DecimalField(null=True,
                                   decimal_places=2,
                                   max_digits=7,)
-    age20_30 = models.DecimalField(null=True,
+    age20_29 = models.DecimalField(null=True,
                                    decimal_places=2,
                                    max_digits=7,)
-    age30_50 = models.DecimalField(null=True,
+    age30_49 = models.DecimalField(null=True,
                                    decimal_places=2,
                                    max_digits=7,)
-    age50_70 = models.DecimalField(null=True,
+    age50_69 = models.DecimalField(null=True,
                                    decimal_places=2,
                                    max_digits=7,)
     age70_79 = models.DecimalField(null=True,
                                    decimal_places=2,
                                    max_digits=7,)
-    age79_m = models.DecimalField(null=True,
+    age80_m = models.DecimalField(null=True,
                                   decimal_places=2,
                                   max_digits=7,)
     n_muertes_roll = models.DecimalField(null=True,

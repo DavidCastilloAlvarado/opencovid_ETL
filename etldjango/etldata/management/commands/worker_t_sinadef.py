@@ -17,6 +17,7 @@ class Command(BaseCommand):
     help = "SINADEF: Command for transform the tables and upload to the data base"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
     file_name = "sinadef.csv"
+    file_population = 'poblacion_edad.csv'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -26,7 +27,9 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("SINADEF transformation working ....")
-        self.downloading_data_from_bucket()
+        # self.downloading_data_from_bucket()
+        self.download_csv_from_bucket_data_source(self.file_population)
+        self.load_population_table()
         table = self.read_file_and_format_date()
         table = self.filter_date_and_deads(table, mode)
         table = self.format_columns_name(table)
@@ -50,6 +53,20 @@ class Command(BaseCommand):
         print(source_url)
         self.bucket.get_from_bucket(source_name=source_url,
                                     destination_name='temp/'+self.file_name)
+
+    def download_csv_from_bucket_data_source(self, filename):
+        self.print_shell("Downloading csv from bucket ...")
+        self.bucket.download_blob(bucket_name=BUCKET_NAME,
+                                  source_blob_name="data_source/"+filename,
+                                  destination_file_name='temp/'+filename)
+
+    def load_population_table(self):
+        table = pd.read_csv('temp/'+self.file_population)
+        self.age_cols = table.columns.tolist()
+        self.age_cols.remove('total')
+        self.age_cols.remove('region')
+        self.popu_total_age = table[self.age_cols].sum(0)
+        self.population = table
 
     def save_table(self, table, db, mode):
         if mode == 'full':
@@ -120,9 +137,9 @@ class Command(BaseCommand):
 
     def transforma_sinadef_table(self, table):
         table = self.getting_lima_region_and_metropol(table)
-        edad_cut = [0, 20, 30, 50, 70, 79, 130]
-        self.labels_age = ['age0_20', 'age20_30', 'age30_50',
-                           'age50_70', 'age70_79', 'age79_m']
+        edad_cut = [0, 19, 29, 49, 69, 79, 130]
+        self.labels_age = ['age0_19', 'age20_29', 'age30_49',
+                           'age50_69', 'age70_79', 'age80_m']
         table['tiempo'] = table['tiempo'].apply(
             lambda x: normalizer_str(x).lower())
         table['edad'] = pd.to_numeric(table['edad'], errors='coerce')
@@ -130,7 +147,7 @@ class Command(BaseCommand):
         table['edad'] = table.apply(
             lambda x: x['edad'] if x['tiempo'] == 'años' else 1, axis=1)
         table['edad'] = pd.cut(table['edad'], edad_cut,
-                               labels=self.labels_age, include_lowest=True)
+                               labels=self.labels_age)
         table["n_muertes"] = 1
         table = pd.pivot_table(table, values='n_muertes', index=['region', 'fecha'],
                                columns='edad', aggfunc=np.sum).fillna(0)
@@ -142,6 +159,18 @@ class Command(BaseCommand):
         # print(table.head())
         return table
 
+    def normalize_10k_popu(self, table, region_name=None, region=True):
+        if region and not region_name in ['EXTRANJERO', 'SIN REGISTRO']:
+            vector = self.population.loc[self.population.region == region_name]
+            vector = vector[self.age_cols]
+            vector = 1/vector*10000
+        else:
+            vector = 1/self.popu_total_age*10000
+        # print(table[self.age_cols])
+        table[self.age_cols] = np.multiply(
+            table[self.age_cols], np.asarray(vector))
+        return table
+
     def transform_sinadef_roller_deads_total(self, table, n_roll=7):
         table = table.groupby(["region", ])
         table_roll = pd.DataFrame()
@@ -149,8 +178,10 @@ class Command(BaseCommand):
         cols_roll_before = self.labels_age + ["n_muertes_roll"]
         # Roller mean for every region
         for region in table:
+            region_name = region[0]
             temp = region[1].sort_values(by="fecha")
             temp = temp.fillna(method="backfill")
+            temp = self.normalize_10k_popu(temp, region_name)
             temp[cols_roll_before] = temp[cols_roll_after].rolling(
                 n_roll, center=False).mean()
             temp = temp.dropna()
@@ -160,6 +191,7 @@ class Command(BaseCommand):
         temp = table_roll.copy()
         temp.drop(columns=['region'], inplace=True)
         temp = temp.groupby(["fecha"]).agg('sum').reset_index()
+        temp = self.normalize_10k_popu(table=temp, region=False)
         temp["region"] = "PERU"
         table_roll = table_roll.append(temp, ignore_index=True)
 
