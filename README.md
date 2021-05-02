@@ -41,7 +41,9 @@ GCP_PROJECT_ID=************
 BUCKET_NAME=************
 BUCKET_ROOT=************ # folder in your bucket
 KEY_JSON_FILE=************.json
-KEY_MAPS_API =************ # Key googlemaps api
+KEY_MAPS_API=************ # Key googlemaps api
+URL_OXIPERU2_DT=************ # API url for details
+URL_OXIPERU2=************* # API url for the provider
 ```
 
 2.  Make all migrations before to run

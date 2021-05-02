@@ -14,6 +14,8 @@ from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import time
+import logging
+logger = logging.getLogger('StackDriverHandler')
 
 
 class Command(BaseCommand):
@@ -40,13 +42,20 @@ class Command(BaseCommand):
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
+    def error_rt(self, table):
+        vector = table.loc[(table.region == 'PERU') & (table.ml <= 0.05)]
+        if len(vector) > 10:
+            return True
+        return False
+
     def save_table(self, table, db, mode):
-        if mode == 'full':
+        if mode == 'full' and self.error_rt(table):
+            self.print_shell("Storing new records - FULL")
             records = table.to_dict(orient='records')
             records = [db(**record) for record in tqdm(records)]
             _ = db.objects.all().delete()
             _ = db.objects.bulk_create(records)
-        elif mode == 'last':
+        elif mode == 'last' and self.error_rt(table):
             #_ = db.objects.all().delete()
             # this is posible because the table is sorter by "-fecha"
             last_record = db.objects.all()[:1]
@@ -63,6 +72,10 @@ class Command(BaseCommand):
                 _ = db.objects.bulk_create(records)
             else:
                 self.print_shell("No new data was found to store")
+        else:
+            logger.warning('RT wasnt saved - bad calculation')
+            self.print_shell(
+                "No new data was found to store - Error in rt Perú values")
 
     def handle(self, *args, **options):
         mode = options["mode"]
@@ -82,7 +95,7 @@ class Command(BaseCommand):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
         max_date = str(datetime.now().date() -
-                       timedelta(days=3))
+                       timedelta(days=1))
         query = DB_positividad.objects
         query = query.filter(fecha__gt=min_date, fecha__lt=max_date)
         query = query.annotate(total_posit=F(

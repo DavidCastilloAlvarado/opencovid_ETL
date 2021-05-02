@@ -252,38 +252,35 @@ class Command(BaseCommand):
         return total
 
     def scoring_variables(self, table):
+        print(table.info())
+        print(table.head())
+        print(table.isnull().sum())
         table = table.fillna(0)
-        cut_fall = [0, 2, 5, 7, 1e7]
-        cut_uci = [0, 70, 90, 98, 100]
-        cut_incid = [0, 80, 100, 120, 1e7]
-        cut_rt = [0, .7, 1.1, 1.6, 1e7]
-        cut_pos = [0, 11, 15, 20, 1e7]
+        cut_fall = [-0.01, 2, 5, 7, 1e7]
+        cut_uci = [-0.01, 70, 90, 98, 100]
+        cut_incid = [-0.01, 80, 100, 120, 1e7]
+        cut_rt = [-0.01, .7, 1.1, 1.6, 1e7]
+        cut_pos = [-0.01, 11, 15, 20, 1e7]
         cut_test = [-1e7, 34, 60, 100, 1e7]
         color = [1, 2, 3, 4]
         table['fall_score'] = pd.cut(table.fall_100,
                                      cut_fall,
-                                     labels=color,
-                                     include_lowest=True).astype(int)
+                                     labels=color).astype(int)
         table['uci_score'] = pd.cut(table.uci,
                                     cut_uci,
-                                    labels=color,
-                                    include_lowest=True).astype(int)
+                                    labels=color).astype(int)
         table['incid_score'] = pd.cut(table.incid_100,
                                       cut_incid,
-                                      labels=color,
-                                      include_lowest=True).astype(int)
+                                      labels=color).astype(int)
         table['rt_score'] = pd.cut(table.rt,
                                    cut_rt,
-                                   labels=color,
-                                   include_lowest=True).astype(int)
+                                   labels=color).astype(int)
         table['posit_score'] = pd.cut(table.positividad,
                                       cut_pos,
-                                      labels=color,
-                                      include_lowest=True).astype(int)
+                                      labels=color).astype(int)
         table['test_score'] = pd.cut(table.avg_test,
                                      cut_test,
-                                     labels=color[::-1],
-                                     include_lowest=True).astype(int)
+                                     labels=color[::-1]).astype(int)
 
         table['score'], table['val_score'] = self.calculate_score(table)
         print(table.describe())
@@ -316,7 +313,8 @@ class Command(BaseCommand):
             totaldatelist = self.date_table_factory(temp.fecha, region_name)
             temp = totaldatelist.merge(temp,
                                        on=["fecha", 'region'],
-                                       how="outer")
+                                       how="outer",
+                                       )
 
             temp = temp.sort_values(by="fecha")
             temp = temp.reset_index(drop=True)
@@ -346,7 +344,6 @@ class Command(BaseCommand):
 
     def calc_vacc_progress(self, table):
         table['vacc_prog'] = table.vacc_acum/table.poblacion*100
-        print(table.info())
         return table
 
     def query_vacunados(self, db, weeks):
