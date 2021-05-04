@@ -151,7 +151,10 @@ class Command(BaseCommand):
         query = query.filter(fecha_corte__gt=fecha_min)
         query = query.exclude(region='PERU')
         query = query.annotate(uci_p=F('uci_zc_cama_ocup') /
-                               F('uci_zc_cama_total')*100)
+                               F('uci_zc_cama_total')*100,
+                               camas_p=F('uci_znc_cama_ocup') /
+                               F('uci_znc_cama_total')*100
+                               )
         query = pd.DataFrame.from_records(query)
         query.rename(columns={'fecha_corte': 'fecha'}, inplace=True)
         print(query)
@@ -210,6 +213,7 @@ class Command(BaseCommand):
             'n_muertes': 'fall_100',
             'ml': 'rt',
             'uci_p': 'uci',
+            'camas_p': 'camas_covid',
             'vacc_acum': 'vacc_acum',
         }, inplace=True)
         return table
@@ -326,7 +330,8 @@ class Command(BaseCommand):
                 'avg_test': 'mean',
                 'incid_100': 'sum',
                 'positividad': 'mean',
-                'uci': 'mean',
+                'uci': 'last',
+                'camas_covid': 'last',
                 'fall_100': 'sum',
                 'rt': 'mean',
                 'vacc_acum': 'max',

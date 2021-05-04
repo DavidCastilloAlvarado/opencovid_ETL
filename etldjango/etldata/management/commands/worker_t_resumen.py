@@ -18,6 +18,7 @@ import time
 
 class Command(BaseCommand):
     help = "RESUMEN: Command for create the resumen using the current date in the DB"
+    URL_TOTAL_VACUNAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSitZm8CsWGbFCGBU_wp6R9uVY9cRscQqXETOuBz61Yjhhr2wA1aNfxCwZAQpwnV46F03BIgAmMhAL1/pub?output=csv'
 
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
@@ -50,7 +51,9 @@ class Command(BaseCommand):
         # Downloading data from bucket
         deaths_before_d, deaths_before_d_std = self.query_avg_daily_deaths_before_covid(
             DB_sinadef)
-        deaths_after = self.query_total_deaths_sinadef(DB_sinadef)
+        self.total_deaths_subreg = self.query_total_deaths_sinadef_total_subreg(
+            DB_sinadef, deaths_before_d)
+        deaths_after = self.query_avg7d_deaths_sinadef(DB_sinadef)
         self.deaths_sinadef = self.calculate_subreg_deaths(deaths_before_d,
                                                            deaths_after,
                                                            deaths_before_d_std)
@@ -60,6 +63,8 @@ class Command(BaseCommand):
         self.vacc_prog, self.vacc_end = self.vacc_forecast()
         self.camas_uci_disp = self.query_camas_uci_disponible(DB_uci)
         self.active_cases = self.query_active_cases(DB_positividad_relativa)
+        table = self.read_vacc_total()
+        self.val_total_vacc_pe = self.take_total_vacc_pe(table)
         self.save_resume(DB_resumen)
         self.print_shell("Work Done!")
 
@@ -68,7 +73,8 @@ class Command(BaseCommand):
         All metrics are avg in the last 7 days,
         except camas_uci_disp, wich is the last day.
         """
-        data = dict(fallecidos_sinadef=self.deaths_sinadef,
+        data = dict(total_fallecidos_sinadef=self.total_deaths_subreg,
+                    fallecidos_sinadef=self.deaths_sinadef,
                     fallecidos_minsa=self.deaths_minsa,
                     vacunados=self.avg_vacc_day,
                     totalvacunados1=self.allvacc,
@@ -76,12 +82,25 @@ class Command(BaseCommand):
                     vacc_ends=self.vacc_end,
                     camas_uci_disp=self.camas_uci_disp,
                     active_cases=self.active_cases,
+                    vacc_purch_pe=self.val_total_vacc_pe,
                     )
         print(data)
         _ = db.objects.create(**data)
 
+    def read_vacc_total(self):
+        table = pd.read_csv(self.URL_TOTAL_VACUNAS,
+                            usecols=['fecha', 'total'])
+        table.fecha = table.fecha.apply(
+            lambda x: datetime.strptime(str(x), "%Y%m%d"))
+        table = table.loc[table.fecha == max(table.fecha)]
+        return table
+
+    def take_total_vacc_pe(self, table):
+        val = table['total'].tolist()[0]
+        return val
+
     def query_avg_daily_deaths_before_covid(self, db):
-        min_fecha_hist = datetime.strptime("01-01-18", "%d-%m-%y")
+        min_fecha_hist = datetime.strptime("01-01-19", "%d-%m-%y")
         max_fecha_hist = datetime.strptime("01-01-20", "%d-%m-%y")
         query = db.objects.values('fecha').filter(fecha__gt=min_fecha_hist,
                                                   fecha__lt=max_fecha_hist,
@@ -90,9 +109,20 @@ class Command(BaseCommand):
         query = query.aggregate(Avg('n_muertes__sum'),
                                 StdDev('n_muertes__sum'))
         print(query)
-        return query['n_muertes__sum__avg'], query['n_muertes__sum__stddev']
+        query2 = db.objects.values('fecha').filter(fecha__gt=min_fecha_hist,
+                                                   fecha__lt=max_fecha_hist,
+                                                   region='PERU')
 
-    def query_total_deaths_sinadef(self, db):
+        def median_value(queryset, term):
+            count = queryset.count()
+            return queryset.values_list(term, flat=True).order_by(term)[int(round(count/2))]
+
+        result = median_value(query2, 'n_muertes')
+        print(result)
+        # query['n_muertes__sum__avg']
+        return result, query['n_muertes__sum__stddev']
+
+    def query_avg7d_deaths_sinadef(self, db):
         """
         AVG deaths by sinadef in the last 7 days
         """
@@ -107,6 +137,18 @@ class Command(BaseCommand):
                                 Count('n_muertes__sum'))
         print(query)
         return query['n_muertes__sum__avg']
+
+    def query_total_deaths_sinadef_total_subreg(self, db, deaths_before_d):
+        min_fecha_hist = datetime.strptime('01-01-20', "%d-%m-%y")
+        query = db.objects.values('fecha')
+        query = query.filter(fecha__gte=min_fecha_hist,
+                             region='PERU')
+        query = query.aggregate(n_muertes=Sum(
+            'n_muertes'), n_dias=Count('fecha'))
+        total = query['n_muertes'] - query['n_dias']*deaths_before_d
+        print(query)
+        print(total)
+        return total
 
     def calculate_subreg_deaths(self, daily_before, total_after, std):
         """

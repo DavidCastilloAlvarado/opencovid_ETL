@@ -186,6 +186,12 @@ class DB_resumen(models.Model):
                                         decimal_places=2,
                                         max_digits=5,)
     vacc_ends = models.DateTimeField()
+    vacc_purch_pe = models.DecimalField(null=True,
+                                        decimal_places=2,
+                                        max_digits=12,)
+    total_fallecidos_sinadef = models.DecimalField(null=True,
+                                                   decimal_places=2,
+                                                   max_digits=9,)
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -511,6 +517,8 @@ class DB_epidemiologico(models.Model):
                                       decimal_places=2, max_digits=8, blank=True,)
     uci = models.DecimalField(null=True, default=None,
                               decimal_places=2, max_digits=8, blank=True,)
+    camas_covid = models.DecimalField(null=True, default=None,
+                                      decimal_places=2, max_digits=8, blank=True,)
     fall_100 = models.DecimalField(null=True, default=None,
                                    decimal_places=2, max_digits=8, blank=True,)
     rt = models.DecimalField(null=True, default=None,
