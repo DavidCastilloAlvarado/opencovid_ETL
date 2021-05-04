@@ -189,6 +189,9 @@ class DB_resumen(models.Model):
     vacc_purch_pe = models.DecimalField(null=True,
                                         decimal_places=2,
                                         max_digits=12,)
+    vacc_day_status_goal = models.DecimalField(null=True,
+                                               decimal_places=2,
+                                               max_digits=5,)
     total_fallecidos_sinadef = models.DecimalField(null=True,
                                                    decimal_places=2,
                                                    max_digits=9,)

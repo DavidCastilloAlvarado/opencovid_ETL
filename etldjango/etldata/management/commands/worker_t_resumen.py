@@ -60,7 +60,7 @@ class Command(BaseCommand):
         self.deaths_minsa = self.query_deaths_minsa(DB_minsa_muertes)
         self.avg_vacc_day, self.allvacc = self.query_vaccinated_first_dosis(
             DB_vacunas)
-        self.vacc_prog, self.vacc_end = self.vacc_forecast()
+        self.vacc_prog, self.vacc_end, self.vacc_status_goal = self.vacc_forecast()
         self.camas_uci_disp = self.query_camas_uci_disponible(DB_uci)
         self.active_cases = self.query_active_cases(DB_positividad_relativa)
         table = self.read_vacc_total()
@@ -83,6 +83,7 @@ class Command(BaseCommand):
                     camas_uci_disp=self.camas_uci_disp,
                     active_cases=self.active_cases,
                     vacc_purch_pe=self.val_total_vacc_pe,
+                    vacc_day_status_goal=self.vacc_status_goal,
                     )
         print(data)
         _ = db.objects.create(**data)
@@ -183,7 +184,15 @@ class Command(BaseCommand):
         days_left = round(days_left)
         vacc_prog = round(int(self.allvacc)/TOTAL_POBLACION*100, 2)
         vacc_end = datetime.now().date() + timedelta(days=days_left)
-        return vacc_prog, vacc_end
+        # how have to be the vaccine status in all the country
+        init_date_vacc = datetime.strptime("9-02-21", "%d-%m-%y").date()
+        end_date_vacc = datetime.strptime("31-12-21", "%d-%m-%y").date()
+        curr_date = datetime.now().date()
+        num_diff = (curr_date-init_date_vacc).days
+        deno_diff = (end_date_vacc-init_date_vacc).days
+        vacc_status_goal = num_diff / deno_diff*100
+
+        return vacc_prog, vacc_end, vacc_status_goal
 
     def query_vaccinated_first_dosis(self, db):
         """
