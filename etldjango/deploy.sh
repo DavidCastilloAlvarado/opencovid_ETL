@@ -12,6 +12,7 @@ REGION=us-central1
 gcloud secrets create application_settings_etl --data-file .env
 export PROJECTNUM=$(gcloud projects describe ${PROJECT_ID} --format 'value(projectNumber)')
 export CLOUDRUN=${PROJECTNUM}-compute@developer.gserviceaccount.com
+rm .env
 
 gcloud secrets add-iam-policy-binding application_settings_etl \
   --member serviceAccount:${CLOUDRUN} --role roles/secretmanager.secretAccessor

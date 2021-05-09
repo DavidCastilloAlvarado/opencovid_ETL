@@ -1,6 +1,6 @@
 import os
 from django.core.management.base import BaseCommand, CommandError
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
+from etldjango.settings import GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta

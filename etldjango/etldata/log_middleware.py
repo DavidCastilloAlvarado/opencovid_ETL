@@ -1,12 +1,11 @@
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS
+from etldjango.settings import DEBUG
 from .utiles import get_client_and_log_resource
 import io
 import logging
 import json
 
 
-client, _LOG_RESOURCE = get_client_and_log_resource(
-    GOOGLE_APPLICATION_CREDENTIALS)
+client, _LOG_RESOURCE = get_client_and_log_resource()
 
 
 class StackDriverHandler(logging.Handler):

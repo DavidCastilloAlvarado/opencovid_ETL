@@ -9,61 +9,82 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # update pip
+RUN apt-get update
 RUN pip install --upgrade pip
 
 # Install geolibs for geodjango
-RUN apt-get install binutils libproj-dev gdal-bin
-RUN apt-get install autoconf automake libtool curl make g++ unzip
-RUN apt-get install -y pkg-config.
-RUN apt-get install libpq-dev
-RUN apt-get install libxml2-dev
-RUN apt install postgresql-server-dev-11
-RUN apt-get install sqlite3 libsqlite3-dev
+RUN apt-get install -y\
+    binutils \ 
+    libproj-dev \ 
+    gdal-bin \
+    autoconf \
+    automake \
+    libtool \
+    curl \ 
+    make \
+    g++ \
+    unzip \
+    pkg-config. \
+    libpq-dev \
+    libxml2-dev \
+    sqlite3 \
+    libsqlite3-dev
+#RUN apt install postgresql-server-dev-11
+# Setup GDAL
+RUN apt-get install -y binutils \
+    libproj-dev \
+    gdal-bin\
+    python-gdal\
+    python3-gdal
 
-#Installing GEOS
-RUN wget https://download.osgeo.org/geos/geos-3.8.1.tar.bz2
-RUN tar xjf geos-3.8.1.tar.bz2
-RUN ./geos-3.8.1/configure
-RUN geos-3.8.1/make
-RUN geos-3.8.1/make install
 
-#Installing PROJ4
-RUN wget https://download.osgeo.org/proj/proj-6.3.1.tar.gz
-RUN wget https://download.osgeo.org/proj/proj-datumgrid-1.8.tar.gz
+# #Installing GEOS
+# RUN wget https://download.osgeo.org/geos/geos-3.8.1.tar.bz2
+# RUN tar xjf geos-3.8.1.tar.bz2
+# RUN ./geos-3.8.1/configure
+# RUN cd geos-3.8.1
+# RUN make
+# RUN make install
+# RUN cd ..
 
-RUN tar xzf proj-6.3.1.tar.gz
-RUN cd proj-6.3.1/data
-RUN tar xzf ../../proj-datumgrid-1.8.tar.gz
-RUN cd ..
+# #Installing PROJ4
+# RUN wget https://download.osgeo.org/proj/proj-6.3.1.tar.gz
+# RUN wget https://download.osgeo.org/proj/proj-datumgrid-1.8.tar.gz
 
-RUN ./configure
-RUN make -j8
-RUN make install
-RUN cd ..
+# RUN tar xzf proj-6.3.1.tar.gz
+# RUN cd proj-6.3.1/data
+# RUN tar xzf ../../proj-datumgrid-1.8.tar.gz
+# RUN cd ..
 
-## Install json-c
-RUN wget https://github.com/json-c/json-c/archive/refs/tags/json-c-0.15-20200726.tar.gz
-RUN tar -xvzf json-c-0.15-20200726.tar.gz
-RUN mv json-c-json-c-0.15-20200726 json-c
-RUN cd json-c
-RUN mkdir json-c-build
-RUN cmake ../json-c
-RUN make
-RUN make install
-RUN cd ..
+# RUN ./configure
+# RUN make -j8
+# RUN make install
+# RUN cd ..
 
-# Installing GDAL
-RUN wget https://download.osgeo.org/gdal/2.4.4/gdal-2.4.4.tar.gz
-RUN tar xzf gdal-2.4.4.tar.gz
-RUN cd gdal-2.4.4
-RUN ./configure --with-python
-RUN make -j8
-RUN sudo make install
-RUN cd ..
+# ## Install json-c
+# RUN wget https://github.com/json-c/json-c/archive/refs/tags/json-c-0.15-20200726.tar.gz
+# RUN tar -xvzf json-c-0.15-20200726.tar.gz
+# RUN mv json-c-json-c-0.15-20200726 json-c
+# RUN cd json-c
+# RUN mkdir json-c-build
+# RUN cmake ../json-c
+# RUN make
+# RUN make install
+# RUN cd ..
+
+# # Installing GDAL
+# RUN wget https://download.osgeo.org/gdal/2.4.4/gdal-2.4.4.tar.gz
+# RUN tar xzf gdal-2.4.4.tar.gz
+# RUN cd gdal-2.4.4
+# RUN ./configure --with-python
+# RUN make -j8
+# RUN make install
+# RUN cd ..
 
 
 # Instaling dependencies
-RUN pip install -r /usr/src/app/requirements.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 
 # copy project

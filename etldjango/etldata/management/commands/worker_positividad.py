@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
+from etldjango.settings import GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from .utils.urllibmod import urlretrieve
@@ -104,7 +104,7 @@ class Command(BaseCommand):
             table = table[cols]
         return table[cols]
 
-    def date_table_factory(self, fechas_orig,region_name):
+    def date_table_factory(self, fechas_orig, region_name):
         min_ = fechas_orig.min()
         max_ = fechas_orig.max()
         totaldatelist = pd.date_range(start=min_, end=max_).tolist()
@@ -117,18 +117,18 @@ class Command(BaseCommand):
         table_total = pd.DataFrame()
         for region in table:
             region_name = region[0]
-            #print(region_name)
+            # print(region_name)
             temp = region[1].sort_values(by="fecha")
             temp = temp.set_index(['fecha', 'region'])
             temp = self.drop_bad_records(temp)
             temp = temp.reset_index()
-            totaldatelist = self.date_table_factory(temp.fecha,region_name)
+            totaldatelist = self.date_table_factory(temp.fecha, region_name)
             temp = totaldatelist.merge(temp,
-                                       on=["fecha",'region'],
+                                       on=["fecha", 'region'],
                                        how="left")
             # print(temp.tail())
             #temp = temp.groupby(["fecha", "region"]).last()
-            
+
             temp = temp.set_index(['fecha', 'region'])
             #temp = temp.sort_values(by="fecha")
             temp = temp.apply(pd.to_numeric, errors='ignore')

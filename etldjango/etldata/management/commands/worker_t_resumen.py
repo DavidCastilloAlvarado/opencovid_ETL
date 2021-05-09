@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
+from etldjango.settings import GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
@@ -13,6 +13,8 @@ import pandas as pd
 import numpy as np
 import os
 import time
+import logging
+logger = logging.getLogger('StackDriverHandler')
 # datetime.now(tz=timezone.utc)  # you can use this value
 
 
@@ -47,6 +49,7 @@ class Command(BaseCommand):
                 self.print_shell("No new data was found to store")
 
     def handle(self, *args, **options):
+        logger.info('Resumen initialized running ...')
         self.print_shell("Computing covid19 resume from db")
         # Downloading data from bucket
         self.total_infected = self.query_total_infected(DB_positividad)

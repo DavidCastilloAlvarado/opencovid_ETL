@@ -1,5 +1,5 @@
 from google.cloud import storage
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
+from etldjango.settings import GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 import os
 from os import path as pathdir
 from pathlib import Path

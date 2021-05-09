@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from etldjango.settings import GOOGLE_APPLICATION_CREDENTIALS, GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
+from etldjango.settings import GCP_PROJECT_ID, BUCKET_NAME, BUCKET_ROOT
 from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
@@ -244,7 +244,7 @@ class Command(BaseCommand):
         print(total_table['serv_uci_left'].sum())
         print(total_table['serv_nc_total'].sum())
         print(total_table['serv_nc_left'].sum())
-        total_table = total_table.loc[total_table['institucion']!= 0]
+        total_table = total_table.loc[total_table['institucion'] != 0]
         #print(total_table.loc[total_table['institucion']== 0])
         self.print_shell("Records oxi + uci: {}".format(total_table.shape))
         return total_table
