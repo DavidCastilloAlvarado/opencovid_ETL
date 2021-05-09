@@ -48,12 +48,13 @@ class Sinadef_api(APIView):
 
 class UpdateOpenCovid2(APIView):
 
-    def post(self, request):
+    def get(self, request):
         out = StringIO()
         out2 = StringIO()
         args = ['v2']
         argsupd = ['last']
         try:
+            call_command('worker_t_resumen', verbosity=0, stdout=out)
             call_command('worker_extractor', verbosity=0, *args, stdout=out)
             call_command('worker_update_all', verbosity=0,
                          *argsupd, stdout=out2)
