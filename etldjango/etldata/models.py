@@ -195,6 +195,9 @@ class DB_resumen(models.Model):
     total_fallecidos_sinadef = models.DecimalField(null=True,
                                                    decimal_places=2,
                                                    max_digits=9,)
+    total_infectados_hist = models.DecimalField(null=True,
+                                                decimal_places=2,
+                                                max_digits=12,)
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -663,7 +666,10 @@ class DB_vaccine_resum(models.Model):
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
+    region = models.CharField(max_length=50, null=True,)
     diario = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    diario_roll = models.DecimalField(
+        null=True, decimal_places=1, max_digits=10,)
     acum = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
     resta = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
     meta = models.DecimalField(null=True, decimal_places=1, max_digits=10,)

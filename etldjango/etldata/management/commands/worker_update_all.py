@@ -19,7 +19,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(text))
 
     def handle(self, *args, **options):
-        logger.info("Running update - OK")
+        logger.info("Running updates initialization- OK")
         try:
             mode = options["mode"]
             assert mode in ['full', 'last'], "Error in --mode argument"
@@ -40,6 +40,7 @@ class Command(BaseCommand):
             self.update_epidemiological_score(mode)
             self.update_resumen()
             self.print_shell("Work Done!")
+            logger.info("Updates finished - OK")
         except Exception as error:
             logger.error("Error running daily update, " + error.args[0])
 
@@ -48,12 +49,14 @@ class Command(BaseCommand):
         args = [mode]
         call_command('worker_mov', *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_movility- OK")
 
     def update_records_positivity(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_pos_rel', *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_records_positivity- OK")
 
     def update_acum_positivity_from_pdf(self, mode):
         out = StringIO()
@@ -64,6 +67,7 @@ class Command(BaseCommand):
 
         call_command('worker_posit', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_acum_positivity_from_pdf- OK")
 
     def update_daily_positivity_from_db_acum_table(self, mode):
         out = StringIO()
@@ -73,6 +77,7 @@ class Command(BaseCommand):
             args = ['full']
         call_command('worker_positividad', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_daily_positivity_from_db_acum_table - OK")
 
     def update_rt_score(self, mode):
         out = StringIO()
@@ -83,30 +88,35 @@ class Command(BaseCommand):
         #     args = ['full']
         call_command('worker_rt', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_rt_score - OK")
 
     def update_hospital_capacity(self, mode):
         out = StringIO()
         args = ['last']
         call_command('worker_t_caphospv2', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_hospital_capacity - OK")
 
     def update_minsa_deaths(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_t_minsamuertes', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_minsa_deaths - OK")
 
     def update_sinadef_deaths(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_t_sinadef', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_sinadef_deaths - OK")
 
     def update_oxi_statistics(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_t_oxistatv2', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_oxi_statistics - OK")
 
     def update_oxi_business(self, mode):
         out = StringIO()
@@ -118,6 +128,7 @@ class Command(BaseCommand):
         args = ['oxiperu']
         call_command('worker_oxi_provider', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_oxi_business - OK")
 
     def update_drugstore_business(self, mode):
         out = StringIO()
@@ -128,24 +139,28 @@ class Command(BaseCommand):
         args = ['csv']  # change to search to use googlemaps API - save your money
         call_command('worker_farmacias', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_drugstore_business - OK")
 
     def update_UCI_geo(self):
         out = StringIO()
         args = ['full']
         call_command('worker_t_uci_geov2', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_UCI_geo - OK")
 
     def update_vacunas_record(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_t_vacunas', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_vacunas_record - OK")
 
     def update_vacunas_resumen(self, mode):
         out = StringIO()
         args = [mode]
         call_command('worker_t_vaccresum', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_vacunas_resumen - OK")
 
     def update_epidemiological_score(self, mode):
         out = StringIO()
@@ -155,8 +170,10 @@ class Command(BaseCommand):
             args = ['full']
         call_command('worker_t_epidem', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_epidemiological_score - OK")
 
     def update_resumen(self):
         out = StringIO()
         call_command('worker_t_resumen', verbosity=0, stdout=out)
         self.print_shell(out.getvalue())
+        logger.info("update_resumen - OK")

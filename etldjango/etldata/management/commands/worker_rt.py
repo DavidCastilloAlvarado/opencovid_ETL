@@ -49,13 +49,13 @@ class Command(BaseCommand):
         return False
 
     def save_table(self, table, db, mode):
-        if mode == 'full' and self.error_rt(table):
+        if mode == 'full' and not self.error_rt(table):
             self.print_shell("Storing new records - FULL")
             records = table.to_dict(orient='records')
             records = [db(**record) for record in tqdm(records)]
             _ = db.objects.all().delete()
             _ = db.objects.bulk_create(records)
-        elif mode == 'last' and self.error_rt(table):
+        elif mode == 'last' and not self.error_rt(table):
             #_ = db.objects.all().delete()
             # this is posible because the table is sorter by "-fecha"
             last_record = db.objects.all()[:1]
@@ -95,7 +95,7 @@ class Command(BaseCommand):
         min_date = str(datetime.now().date() -
                        timedelta(days=int(30*months_before)))
         max_date = str(datetime.now().date() -
-                       timedelta(days=1))
+                       timedelta(days=2))
         query = DB_positividad.objects
         query = query.filter(fecha__gt=min_date, fecha__lt=max_date)
         query = query.annotate(total_posit=F(

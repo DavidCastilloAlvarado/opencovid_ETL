@@ -4,7 +4,7 @@ from .utils.storage import Bucket_handler, GetBucketData
 from .utils.extractor import Data_Extractor
 from datetime import datetime, timedelta
 from .utils.unicodenorm import normalizer_str
-from etldata.models import DB_sinadef, DB_minsa_muertes, DB_vacunas, DB_uci, DB_positividad_relativa, DB_resumen
+from etldata.models import DB_sinadef, DB_minsa_muertes, DB_vacunas, DB_uci, DB_positividad_relativa, DB_resumen, DB_positividad
 from django.contrib.gis.geos import Point
 # from django.utils import timezone
 from django.db.models import Sum, Avg, Count, StdDev, Max
@@ -49,6 +49,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.print_shell("Computing covid19 resume from db")
         # Downloading data from bucket
+        self.total_infected = self.query_total_infected(DB_positividad)
         deaths_before_d, deaths_before_d_std = self.query_avg_daily_deaths_before_covid(
             DB_sinadef)
         self.total_deaths_subreg = self.query_total_deaths_sinadef_total_subreg(
@@ -84,9 +85,16 @@ class Command(BaseCommand):
                     active_cases=self.active_cases,
                     vacc_purch_pe=self.val_total_vacc_pe,
                     vacc_day_status_goal=self.vacc_status_goal,
+                    total_infectados_hist=self.total_infected,
                     )
         print(data)
         _ = db.objects.create(**data)
+
+    def query_total_infected(self, db):
+        last_day = self.get_fecha_max(db)
+        query = db.objects.filter(fecha=last_day)
+        query = query.aggregate(total=Sum('total_pos'))
+        return query['total']
 
     def read_vacc_total(self):
         table = pd.read_csv(self.URL_TOTAL_VACUNAS,

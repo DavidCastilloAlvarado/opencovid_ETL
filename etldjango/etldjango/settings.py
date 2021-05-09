@@ -12,34 +12,53 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from os import path as pathdir
-from decouple import config
+from decouple import config as env
+import google.auth
 import os
+import io
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+env_file = os.path.join(BASE_DIR.parent,  ".env")
+
+if not os.path.isfile(env_file):
+    import environ
+    from google.cloud import secretmanager as sm
+    SETTINGS_NAME = "application_settings_etl"
+    _, project = google.auth.default()
+    client = sm.SecretManagerServiceClient()
+    name = f"projects/{project}/secrets/{SETTINGS_NAME}/versions/latest"
+    payload = client.access_secret_version(
+        name=name).payload.data.decode("UTF-8")
+    env = environ.Env()
+    env.read_env(io.StringIO(payload))
+else:
+    aut_file = env('KEY_JSON_FILE')
+    GOOGLE_APPLICATION_CREDENTIALS = pathdir.join(BASE_DIR, aut_file)
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+    _, _ = google.auth.default()
+
+
+DEBUG = bool(int(env('DEBUG')))
 
 # API key json
-aut_file = config('KEY_JSON_FILE')
-KEY_MAPS_API = config('KEY_MAPS_API')
-URL_OXIPERU2 = config('URL_OXIPERU2')
-URL_OXIPERU2_DT = config('URL_OXIPERU2_DT')
-BASE_DIR = Path(__file__).resolve().parent.parent
-GOOGLE_APPLICATION_CREDENTIALS = pathdir.join(
-    BASE_DIR, "API", aut_file)
-if DEBUG:
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+
+aut_file = env('KEY_JSON_FILE')
+KEY_MAPS_API = env('KEY_MAPS_API')
+URL_OXIPERU2 = env('URL_OXIPERU2')
+URL_OXIPERU2_DT = env('URL_OXIPERU2_DT')
+
 # Project ID GCP
-GCP_PROJECT_ID = config('GCP_PROJECT_ID')
+GCP_PROJECT_ID = env('GCP_PROJECT_ID')
 # Bucket name
-BUCKET_NAME = config('BUCKET_NAME')
-BUCKET_ROOT = config('BUCKET_ROOT')
+BUCKET_NAME = env('BUCKET_NAME')
+BUCKET_ROOT = env('BUCKET_ROOT')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '20*4m(g-t8t(%k#fd7yl$rc0erzjt+kdaah2po)h+uky-en@-u'
+SECRET_KEY = env('SECRET_KEY')
 
 
 ALLOWED_HOSTS = []
@@ -57,6 +76,7 @@ INSTALLED_APPS = [
     'etldata',
     'rest_framework',
 ]
+INSTALLED_APPS += ["storages"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -110,15 +130,14 @@ WSGI_APPLICATION = 'etldjango.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': config('NAME'),
-        'USER': config('USER_NAME'),
-        'PASSWORD': config('PASSWORD'),
-        'HOST': config('IP_SERVER'),
+        'NAME': env('NAME'),
+        'USER': env('USER_NAME'),
+        'PASSWORD': env('PASSWORD'),
+        'HOST': env('IP_SERVER'),
         'DATABASE_PORT': '5432',
         'TEST': {
             'NAME': 'mytestdatabase',
         },
-
     },
 }
 
@@ -159,7 +178,27 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STORAGE_MODE = env('STORAGE_MODE')
+
+# set storage based on STORAGE_MODE
+if (STORAGE_MODE == 'local'):
+    # storage mode for local development
+    STATIC_URL = '/static/'
+
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+else:
+    # storage mode for Google Cloud
+    GS_STATIC_BUCKET_NAME = env('GS_STATIC_BUCKET_NAME')
+
+    STATIC_URL = 'https://storage.googleapis.com/{}/'.format(
+        GS_STATIC_BUCKET_NAME)
+
+    DEFAULT_FILE_STORAGE = 'config.storage_backends.GoogleCloudMediaStorage'
+    STATICFILES_STORAGE = 'config.storage_backends.GoogleCloudStaticStorage'
+    GS_DEFAULT_ACL = "publicRead"
+
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')

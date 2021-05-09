@@ -41,6 +41,7 @@ class Bucket_handler(object):
                                'url': destination,
                                'status': status,
                                'mode': 'upload'})
+            logger.info('Uploaded file ' + source_file_name)
         except:
             logger.error('Can\'t upload ' + source_file_name)
             status = 'fail'
@@ -72,6 +73,7 @@ class Bucket_handler(object):
                                'url': destination,
                                'status': status,
                                'mode': 'download'})
+            logger.info('Downloaded file ' + source_blob_name)
         except:
             logger.error('Can\'t download ' + source_blob_name)
             print("FAIL: downloading {} to {}.".format(source_blob_name,

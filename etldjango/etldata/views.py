@@ -5,6 +5,9 @@ from .serializers import UCISerializer, SinadefSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import DB_uci, DB_sinadef
+from io import StringIO
+from django.core.management import call_command
+from django.test import TestCase
 
 
 class Uci_api(APIView):
@@ -41,3 +44,19 @@ class Sinadef_api(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UpdateOpenCovid2(APIView):
+
+    def post(self, request):
+        out = StringIO()
+        out2 = StringIO()
+        args = ['v2']
+        argsupd = ['last']
+        try:
+            call_command('worker_extractor', verbosity=0, *args, stdout=out)
+            call_command('worker_update_all', verbosity=0,
+                         *argsupd, stdout=out2)
+            return Response(out2.getvalue(), status=status.HTTP_200_OK)
+        except:
+            return Response('Error while running command', status=status.HTTP_400_BAD_REQUEST)
