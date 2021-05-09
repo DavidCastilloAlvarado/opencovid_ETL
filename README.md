@@ -1,6 +1,6 @@
 # ETL by Django Command
 
-### Python 3.6.9
+### Python 3.7.5
 
 ## **Installation:**
 
@@ -33,6 +33,7 @@ pip install -r requirements.txt
 2. Set your own credential for postgres and GCP services in your enviorment .env
 
 ```bash
+STORAGE_MODE=local      #Lolcal or empty to production
 IP_SERVER=************  #postgres
 PASSWORD=************   #postgres
 NAME=************       #database name
@@ -44,6 +45,8 @@ KEY_JSON_FILE=************.json
 KEY_MAPS_API=************ # Key googlemaps api
 URL_OXIPERU2_DT=************ # API url for details
 URL_OXIPERU2=************* # API url for the provider
+SECRET_KEY==************* # your django secret key
+GS_STATIC_BUCKET_NAME==************* # Your bucket static name
 ```
 
 2.  Make all migrations before to run
