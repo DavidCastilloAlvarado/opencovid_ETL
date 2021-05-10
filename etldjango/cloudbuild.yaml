@@ -1,7 +1,7 @@
 steps:
   # build the container image
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/${_PROJECT_ID}/opencovid2-etl", "."]
+    args: ["build", "-t", "gcr.io/${_PROJECT_ID}/opencovid2-etl", "etldjango/."]
   # push the container image
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/${_PROJECT_ID}/opencovid2-etl"]
