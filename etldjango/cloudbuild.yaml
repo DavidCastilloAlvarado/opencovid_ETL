@@ -1,0 +1,59 @@
+steps:
+  # build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/${_PROJECT_ID}/opencovid2-etl", "."]
+  # push the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/${_PROJECT_ID}/opencovid2-etl"]
+  # migrate Cloud SQL db
+  - name: "gcr.io/google-appengine/exec-wrapper"
+    args:
+      [
+        "-i",
+        "gcr.io/$_PROJECT_ID/opencovid2-etl",
+        "-s",
+        "${_PROJECT_ID}:us-central1:opencovid-db",
+        "--",
+        "python",
+        "manage.py",
+        "migrate",
+      ]
+  # push static files to Cloud Bucket
+  - name: "gcr.io/google-appengine/exec-wrapper"
+    args:
+      [
+        "-i",
+        "gcr.io/$_PROJECT_ID/opencovid2-etl",
+        "-s",
+        "${_PROJECT_ID}:us-central1:opencovid-db",
+        "--",
+        "python",
+        "manage.py",
+        "collectstatic",
+        "--no-input",
+      ]
+
+    # deploy to Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    args:
+      [
+        "beta",
+        "run",
+        "deploy",
+        "opencovid2-etl",
+        "--image",
+        "gcr.io/$_PROJECT_ID/opencovid2-etl",
+        "--cpu",
+        "2",
+        "--timeout",
+        "3600",
+        "--memory",
+        "4096",
+        "--region",
+        "us-central1",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated",
+        "--add-cloudsql-instances",
+        "${_PROJECT_ID}:us-central1:opencovid-db",
+      ]

@@ -42,6 +42,7 @@ class Command(BaseCommand):
             self.print_shell("Work Done!")
             logger.info("Updates finished - OK")
         except Exception as error:
+            print('Error', error.args[0])
             logger.error("Error running daily update, " + error.args[0])
 
     def update_movility(self, mode):

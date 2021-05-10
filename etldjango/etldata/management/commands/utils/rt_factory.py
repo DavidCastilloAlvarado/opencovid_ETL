@@ -158,7 +158,7 @@ class Generator_RT(object):
         final_results = None
 
         for state_name, result in tqdm(results.items()):
-            print(state_name)
+            # print(state_name)
             # print(result)
             posteriors = result['posteriors'][max_likelihood_index]
 

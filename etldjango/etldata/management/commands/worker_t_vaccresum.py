@@ -86,7 +86,7 @@ class Command(BaseCommand):
         # self.age_cols.remove('region')
         #self.popu_total_age = table[self.age_cols].sum(0)
         print('Total population: ', self.population.total.sum())
-        print(self.population.head())
+        # print(self.population.head())
 
     def query_vaccinated_first_dosis(self, db, months):
         """
@@ -106,8 +106,8 @@ class Command(BaseCommand):
         query_all = query_all.order_by('region')
         table_total = pd.DataFrame.from_dict(query_all)
         #query_all = query_all.aggregate(total=Sum('cantidad'))
-        print(table_total)
-        print(table)
+        # print(table_total)
+        # print(table)
         return table, table_total
 
     def transform_dayli_goals(self, table, total, region_name):
@@ -133,9 +133,10 @@ class Command(BaseCommand):
         return table.join(table.apply(goal_worker, axis=1))
 
     def date_table_factory(self, fechas_orig, region_name):
-        min_ = fechas_orig.min()
-        max_ = fechas_orig.max()
-        totaldatelist = pd.date_range(start=min_, end=max_).tolist()
+        min_ = fechas_orig.min().min()
+        max_ = fechas_orig.max().max()
+        totaldatelist = pd.date_range(start=min_, end=max_)
+        totaldatelist = totaldatelist.tolist()
         totaldatelist = pd.DataFrame(data={"fecha": totaldatelist})
         totaldatelist.sort_values(by="fecha", ascending=False, inplace=True)
         totaldatelist['region'] = region_name
@@ -158,5 +159,5 @@ class Command(BaseCommand):
             temp['region'] = region_name
             table_total = table_total.append(temp)
         table_total = table_total.fillna(0)
-        print(table_total.tail(50))
+        print(table_total.tail())
         return table_total

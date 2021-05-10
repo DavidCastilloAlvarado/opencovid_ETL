@@ -183,19 +183,18 @@ STORAGE_MODE = env('STORAGE_MODE')
 if (STORAGE_MODE == 'local'):
     # storage mode for local development
     STATIC_URL = '/static/'
+    STATIC_ROOT = '/tmp/static'
 
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 else:
     # storage mode for Google Cloud
-    GS_STATIC_BUCKET_NAME = env('GS_STATIC_BUCKET_NAME')
+    GS_BUCKET_NAME = env('GS_STATIC_BUCKET_NAME')
 
-    STATIC_URL = 'https://storage.googleapis.com/{}/'.format(
-        GS_STATIC_BUCKET_NAME)
-
-    DEFAULT_FILE_STORAGE = 'config.storage_backends.GoogleCloudMediaStorage'
-    STATICFILES_STORAGE = 'config.storage_backends.GoogleCloudStaticStorage'
+    STATIC_URL = 'https://storage.googleapis.com/{}/'.format(GS_BUCKET_NAME)
+    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+    STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     GS_DEFAULT_ACL = "publicRead"
 
 
