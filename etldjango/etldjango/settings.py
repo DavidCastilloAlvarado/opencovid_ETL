@@ -41,6 +41,19 @@ else:
 
 
 DEBUG = bool(int(env('DEBUG')))
+PROXI = env('_PROXI')
+PORT_PROXI = env('_PORT_PROXI')
+EMAIL_PROXI = env('_EMAIL_PROXI')
+# Run proxiVPN
+# sudo apt install openssh-server
+# see: ps aux | grep ssh
+# deleate: killall {number_proccess}
+if PROXI == 'yes':
+    with open('id_rsa', 'w') as f:
+        f.write(env('_ID_RSA').replace('\\n', '\n'))
+    os.system('sudo chmod 600 ./id_rsa && \
+                sudo ssh -4 -i ./id_rsa -o StrictHostKeyChecking=no -D {} -C -N {} -f &'.format(
+        PORT_PROXI, EMAIL_PROXI))
 
 # API key json
 

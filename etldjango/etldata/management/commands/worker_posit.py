@@ -184,7 +184,7 @@ class Command(BaseCommand):
                                 area=area)
         table = table[0].set_index("Región")
         table = table.applymap(lambda x: str(
-            x).replace(" ", "").replace(",", "."))
+            x).replace(" ", "").replace(",", "").replace(".", ""))
         table = table.apply(pd.to_numeric, errors='ignore')
         assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
         table.reset_index(inplace=True)
@@ -213,6 +213,7 @@ class Command(BaseCommand):
         index = table.loc[table.region == "TOTAL"].index[0]
         table.drop(index=[index], inplace=True)
         print(table.head(50))
+        print(table.dtypes)
         return table
 
     def download_csv_from_bucket(self):

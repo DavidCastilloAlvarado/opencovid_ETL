@@ -4,6 +4,7 @@ Scripts
 **.cfg
 build
 Build
+id_rsa
 db.sqlite3
 __pycache__
 **/migrations/**

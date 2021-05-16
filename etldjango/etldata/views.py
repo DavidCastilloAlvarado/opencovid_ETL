@@ -54,10 +54,20 @@ class UpdateOpenCovid2(APIView):
         args = ['v2']
         argsupd = ['last']
         try:
-            call_command('worker_t_resumen', verbosity=0, stdout=out)
             call_command('worker_extractor', verbosity=0, *args, stdout=out)
             call_command('worker_update_all', verbosity=0,
                          *argsupd, stdout=out2)
             return Response(out2.getvalue(), status=status.HTTP_200_OK)
+        except:
+            return Response('Error while running command', status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateDownloads(APIView):
+
+    def get(self, request):
+        out = StringIO()
+        args = ['v2']
+        try:
+            call_command('worker_extractor', verbosity=0, *args, stdout=out)
+            return Response(out.getvalue(), status=status.HTTP_200_OK)
         except:
             return Response('Error while running command', status=status.HTTP_400_BAD_REQUEST)

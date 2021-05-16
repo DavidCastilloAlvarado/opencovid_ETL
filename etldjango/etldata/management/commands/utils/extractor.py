@@ -4,6 +4,8 @@ import pandas as pd
 from tqdm import tqdm
 from .urllibmod import urlretrieve
 from etldata.models import Logs_extractor
+import logging
+logger = logging.getLogger('StackDriverHandler')
 
 
 class Data_Extractor(object):
@@ -45,11 +47,13 @@ class Data_Extractor(object):
                                'status': 'ok',
                                'mode': 'download'})
             return True
+            logger.info('file downloaded from {}'.format(url))
         except:
             self.log_register({'e_name': file_name.split('/')[-1],
                                'url': url,
                                'status': 'fail',
                                'mode': 'download'})
+            logger.error('file wasn\'t downloaded from {}'.format(url))
             return False
 
     def log_register(self, data):
