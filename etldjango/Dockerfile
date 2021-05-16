@@ -1,6 +1,6 @@
 # pull official base image
 FROM python:3.7
-
+EXPOSE 9002
 # set work directory
 WORKDIR /usr/src/app
 

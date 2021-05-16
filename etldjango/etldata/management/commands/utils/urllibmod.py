@@ -1,8 +1,7 @@
 import contextlib
-import urllib
 import requests
 from tqdm import tqdm
-
+from etldjango.settings import PROXI, PORT_PROXI
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -19,8 +18,13 @@ def urlretrieve(url, filename, n_bytes=1024):
     filename: where to save the file and what is its name
     n_bytes: set the chunk size
     """
+    if PROXI == 'yes':
+        proxies = dict(http='socks5://localhost:'+str(PORT_PROXI),
+                       https='socks5://localhost:'+str(PORT_PROXI))
+    else:
+        proxies = None
     # proxies={"http": "http://201.234.60.82:999"}
-    with contextlib.closing(session.get(url, stream=True, timeout=10, verify=False, )) as r:
+    with contextlib.closing(session.get(url, stream=True, timeout=10, verify=False, proxies=proxies)) as r:
         r.raise_for_status()
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=n_bytes):
