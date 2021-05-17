@@ -36,12 +36,13 @@ if not os.path.isfile(env_file):
 else:
     aut_file = env('KEY_JSON_FILE')
     GOOGLE_APPLICATION_CREDENTIALS = pathdir.join(BASE_DIR, aut_file)
+    #os.environ["_PROXI"] = 'yes'
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
     _, _ = google.auth.default()
 
 
 DEBUG = bool(int(env('DEBUG')))
-PROXI = env('_PROXI')
+PROXI = 'no' if os.getenv('_PROXI') is None else os.getenv('_PROXI')  #env('_PROXI')
 PORT_PROXI = env('_PORT_PROXI')
 EMAIL_PROXI = env('_EMAIL_PROXI')
 # Run proxiVPN
