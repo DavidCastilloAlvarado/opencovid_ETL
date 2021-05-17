@@ -24,8 +24,8 @@ export PROJECTNUM=$(gcloud projects describe ${_PROJECT_ID} --format 'value(proj
 export CLOUDBUILD=${PROJECTNUM}@cloudbuild.gserviceaccount.com
 
 # Build  Docker container
-gcloud builds submit --tag gcr.io/$_PROJECT_ID/opencovid2-etl
-gcloud container images list
+# gcloud builds submit --tag gcr.io/$_PROJECT_ID/opencovid2-etl
+# gcloud container images list
 
 # Past secrets to the Docket container
 gcloud secrets add-iam-policy-binding application_settings_etl \
