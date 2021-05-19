@@ -151,14 +151,14 @@ class Command(BaseCommand):
 
     def update_vacunas_record(self, mode):
         out = StringIO()
-        args = [mode]
+        args = ['full']#mode
         call_command('worker_t_vacunas', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_vacunas_record - OK")
 
     def update_vacunas_resumen(self, mode):
         out = StringIO()
-        args = [mode]
+        args = ['full']#mode
         call_command('worker_t_vaccresum', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_vacunas_resumen - OK")
