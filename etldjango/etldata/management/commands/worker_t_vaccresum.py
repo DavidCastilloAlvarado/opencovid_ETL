@@ -17,7 +17,6 @@ import time
 
 
 class Command(BaseCommand):
-    TOTAL_POBLACION = 22192700  # poblacion apta para la vacuna
     FIN_VACUNACION = (2021, 12, 31)
     file_population = 'total_popu_vacc.csv'
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
