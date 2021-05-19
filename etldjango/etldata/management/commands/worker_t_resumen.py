@@ -21,7 +21,7 @@ logger = logging.getLogger('StackDriverHandler')
 class Command(BaseCommand):
     help = "RESUMEN: Command for create the resumen using the current date in the DB"
     URL_TOTAL_VACUNAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSitZm8CsWGbFCGBU_wp6R9uVY9cRscQqXETOuBz61Yjhhr2wA1aNfxCwZAQpwnV46F03BIgAmMhAL1/pub?output=csv'
-
+    END_VACC = "31-12-21"
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
@@ -190,14 +190,14 @@ class Command(BaseCommand):
 
     def vacc_forecast(self):
         # x29381884x # 22192700 = Poblacion mayor a 18 años - proyección 2019 CPI - censo 2017
-        TOTAL_POBLACION = 22192700
+        TOTAL_POBLACION = 22967832
         days_left = (TOTAL_POBLACION-int(self.allvacc))/self.avg_vacc_day
         days_left = round(days_left)
         vacc_prog = round(int(self.allvacc)/TOTAL_POBLACION*100, 2)
         vacc_end = datetime.now().date() + timedelta(days=days_left)
         # how have to be the vaccine status in all the country
         init_date_vacc = datetime.strptime("9-02-21", "%d-%m-%y").date()
-        end_date_vacc = datetime.strptime("31-12-21", "%d-%m-%y").date()
+        end_date_vacc = datetime.strptime(self.END_VACC, "%d-%m-%y").date()
         curr_date = datetime.now().date()
         num_diff = (curr_date-init_date_vacc).days
         deno_diff = (end_date_vacc-init_date_vacc).days
