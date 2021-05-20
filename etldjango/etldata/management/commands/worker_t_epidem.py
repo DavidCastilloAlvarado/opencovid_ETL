@@ -265,7 +265,7 @@ class Command(BaseCommand):
         cut_incid = [-0.01, 80, 100, 120, 1e7]
         cut_rt = [-0.01, .7, 1.1, 1.6, 1e7]
         cut_pos = [-0.01, 11, 15, 20, 1e7]
-        cut_test = [-1e7, 34, 60, 100, 1e7]
+        cut_test = [-1e7, 34*7, 60*7, 100*7, 1e7]
         color = [1, 2, 3, 4]
         table['fall_score'] = pd.cut(table.fall_100,
                                      cut_fall,
@@ -327,7 +327,7 @@ class Command(BaseCommand):
             temp = temp.dropna()
             temp = temp.groupby(["n_week", "region"]).agg({
                 'fecha': 'first',
-                'avg_test': 'mean',
+                'avg_test': 'sum',
                 'incid_100': 'sum',
                 'positividad': 'mean',
                 'uci': 'last',
