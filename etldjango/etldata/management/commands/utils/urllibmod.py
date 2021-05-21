@@ -1,7 +1,7 @@
 import contextlib
 import requests
 from tqdm import tqdm
-from etldjango.settings import PROXI, PORT_PROXI
+from etldjango.settings import PROXI, PORT_PROXI, IP_PROXI_EXT
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
@@ -19,9 +19,15 @@ def urlretrieve(url, filename, n_bytes=1024):
     n_bytes: set the chunk size
     """
     if PROXI == 'yes':
+        print('Internal proxy')
         proxies = dict(http='socks5://localhost:'+str(PORT_PROXI),
                        https='socks5://localhost:'+str(PORT_PROXI))
+    elif not IP_PROXI_EXT is None:
+        print('External proxy')
+        proxies = dict(http='socks5://{}:'.format(IP_PROXI_EXT)+str(PORT_PROXI),
+                       https='socks5://{}:'.format(IP_PROXI_EXT)+str(PORT_PROXI))
     else:
+        print('NO proxy')
         proxies = None
     # proxies={"http": "http://201.234.60.82:999"}
     with contextlib.closing(session.get(url, stream=True, timeout=10, verify=False, proxies=proxies)) as r:

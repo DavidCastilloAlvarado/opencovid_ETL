@@ -8,10 +8,6 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-#Proxi variables 
-#ENV HTTP_PROXY="http://127.0.0.1:9002"
-#ENV HTTPS_PROXY="https://127.0.0.1:9002"
-
 # update pip
 RUN apt-get update
 RUN pip install --upgrade pip
