@@ -191,8 +191,9 @@ class Command(BaseCommand):
     def vacc_forecast(self):
         # x29381884x # 22192700 = Poblacion mayor a 18 años - proyección 2019 CPI - censo 2017
         TOTAL_POBLACION = 24070572
+        EXTRA_DAY = 4*7 # tiempo para la segunda dosis
         days_left = (TOTAL_POBLACION-int(self.allvacc))/self.avg_vacc_day
-        days_left = round(days_left)
+        days_left = round(days_left+EXTRA_DAY)
         vacc_prog = round(int(self.allvacc)/TOTAL_POBLACION*100, 2)
         vacc_end = datetime.now().date() + timedelta(days=days_left)
         # how have to be the vaccine status in all the country
@@ -211,7 +212,7 @@ class Command(BaseCommand):
         """
         min_date = str(datetime.now().date() - timedelta(days=30))
         query = db.objects
-        query = query.filter(fecha__gt=min_date)
+        query = query.filter(fecha__gt=min_date, dosis=1)
         query = query.values('fecha')
         # dosis=1,
         query = query.annotate(Sum('cantidad'))
