@@ -51,7 +51,7 @@ class Command(BaseCommand):
         #_ = db.objects.bulk_create(records)
 
     def handle(self, *args, **options):
-        _=DB_daily.objects.all().delete()
+        #_=DB_daily.objects.all().delete()
         rss_result = self.capture_url_from_rss(DB_daily,mode='many')
         for feed in rss_result:
             doc = self.extract_rawdata_from_feed(feed)
