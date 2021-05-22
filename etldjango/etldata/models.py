@@ -195,6 +195,9 @@ class DB_resumen(models.Model):
     total_fallecidos_sinadef = models.DecimalField(null=True,
                                                    decimal_places=2,
                                                    max_digits=9,)
+    total_poblac_2_vacc = models.DecimalField(null=True,
+                                                decimal_places=2,
+                                                max_digits=12,)
     total_infectados_hist = models.DecimalField(null=True,
                                                 decimal_places=2,
                                                 max_digits=12,)
@@ -680,3 +683,35 @@ class DB_vaccine_resum(models.Model):
         indexes = [
             models.Index(fields=['-fecha']),
         ]
+
+
+class DB_daily(models_gis.Model):
+    """
+    La tabla contiene información sobre los 
+    reportes diarios del minsa y de vacunación del Perú
+    llenados a portir de metodos de scrapeo
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    url = models.URLField(null=True, blank=True, max_length=200)
+    total_muestras = models.DecimalField(default=0, decimal_places=1, max_digits=12,)
+    total_neg = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    total_pos = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    dia_muestras = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    dia_pos = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    hosp_zc_total = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    hosp_zc_uci = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    recuperados = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+    fallecidos = models.DecimalField( default=0, decimal_places=1, max_digits=12,)
+    vacc_1d = models.DecimalField(default=0, decimal_places=1, max_digits=12,)
+    vacc_2d = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
+
+    class Meta:
+        ordering = ['-fecha_creacion']
+        indexes = [
+            models.Index(fields=['fecha', ]),
+        ]
+        db_table = 'daily_table'
+
+    def __str__(self):
+        return self.nombre

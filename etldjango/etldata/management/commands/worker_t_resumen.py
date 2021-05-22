@@ -22,6 +22,8 @@ class Command(BaseCommand):
     help = "RESUMEN: Command for create the resumen using the current date in the DB"
     URL_TOTAL_VACUNAS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSitZm8CsWGbFCGBU_wp6R9uVY9cRscQqXETOuBz61Yjhhr2wA1aNfxCwZAQpwnV46F03BIgAmMhAL1/pub?output=csv'
     END_VACC = "31-12-21"
+    TOTAL_POBLACION_2_VACC = 24070572
+
     def print_shell(self, text):
         self.stdout.write(self.style.SUCCESS(text))
 
@@ -89,6 +91,7 @@ class Command(BaseCommand):
                     vacc_purch_pe=self.val_total_vacc_pe,
                     vacc_day_status_goal=self.vacc_status_goal,
                     total_infectados_hist=self.total_infected,
+                    total_poblac_2_vacc = self.TOTAL_POBLACION_2_VACC,
                     )
         print(data)
         _ = db.objects.create(**data)
@@ -190,7 +193,7 @@ class Command(BaseCommand):
 
     def vacc_forecast(self):
         # x29381884x # 22192700 = Poblacion mayor a 18 años - proyección 2019 CPI - censo 2017
-        TOTAL_POBLACION = 24070572
+        TOTAL_POBLACION = self.TOTAL_POBLACION_2_VACC
         EXTRA_DAY = 4*7 # tiempo para la segunda dosis
         days_left = (TOTAL_POBLACION-int(self.allvacc))/self.avg_vacc_day
         days_left = round(days_left+EXTRA_DAY)
