@@ -707,7 +707,7 @@ class DB_daily(models_gis.Model):
     vacc_2d = models.DecimalField(default=0,  decimal_places=1, max_digits=12,)
 
     class Meta:
-        ordering = ['-fecha_creacion']
+        ordering = ['-fecha']
         indexes = [
             models.Index(fields=['fecha', ]),
         ]
