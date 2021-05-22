@@ -51,6 +51,7 @@ class Command(BaseCommand):
         #_ = db.objects.bulk_create(records)
 
     def handle(self, *args, **options):
+        _=DB_daily.objects.all().delete()
         rss_result = self.capture_url_from_rss(DB_daily,mode='many')
         for feed in rss_result:
             doc = self.extract_rawdata_from_feed(feed)
@@ -100,8 +101,8 @@ class Command(BaseCommand):
     def extract_metrics_from_doc_feed(self, doc):
         #print(doc)
         self.total_muestras, last_ix = self.number_extractor(doc,'procesado muestras para','personas')
-        self.total_neg, last_ix = self.number_extractor(doc, ', obteniéndose,', 'casos confirmados', last_ix)
-        self.total_pos, last_ix = self.number_extractor(doc, 'confirmados y', 'negativos.', last_ix)
+        self.total_pos, last_ix = self.number_extractor(doc, ', obteniéndose,', 'casos confirmados', last_ix)
+        self.total_neg, last_ix = self.number_extractor(doc, 'confirmados y', 'negativos.', last_ix)
         self.dia_muestras, last_ix = self.number_extractor(doc, 'registraron los resultados de', 'personas muestreadas', last_ix)
         dia_pos, last_ix = self.number_extractor(doc, 'de los cuales', 'fueron casos sintomáticos', last_ix)
         parcial_pos, last_ix = self.number_extractor(doc, 'registraron parcialmente, además, los resultados de', 'casos confirmados por', last_ix)
