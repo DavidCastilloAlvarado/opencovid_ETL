@@ -58,6 +58,7 @@ class Command(BaseCommand):
             self.capture_data_from_gob_vacc()
             self.save_record(DB_daily)
         self.print_shell("Work Done!")
+        logger.info('Daily report update Finished ')
 
     def capture_url_from_rss(self,db, mode='single'):
         NewsFeed = feedparser.parse(self.RSS_URL)

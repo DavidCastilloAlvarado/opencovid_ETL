@@ -687,9 +687,9 @@ class DB_vaccine_resum(models.Model):
 
 class DB_daily(models_gis.Model):
     """
-    Utilidad: La tabla contiene los datos de negocio de los proveedores de oxigeno a nivel nacional. 
-    Lectura: La tabla se lee completa recogiendo los puntos más cercanos al usuario.
-    Escritura: La tabla se actualiza en su totalidad con cada rutina de actualización.
+    La tabla contiene información sobre los 
+    reportes diarios del minsa y de vacunación del Perú
+    llenados a portir de metodos de scrapeo
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
