@@ -37,7 +37,7 @@ class Command(BaseCommand):
             self.update_UCI_geo()
             self.update_vacunas_record(mode)
             self.update_vacunas_resumen(mode)
-            self.update_epidemiological_score(mode)
+            #self.update_epidemiological_score(mode)
             self.update_resumen()
             self.print_shell("Work Done!")
             logger.info("Updates finished - OK")

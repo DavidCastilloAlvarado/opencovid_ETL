@@ -168,32 +168,46 @@ class Command(BaseCommand):
 
     def read_pdf_validate(self, filename, page=3, contain="MUESTRAS TOTALES"):
         self.print_shell('Validating pdf estructure ... ')
-        # Reading and transforming
+        # Reading 
         tables_raw = tabula.read_pdf(filename, pages=[page])
+        #print(tables_raw[0])
+        # Validating that the table is on the pdf
+        row_col = [tables_raw[0].columns.tolist()]
+        tables_raw[0] = tables_raw[0].append(row_col, ignore_index=True)
+        tables_raw[0] = tables_raw[0].applymap(lambda x: str(x))
+        #print(tables_raw[0])
         alldata = tables_raw[0].sum(1).apply(
             lambda x: str(x).replace("  ", " "))
-        assert len(alldata.loc[alldata.str.contains(
-            contain)]) > 0, "Table not found"
+        #print(alldata)
+        assert len(alldata.loc[alldata.str.contains(contain)]) > 0, "Table not found inside PDF"
 
-    def extracting_table_from_pdf(self, filename, page=3, area=(80, 5, 500, 1000)):
+    def extracting_table_from_pdf(self, filename, page=3, areas=[(80, 5, 500, 450),
+                                                                (80, 450, 500, 1000)]):
         # Extract data
-        self.print_shell('Extracting table from pdf... ')
-        table = tabula.read_pdf(filename,
-                                pages=[page],
-                                guess=False,
-                                area=area)
-        table = table[0].set_index("Región")
-        table = table.applymap(lambda x: str(
-            x).replace(" ", "").replace(",", "").replace(".", ""))
-        table = table.apply(pd.to_numeric, errors='ignore')
-        assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
-        table.reset_index(inplace=True)
-        # print(table)
-        return table
+        for i, area in enumerate(areas):
+            self.print_shell('Extracting table from pdf {}subtable... '.format(i))
+            table = tabula.read_pdf(filename,
+                                    pages=[page],
+                                    guess=False,
+                                    area=area)
+            table = table[0]
+            table = table.set_index("Región")
+            table = table.applymap(lambda x: str(
+                x).replace(" ", "").replace(",", "").replace(".", ""))
+            table = table.apply(pd.to_numeric, errors='ignore')
+            #print(table)
+            assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
+            if i==0:
+                total_table = table.copy()
+            else:
+                total_table = total_table.join(table.add_suffix('.1') )
 
-    def formating_table(self, table, fecha):
+        total_table.reset_index(inplace=True)
+        print(total_table)
+        return total_table
+
+    def formating_table(self, table,fecha ):#fecha
         self.print_shell('Formating table to store in db ... ')
-        table.drop(columns=["Región.1"], inplace=True)
         table["fecha"] = fecha
         print(table.dtypes)
         table.rename(columns={"Región": "region",
@@ -205,7 +219,7 @@ class Command(BaseCommand):
                               "PR.1": "pr_pos",
                               "AG.1": "ag_pos",
                               "Total.1": "total_pos",
-                              "% Positividad": "positividad",
+                              "% Positividad.1": "positividad",
                               "mypos": "positividad_verif",
                               }, inplace=True)
         table.drop(columns=["positividad"], inplace=True)

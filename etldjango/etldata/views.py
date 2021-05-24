@@ -54,4 +54,13 @@ class UpdateDailyReport(APIView):
         if serializer.is_valid():
             serializer.save()
 
+class UpdateEpidemiologicalTable(APIView):
+    def get(self, request):
+        out = StringIO()
+        args = ['last', '--w', '3']
+        try:
+            call_command('worker_t_epidem', verbosity=0, *args, stdout=out)
+            return Response(out.getvalue(), status=status.HTTP_200_OK)
+        except:
+            return Response('Error while running command', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 

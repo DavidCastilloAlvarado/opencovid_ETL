@@ -111,7 +111,7 @@ class Command(BaseCommand):
         table = pd.read_csv('temp/'+self.filename)
         table.rename(columns={
             'Region': 'region',
-            'Poblacion': 'poblacion'
+            'total': 'poblacion'
         }, inplace=True)
         table.region = table.region.apply(lambda x: normalizer_str(x))
         print(table)
