@@ -40,11 +40,16 @@ else:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
     _, _ = google.auth.default()
 
+try:
+    IP_PROXI_EXT= env('_IP_PROXI_EXT')
+except :
+    IP_PROXI_EXT=None
+
 DEBUG = bool(int(env('DEBUG')))
-IP_PROXI_EXT= os.getenv('_IP_PROXI_EXT')
 PROXI = 'no' if os.getenv('_PROXI') is None else os.getenv('_PROXI')  #env('_PROXI')
 PORT_PROXI = env('_PORT_PROXI')
 EMAIL_PROXI = env('_EMAIL_PROXI')
+
 # Run proxiVPN
 # sudo apt install openssh-server
 # see: ps aux | grep ssh
