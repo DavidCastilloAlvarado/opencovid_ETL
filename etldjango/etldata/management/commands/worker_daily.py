@@ -106,7 +106,7 @@ class Command(BaseCommand):
         self.dia_muestras, last_ix = self.number_extractor(doc, 'registraron los resultados de', 'personas muestreadas', last_ix)
         dia_pos, last_ix = self.number_extractor(doc, 'de los cuales', 'fueron casos sintomáticos', last_ix)
         parcial_pos, last_ix = self.number_extractor(doc, 'registraron parcialmente, además, los resultados de', 'casos confirmados por', last_ix)
-        self.dia_pos = dia_pos + parcial_pos
+        self.dia_pos = dia_pos #+ parcial_pos
         self.hosp_zc_total, last_ix = self.number_extractor(doc, '4. A la fecha, se tienen', 'pacientes hospitalizados', last_ix)
         self.hosp_zc_uci, last_ix = self.number_extractor(doc, 'de los cuales,', 'se encuentran en UCI', last_ix)
         self.recuperados, last_ix = self.number_extractor(doc, 'Del total de casos confirmados, a la fecha,', 'personas cumplieron su período', last_ix)

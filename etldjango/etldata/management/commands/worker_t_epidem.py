@@ -14,7 +14,8 @@ import numpy as np
 import os
 import time
 # datetime.now(tz=timezone.utc)  # you can use this value
-
+#db = DB_epidemiologico.objects.filter(fecha="2021-05-17")
+#db.delete()
 
 class Command(BaseCommand):
     help = "Epidemiolog: Command for create the resumen using the current date in the DB"
