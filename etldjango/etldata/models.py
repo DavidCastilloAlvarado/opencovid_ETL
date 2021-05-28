@@ -715,3 +715,26 @@ class DB_daily(models_gis.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class DB_vaccine_arrived(models.Model):
+    """
+    Utilidad: Almacena los calculos de resumen de las vacunas, solo datos diarios, primera dosis
+    Escritura: Se actualiza con los datos aggregados de la tabla de vacunas
+    Lectura: Se lee en su totalidad o por ventanas de tiempo para mostrar el progreso general de las vacunas y las metas diarias a cumplir para acabar a fin de año 2021.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    pfizer = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    sinopharm = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    astrazeneca = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    pfizer_covax = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    astrazeneca_covax = models.DecimalField(null=True, decimal_places=1, max_digits=10,)
+    total = models.DecimalField(null=True, decimal_places=1, max_digits=12,)
+    
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'vacc_arrived'
+        indexes = [
+            models.Index(fields=['-fecha']),
+        ]

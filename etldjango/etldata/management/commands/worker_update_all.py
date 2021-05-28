@@ -37,6 +37,7 @@ class Command(BaseCommand):
             self.update_UCI_geo()
             self.update_vacunas_record(mode)
             self.update_vacunas_resumen(mode)
+            self.update_vacunas_arrived(mode)
             #self.update_epidemiological_score(mode)
             self.update_resumen()
             self.print_shell("Work Done!")
@@ -178,3 +179,13 @@ class Command(BaseCommand):
         call_command('worker_t_resumen', verbosity=0, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_resumen - OK")
+
+    def update_vacunas_arrived(self, mode):
+        out = StringIO()
+        if mode == 'last':
+            args = ['last']
+        elif mode == 'full':
+            args = ['full']
+        call_command('worker_t_vacc_arrived', verbosity=0,*args,stdout=out)
+        self.print_shell(out.getvalue())
+        logger.info("update_vacc_arrived - OK")
