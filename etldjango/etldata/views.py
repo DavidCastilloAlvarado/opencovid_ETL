@@ -18,10 +18,9 @@ class UpdateOpenCovid2(APIView):
         args = ['v2']
         argsupd = ['last']
         try:
-            call_command('worker_extractor', verbosity=0, *args, stdout=out)
-            call_command('worker_update_all', verbosity=0,
-                         *argsupd, stdout=out2)
-            call_command('worker_t_resumen', verbosity=0, stdout=out3)
+            call_command('worker_extractor', verbosity=0,*args,stdout=out)
+            call_command('worker_update_all', verbosity=0,*argsupd,stdout=out2)
+            call_command('worker_t_resumen', verbosity=0,stdout=out3)
             return Response(out3.getvalue(), status=status.HTTP_200_OK)
         except:
             return Response('Error while running command', status=status.HTTP_503_SERVICE_UNAVAILABLE)

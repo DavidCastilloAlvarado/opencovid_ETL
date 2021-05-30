@@ -719,9 +719,9 @@ class DB_daily(models_gis.Model):
 
 class DB_vaccine_arrived(models.Model):
     """
-    Utilidad: Almacena los calculos de resumen de las vacunas, solo datos diarios, primera dosis
-    Escritura: Se actualiza con los datos aggregados de la tabla de vacunas
-    Lectura: Se lee en su totalidad o por ventanas de tiempo para mostrar el progreso general de las vacunas y las metas diarias a cumplir para acabar a fin de año 2021.
+    Utilidad: almacena los datos de las vacunas que llegaron
+    al territorio nacional, cada columna representa el 
+    fabricante de la vacuna.
     """
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha = models.DateTimeField()
