@@ -49,6 +49,8 @@ class Generator_RT(object):
 
         data_ctry = pd.Series(states.groupby(
             by='date').sum().values, index=final_index)
+        print('=============================================0')
+        print(data_ctry)
         states = states.append(data_ctry)
 
         # Fixing data to have difference of two days for the cumulative values

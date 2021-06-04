@@ -225,7 +225,8 @@ class Command(BaseCommand):
                               "% Positividad.1": "positividad",
                               "mypos": "positividad_verif",
                               }, inplace=True)
-        table.drop(columns=["positividad"], inplace=True)
+        if 'positividad' in table.columns.tolist():
+            table.drop(columns=["positividad"], inplace=True)
         table = self.formating_region_column(table)
         index = table.loc[table.region == "TOTAL"].index[0]
         table.drop(index=[index], inplace=True)

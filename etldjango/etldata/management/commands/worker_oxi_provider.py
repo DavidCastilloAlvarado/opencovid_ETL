@@ -21,8 +21,6 @@ import time
 import tabula
 import re
 # datetime.now(tz=timezone.utc)  # you can use this value
-URL_MINSA_REPORT = "https://www.dge.gob.pe/portalnuevo/covid-19/covid-cajas/situacion-del-covid-19-en-el-peru/"
-
 
 class Command(BaseCommand):
     help = "Command for load the oxi provider"
@@ -253,7 +251,7 @@ class Command(BaseCommand):
         def price_handler(x):
             text = {}
             if x == x and not x is None:
-                x = str(x).split('/')[-1]
+                x = str(x).split('/')[-1].upper()
                 if 'GRAT' in x:
                     text['m3'] = 'GRATIS'
                 elif '-' in x:
