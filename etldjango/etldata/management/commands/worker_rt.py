@@ -116,6 +116,7 @@ class Command(BaseCommand):
 
     def fix_daily_records(self, table):
         # table.sort_values(by='fecha', inplace=True)
+        temp_fecha = table.fecha
         table = table.groupby(["region", ])
         table_acum = pd.DataFrame()
         for region in table:
@@ -127,11 +128,12 @@ class Command(BaseCommand):
                                        on=["fecha", 'region'],
                                        how="left")
             temp = temp.sort_values(by="fecha")
-            temp["total_posit"] = temp["total_posit"].interpolate(method='linear',
+            temp["total_posit"] = temp["total_posit"].astype(float)
+            temp[["total_posit"]] = temp[["total_posit"]].interpolate(method='linear',
                                                                   limit_direction='forward',
                                                                   axis=0)
             temp = temp.reset_index(drop=True)
-            temp.dropna(inplace=True)
+            #temp.dropna(inplace=True)
             #temp = temp.fillna(method="ffill")
 
             #temp["cum_pos_total"] = temp["total"].cumsum()

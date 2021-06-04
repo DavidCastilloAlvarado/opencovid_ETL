@@ -63,3 +63,12 @@ class UpdateEpidemiologicalTable(APIView):
         except:
             return Response('Error while running command', status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+class UpdateArrivedVaccines(APIView):
+    def get(self, request):
+        out = StringIO()
+        args = ['full']
+        try:
+            call_command('worker_t_vacc_arrived', verbosity=0, *args, stdout=out)
+            return Response(out.getvalue(), status=status.HTTP_200_OK)
+        except:
+            return Response('Error while running command', status=status.HTTP_503_SERVICE_UNAVAILABLE)
