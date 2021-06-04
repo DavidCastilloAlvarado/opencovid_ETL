@@ -8,5 +8,5 @@ urlpatterns = [
     path('updatefiles/', views.UpdateDownloads.as_view(), name='updatefiles'),
     path('updatedailyreport/', views.UpdateDailyReport.as_view(), name='updateReport'),
     path('updateepidemtable/', views.UpdateEpidemiologicalTable.as_view(), name='updateEpidem'),
-    path('updateVaccines/', views.UpdateArrivedVaccines.as_view(), name='updateArrivedVacc')
+    path('updatevaccines/', views.UpdateArrivedVaccines.as_view(), name='updateArrivedVacc')
     ]
