@@ -27,7 +27,7 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("SINADEF transformation working ....")
-        #self.downloading_data_from_bucket()
+        self.downloading_data_from_bucket()
         self.download_csv_from_bucket_data_source(self.file_population)
         self.load_population_table()
         table = self.read_file_and_format_date()

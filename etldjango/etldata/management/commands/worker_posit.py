@@ -183,8 +183,8 @@ class Command(BaseCommand):
 
     def extracting_table_from_pdf(self, filename, page=3, ):
         ####### y   x   y1   x1    y   x    y1   x1
-        midl_tab = 446
-        areas=[[80, 5, 500, midl_tab],[80, midl_tab, 500, 1000]]
+        midl_tab = 444
+        areas=[[80, 0, 500, midl_tab],[80, midl_tab, 500, 1000]]
         # Extract data
         for i, area in enumerate(areas):
             self.print_shell('Extracting table from pdf {}subtable... '.format(i))
@@ -193,6 +193,7 @@ class Command(BaseCommand):
                                     guess=False,
                                     area=area)
             table = table[0]
+            print(table)
             #print(table)
             table = table.set_index("Región")
             table = table.applymap(lambda x: str(
