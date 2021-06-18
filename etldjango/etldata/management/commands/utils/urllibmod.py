@@ -30,7 +30,7 @@ def urlretrieve(url, filename, n_bytes=1024):
         print('NO proxy')
         proxies = None
     # proxies={"http": "http://201.234.60.82:999"}
-    with contextlib.closing(session.get(url, stream=True, timeout=10, verify=False, proxies=proxies)) as r:
+    with contextlib.closing(session.get(url, stream=True, timeout=10, verify=True, proxies=proxies)) as r:
         r.raise_for_status()
         with open(filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=n_bytes):

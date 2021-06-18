@@ -101,12 +101,12 @@ class Command(BaseCommand):
             "FECHA",
         ]
         sinadef = pd.read_csv("temp/"+self.file_name,
-                              sep=";",
+                              sep="|",
                               usecols=col_extr,)
                             #   encoding='latin-1',)
                             #   header=2)  # .iloc[:, 0:31]
         sinadef.FECHA = sinadef.FECHA.apply(
-            lambda x: datetime.strptime(x, "%d/%m/%Y"))
+            lambda x: datetime.strptime(x, "%Y-%m-%d"))
         return sinadef
 
     def filter_date_and_deads(self, table, mode, min_date="2018-01-01"):

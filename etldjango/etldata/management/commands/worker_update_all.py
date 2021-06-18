@@ -110,14 +110,14 @@ class Command(BaseCommand):
 
     def update_minsa_deaths(self, mode):
         out = StringIO()
-        args = [mode]
+        args = ['full']
         call_command('worker_t_minsamuertes', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_minsa_deaths - OK")
 
     def update_sinadef_deaths(self, mode):
         out = StringIO()
-        args = [mode]
+        args = [mode] #mode
         call_command('worker_t_sinadef', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_sinadef_deaths - OK")
