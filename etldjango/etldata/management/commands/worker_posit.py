@@ -169,8 +169,9 @@ class Command(BaseCommand):
     def read_pdf_validate(self, filename, page=3, contain="MUESTRAS TOTALES"):
         self.print_shell('Validating pdf estructure ... ')
         # Reading 
-        tables_raw = tabula.read_pdf(filename, pages=[page])
-        #print(tables_raw[0])
+        # areas=[[80, 0, 500, midl_tab_1],[80, midl_tab_1, 500, 1000]]
+        tables_raw = tabula.read_pdf(filename, pages=[page],area=[40, 0, 80,1000 ])
+        #print(tables_raw)
         # Validating that the table is on the pdf
         row_col = [tables_raw[0].columns.tolist()]
         tables_raw[0] = tables_raw[0].append(row_col, ignore_index=True)
@@ -182,28 +183,42 @@ class Command(BaseCommand):
         assert len(alldata.loc[alldata.str.contains(contain)]) > 0, "Table not found inside PDF"
 
     def extracting_table_from_pdf(self, filename, page=3, ):
-        ####### y   x   y1   x1    y   x    y1   x1
-        midl_tab = 446
-        areas=[[80, 5, 500, midl_tab],[80, midl_tab, 500, 1000]]
+        ####### y   x   y1        x1    y        x    y1   x1
+        midl_tab_1 = 444
+        midl_tab_2 = 495
         # Extract data
-        for i, area in enumerate(areas):
-            self.print_shell('Extracting table from pdf {}subtable... '.format(i))
-            table = tabula.read_pdf(filename,
-                                    pages=[page],
-                                    guess=False,
-                                    area=area)
-            table = table[0]
-            #print(table)
-            table = table.set_index("Región")
-            table = table.applymap(lambda x: str(
-                x).replace(" ", "").replace(",", "").replace(".", ""))
-            table = table.apply(pd.to_numeric, errors='ignore')
-            #print(table)
-            assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
-            if i==0:
-                total_table = table.copy()
-            else:
-                total_table = total_table.join(table.add_suffix('.1') )
+        def extract_tables(filename, page, areas):
+            for i, area in enumerate(areas):
+                self.print_shell('Extracting table from pdf {}subtable... '.format(i))
+                table = tabula.read_pdf(filename,
+                                        pages=[page],
+                                        guess=False,
+                                        area=area)
+                table = table[0]
+                print(table)
+                #print(table)
+                table = table.set_index("Región")
+                table = table.applymap(lambda x: str(
+                    x).replace(" ", "").replace(",", "").replace(".", ""))
+                table = table.apply(pd.to_numeric, errors='ignore')
+                #print(table)
+                assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
+                if i==0:
+                    total_table = table.copy()
+                else:
+                    print(table.columns.tolist())
+                    assert "% Positividad" in table.columns.tolist(), "Doesn't contain [% Posividad] column"
+                    total_table = total_table.join(table.add_suffix('.1') )
+            return total_table
+        try:
+            # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS
+            areas=[[80, 0, 500, midl_tab_1],[80, midl_tab_1, 500, 1000]]
+            total_table = extract_tables(filename,page, areas)
+        except :
+            # Tablas ordenadas | PRUEBAS *POSITIVAS* ACUMULADAS | PRUEBAS TOTALES ACUMULADAS 
+            areas=[[80, midl_tab_2, 500, 1000], [80, 0, 500, midl_tab_2]]
+            total_table = extract_tables(filename,page, areas)
+
 
         total_table.reset_index(inplace=True)
         print(total_table)

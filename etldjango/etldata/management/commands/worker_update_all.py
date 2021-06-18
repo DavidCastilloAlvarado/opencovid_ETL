@@ -23,23 +23,32 @@ class Command(BaseCommand):
         try:
             mode = options["mode"]
             assert mode in ['full', 'last'], "Error in --mode argument"
+            self.update_UCI_geo()
+            self.update_hospital_capacity(mode)
+            self.update_vacunas_record(mode)
+            self.update_vacunas_resumen(mode)
+            self.update_vacunas_arrived(mode)
+            self.update_oxi_statistics(mode)
+            self.update_oxi_business(mode)
+            self.update_minsa_deaths(mode)
+            self.update_sinadef_deaths(mode)###############
             self.update_movility(mode)
             self.update_records_positivity(mode)
             self.update_acum_positivity_from_pdf(mode)
             self.update_daily_positivity_from_db_acum_table(mode)
             self.update_rt_score(mode)######################
-            self.update_hospital_capacity(mode)
-            self.update_minsa_deaths(mode)
-            self.update_sinadef_deaths(mode)###############
-            self.update_oxi_statistics(mode)
-            self.update_oxi_business(mode)
+            # self.update_hospital_capacity(mode)
+            # self.update_minsa_deaths(mode)
+            # self.update_sinadef_deaths(mode)###############
+            # self.update_oxi_statistics(mode)
+            # self.update_oxi_business(mode)
             ### self.update_drugstore_business(mode)
-            self.update_UCI_geo()
-            self.update_vacunas_record(mode)
-            self.update_vacunas_resumen(mode)
-            self.update_vacunas_arrived(mode)
+            # self.update_UCI_geo()
+            # self.update_vacunas_record(mode)
+            # self.update_vacunas_resumen(mode)
+            # self.update_vacunas_arrived(mode)
             ####self.update_epidemiological_score(mode)
-            # self.update_resumen()
+            self.update_resumen()
             self.print_shell("Work Done!")
             logger.info("Updates finished - OK")
         except Exception as error:
@@ -101,14 +110,14 @@ class Command(BaseCommand):
 
     def update_minsa_deaths(self, mode):
         out = StringIO()
-        args = [mode]
+        args = ['full']
         call_command('worker_t_minsamuertes', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_minsa_deaths - OK")
 
     def update_sinadef_deaths(self, mode):
         out = StringIO()
-        args = [mode]
+        args = [mode] #mode
         call_command('worker_t_sinadef', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_sinadef_deaths - OK")

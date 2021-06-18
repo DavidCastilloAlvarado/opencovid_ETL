@@ -27,7 +27,7 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.print_shell("SINADEF transformation working ....")
-        #self.downloading_data_from_bucket()
+        self.downloading_data_from_bucket()
         self.download_csv_from_bucket_data_source(self.file_population)
         self.load_population_table()
         table = self.read_file_and_format_date()
@@ -101,12 +101,12 @@ class Command(BaseCommand):
             "FECHA",
         ]
         sinadef = pd.read_csv("temp/"+self.file_name,
-                              sep=";",
+                              sep="|",
                               usecols=col_extr,)
                             #   encoding='latin-1',)
                             #   header=2)  # .iloc[:, 0:31]
         sinadef.FECHA = sinadef.FECHA.apply(
-            lambda x: datetime.strptime(x, "%d/%m/%Y"))
+            lambda x: datetime.strptime(x, "%Y-%m-%d"))
         return sinadef
 
     def filter_date_and_deads(self, table, mode, min_date="2018-01-01"):
