@@ -197,12 +197,13 @@ class Command(BaseCommand):
                 table = table[0]
                 print(table)
                 #print(table)
+                assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
+                assert "Región" in table.columns.tolist(), "Doesn't contain PCR column"
                 table = table.set_index("Región")
                 table = table.applymap(lambda x: str(
                     x).replace(" ", "").replace(",", "").replace(".", ""))
                 table = table.apply(pd.to_numeric, errors='ignore')
                 #print(table)
-                assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
                 if i==0:
                     total_table = table.copy()
                 else:
@@ -211,10 +212,17 @@ class Command(BaseCommand):
                     total_table = total_table.join(table.add_suffix('.1') )
             return total_table
         try:
-            # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS
+            # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS (SAME)
             areas=[[80, 0, 500, midl_tab_1],[80, midl_tab_1, 500, 1000]]
             total_table = extract_tables(filename,page, areas)
-        except :
+
+        except AssertionError as e:
+            print(e)
+            # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS (SAME)
+            areas=[[75, 0, 500, midl_tab_1],[75, midl_tab_1, 500, 1000]]
+            total_table = extract_tables(filename,page, areas)
+        except AssertionError as e:
+            print(e)
             # Tablas ordenadas | PRUEBAS *POSITIVAS* ACUMULADAS | PRUEBAS TOTALES ACUMULADAS 
             areas=[[80, midl_tab_2, 500, 1000], [80, 0, 500, midl_tab_2]]
             total_table = extract_tables(filename,page, areas)
