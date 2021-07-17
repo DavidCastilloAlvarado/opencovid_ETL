@@ -28,6 +28,7 @@ class Command(BaseCommand):
             self.update_vacunas_record(mode)
             self.update_vacunas_resumen(mode)
             self.update_vacunas_arrived(mode)
+            self.update_vacunas_edades(mode)
             self.update_oxi_statistics(mode)
             self.update_oxi_business(mode)
             self.update_minsa_deaths(mode)
@@ -172,6 +173,13 @@ class Command(BaseCommand):
         call_command('worker_t_vaccresum', verbosity=0, *args, stdout=out)
         self.print_shell(out.getvalue())
         logger.info("update_vacunas_resumen - OK")
+
+    def update_vacunas_edades(self, mode):
+        out = StringIO()
+        args = ['full']#mode
+        call_command('worker_t_vacunas_10bin', verbosity=0, *args, stdout=out)
+        self.print_shell(out.getvalue())
+        logger.info("worker_t_vacunas_10bin - OK")
 
     def update_epidemiological_score(self, mode):
         out = StringIO()

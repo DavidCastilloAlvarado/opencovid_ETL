@@ -454,6 +454,27 @@ class DB_capacidad_oxi(models.Model):
     def __str__(self):
         return self.region
 
+class DB_minsa_muertes_full(models.Model):
+    """
+    Utilidad: Contiene los datos agregados de fallecidos registrados por el minsa, por región y día, ademas de una media movil.
+    Escritura: Se actualiza con los últimos datos obtenidos.
+    Lectura: Se lee por ventanas de tiempo region o todos las regiones al mismo tiempo.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha = models.DateTimeField()
+    clasificacion = models.CharField(max_length=100)
+    region = models.CharField(max_length=50)
+    n_muertes = models.IntegerField(null=True, default=None, blank=True,)
+
+    class Meta:
+        ordering = ['-fecha']
+        db_table = 'muertes_minsa_full'
+        indexes = [
+            models.Index(fields=['-fecha', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
 
 class DB_minsa_muertes(models.Model):
     """
@@ -491,7 +512,7 @@ class DB_vacunas(models.Model):
     region = models.CharField(max_length=50)
     fabricante = models.CharField(max_length=50)
     provincia = models.CharField(max_length=50)
-    grupo_riesgo = models.CharField(max_length=50)
+    grupo_riesgo = models.CharField(max_length=120)
     cantidad = models.DecimalField(null=True, default=None,
                                    decimal_places=2, max_digits=9, blank=True,)
     dosis = models.IntegerField(null=True, default=None, blank=True,)
@@ -501,6 +522,33 @@ class DB_vacunas(models.Model):
         db_table = 'vacunas_record'
         indexes = [
             models.Index(fields=['-fecha', 'region']),
+        ]
+
+    def __str__(self):
+        return self.region
+
+class DB_vacunas_ages(models.Model):
+    """
+    Utilidad: Contiene los datos agregados de los vacunados a la fecha.
+    Escritura: Se actualiza con los últimos datos obtenidos.
+    Lectura: Se lee por ventanas de tiempo region o todos las regiones al mismo tiempo.
+    """
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    edad = models.CharField(max_length=50)
+    region = models.CharField(max_length=50)
+    m = models.IntegerField(null=True, default=None, blank=True,)
+    f = models.IntegerField(null=True, default=None, blank=True,)
+    count = models.IntegerField(null=True, default=None, blank=True,)
+    dosis = models.IntegerField(null=True, default=None, blank=True,)
+    population= models.IntegerField(null=True, default=None, blank=True,)
+    popu_f= models.IntegerField(null=True, default=None, blank=True,)
+    popu_m= models.IntegerField(null=True, default=None, blank=True,)
+
+    class Meta:
+        ordering = ['region']
+        db_table = 'vacunas_fully'
+        indexes = [
+            models.Index(fields=['region']),
         ]
 
     def __str__(self):

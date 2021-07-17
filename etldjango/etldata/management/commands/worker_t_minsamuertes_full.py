@@ -4,7 +4,7 @@ from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from .utils.urllibmod import urlretrieve
 from datetime import datetime, timedelta
-from etldata.models import DB_vacunas, Logs_extractor
+from etldata.models import DB_minsa_muertes_full, Logs_extractor
 from .utils.unicodenorm import normalizer_str
 #from django.utils import timezone
 from tqdm import tqdm
@@ -13,9 +13,9 @@ import numpy as np
 
 
 class Command(BaseCommand):
-    help = "Command for store Vaccines records"
+    help = "Command for deads registered by Minsa"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
-    file_name = "vacunas.csv"
+    file_name = "fallecidos_covid_minsa.csv"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -66,70 +66,51 @@ class Command(BaseCommand):
         self.downloading_data_from_bucket()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
-        table = self.format_columns(table)
-        table = self.transform_vacunas(table)
-        self.save_table(table, DB_vacunas, mode)
+        table = self.transform_minsa_deads(table)
+        table = self.transform_roller_deads_total(table)
+        self.save_table(table, DB_minsa_muertes_full, mode)
         self.print_shell("Work Done!")
 
     def read_raw_data_format_date(self,):
         cols_extr = [
-            "FECHA_VACUNACION",
+            "FECHA_FALLECIMIENTO",
             "DEPARTAMENTO",
-            "DOSIS",
-            "FABRICANTE",
             "PROVINCIA",
-            "GRUPO_RIESGO"
+            "CLASIFICACION_DEF",
         ]
         # usecols=cols_extr)
-        table = pd.read_csv('temp/'+self.file_name, usecols=cols_extr)
-
-        table.rename(columns={"FECHA_VACUNACION": "fecha"}, inplace=True)
+        table = pd.read_csv('temp/'+self.file_name, sep=";",
+                            usecols=cols_extr, #encoding='latin-1'
+                            )
+        cols = table.columns.tolist()
+        table.columns = [normalizer_str(col).lower() for col in cols]
+        table.rename(columns={"fecha_fallecimiento": "fecha",
+                              "departamento": "region",
+                              "provincia": "provincia",
+                              "clasificacion_def": "clasificacion"}, inplace=True)
         # Format date
         table.fecha = table.fecha.apply(
             lambda x: datetime.strptime(str(int(x)), "%Y%m%d") if x == x else x)
         return table
 
     def filter_by_date(self, table, mode, min_date="2020-03-01"):
-        max_date_table = table.fecha.max()
         if mode == 'full':
             # max_date = str(datetime.now().date() - timedelta(days=30)) # test only
-            table = table.loc[(table.fecha >= min_date) &
-                              (table.fecha < max_date_table)]
+            table = table.loc[(table.fecha >= min_date)]
         elif mode == 'last':
             min_date = str(datetime.now().date() - timedelta(days=30))
-            table = table.loc[(table.fecha >= min_date) &
-                              (table.fecha < max_date_table)]
+            table = table.loc[(table.fecha >= min_date)]
         self.print_shell("Records after filter: {}".format(table.shape))
         return table
 
-    def format_columns(self, table):
-        table.rename(columns={
-            "DEPARTAMENTO": 'region',
-            "DOSIS": 'dosis',
-            "FABRICANTE": 'fabricante',
-            "PROVINCIA": 'provincia',
-            "GRUPO_RIESGO": 'grupo_riesgo',
-        }, inplace=True)
-        return table
-
-    def transform_vacunas(self, table):
-        # Drop empty records
-        #table.dropna(subset=['region'], inplace=True)
-        # normalize words
+    def transform_minsa_deads(self, table):
+        # pivot table
+        table = self.getting_lima_region_and_metropol(table)
         table.region = table.region.apply(
             lambda x: normalizer_str(x))
-        table.grupo_riesgo = table.grupo_riesgo.apply(
-            lambda x: normalizer_str(x))
-        table["cantidad"] = 1
-        cols = ['fecha', 'region', 'fabricante',
-                'provincia', 'dosis', 'grupo_riesgo']
-        table = table.groupby(by=cols).sum()
-        table.sort_values(by='fecha', inplace=True)
-        table.reset_index(inplace=True)
-        table = self.getting_lima_region_and_metropol(table)
-        print(table.tail(20))
-        print(table.info())
-        print(table.grupo_riesgo.unique())
+        table.clasificacion = table.clasificacion.apply(
+            lambda x: normalizer_str(x).replace('Criterio ', ''))
+        table["n_muertes"] = 1
         return table
 
     def getting_lima_region_and_metropol(self, table):
@@ -143,3 +124,7 @@ class Command(BaseCommand):
                 return x['region']
         table['region'] = table.apply(transform_region, axis=1)
         return table.drop(columns=['provincia'])
+
+    def transform_roller_deads_total(self, table, n_roll=3):
+        print(table.head())
+        return table

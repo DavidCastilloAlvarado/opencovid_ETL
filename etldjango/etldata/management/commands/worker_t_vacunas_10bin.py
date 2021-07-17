@@ -4,7 +4,7 @@ from .utils.storage import GetBucketData
 from .utils.extractor import Data_Extractor
 from .utils.urllibmod import urlretrieve
 from datetime import datetime, timedelta
-from etldata.models import DB_vacunas, Logs_extractor
+from etldata.models import DB_vacunas_ages, Logs_extractor
 from .utils.unicodenorm import normalizer_str
 #from django.utils import timezone
 from tqdm import tqdm
@@ -15,6 +15,7 @@ import numpy as np
 class Command(BaseCommand):
     help = "Command for store Vaccines records"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
+    POPULATION_10BIN = 'poblacion_edad_10bin.csv'
     file_name = "vacunas.csv"
 
     def add_arguments(self, parser):
@@ -59,17 +60,35 @@ class Command(BaseCommand):
                 _ = db.objects.bulk_create(records)
             else:
                 self.print_shell("No new data was found to store")
+    
+    def download_csv_from_bucket_data_source(self, filename):
+        self.print_shell("Downloading csv from bucket ...")
+        self.bucket.download_blob(bucket_name=BUCKET_NAME,
+                                  source_blob_name="data_source/"+filename,
+                                  destination_file_name='temp/'+filename)
 
     def handle(self, *args, **options):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
-        self.downloading_data_from_bucket()
+        #self.downloading_data_from_bucket()
+        self.download_csv_from_bucket_data_source(self.POPULATION_10BIN)
+        self.read_population_data()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
         table = self.format_columns(table)
-        table = self.transform_vacunas(table)
-        self.save_table(table, DB_vacunas, mode)
+        table = self.age_class(table)
+        table = self.group_data(table)
+        table = self.join_population_data(table)
+        self.save_table(table, DB_vacunas_ages, mode)
         self.print_shell("Work Done!")
+
+    def read_population_data(self,):
+        self.population_data = pd.read_csv(
+            'temp/'+self.POPULATION_10BIN, )
+        self.population_data.rename(columns={'count':'population',
+                                             'f':'popu_f',
+                                             'm':'popu_m'}, inplace=True)   
+        print(self.population_data.head())
 
     def read_raw_data_format_date(self,):
         cols_extr = [
@@ -78,11 +97,11 @@ class Command(BaseCommand):
             "DOSIS",
             "FABRICANTE",
             "PROVINCIA",
-            "GRUPO_RIESGO"
+            "EDAD",
+            "SEXO"
         ]
         # usecols=cols_extr)
         table = pd.read_csv('temp/'+self.file_name, usecols=cols_extr)
-
         table.rename(columns={"FECHA_VACUNACION": "fecha"}, inplace=True)
         # Format date
         table.fecha = table.fecha.apply(
@@ -108,21 +127,19 @@ class Command(BaseCommand):
             "DOSIS": 'dosis',
             "FABRICANTE": 'fabricante',
             "PROVINCIA": 'provincia',
-            "GRUPO_RIESGO": 'grupo_riesgo',
+            "EDAD":"edad",
+            "SEXO":"sexo",
         }, inplace=True)
         return table
 
     def transform_vacunas(self, table):
-        # Drop empty records
-        #table.dropna(subset=['region'], inplace=True)
         # normalize words
         table.region = table.region.apply(
             lambda x: normalizer_str(x))
-        table.grupo_riesgo = table.grupo_riesgo.apply(
-            lambda x: normalizer_str(x))
         table["cantidad"] = 1
+
         cols = ['fecha', 'region', 'fabricante',
-                'provincia', 'dosis', 'grupo_riesgo']
+                'provincia', 'dosis']
         table = table.groupby(by=cols).sum()
         table.sort_values(by='fecha', inplace=True)
         table.reset_index(inplace=True)
@@ -143,3 +160,26 @@ class Command(BaseCommand):
                 return x['region']
         table['region'] = table.apply(transform_region, axis=1)
         return table.drop(columns=['provincia'])
+
+    def age_class(self, table):
+        table = self.getting_lima_region_and_metropol(table)
+        cut_edad = [-1,5,12,18,30,40,50,60,70,80,1e100 ]
+        self.label = ['a0-04', 'a05-11', 'a12-17','a18-29', 'a30-49', 'a40-49', 'a50-59', 'a60-69', 'a70-79', 'a80-m']
+        table['edad'] = pd.to_numeric(table['edad'], errors='coerce')
+        table['edad'] = pd.cut(table['edad'], cut_edad,
+                               labels=self.label)
+        return table
+    
+    def group_data(self, table):
+        table['m'] = -1*table['sexo'].apply(lambda x: 1 if x != 'FEMENINO' else 0)
+        table['f'] = table['sexo'].apply(lambda x: 1 if x == 'FEMENINO' else 0)
+        table['count'] = 1
+        table = table.groupby(by=[ 'edad','region','dosis']).sum()
+        table.reset_index(inplace=True)
+        return table
+
+    def join_population_data(self,table):
+        table = pd.merge(table, self.population_data, how='left', on=['region', 'edad'])
+        print(table.info())
+        print(table.head())
+        return table
