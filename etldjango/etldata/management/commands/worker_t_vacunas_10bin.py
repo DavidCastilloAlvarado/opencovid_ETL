@@ -164,7 +164,7 @@ class Command(BaseCommand):
     def age_class(self, table):
         table = self.getting_lima_region_and_metropol(table)
         cut_edad = [-1,5,12,18,30,40,50,60,70,80,1e100 ]
-        self.label = ['a0-04', 'a05-11', 'a12-17','a18-29', 'a30-49', 'a40-49', 'a50-59', 'a60-69', 'a70-79', 'a80-m']
+        self.label = ['a0-04', 'a05-11', 'a12-17','a18-29', 'a30-39', 'a40-49', 'a50-59', 'a60-69', 'a70-79', 'a80-m']
         table['edad'] = pd.to_numeric(table['edad'], errors='coerce')
         table['edad'] = pd.cut(table['edad'], cut_edad,
                                labels=self.label)
@@ -175,7 +175,7 @@ class Command(BaseCommand):
         table['f'] = table['sexo'].apply(lambda x: 1 if x == 'FEMENINO' else 0)
         table['count'] = 1
         table = table.groupby(by=[ 'edad','region','dosis']).sum()
-        table.reset_index(inplace=True)
+        table.reset_index(inplace=True)# 10*26*2
         return table
 
     def join_population_data(self,table):
