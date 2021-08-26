@@ -28,7 +28,8 @@ RUN apt-get install -y\
     libpq-dev \
     libxml2-dev \
     sqlite3 \
-    libsqlite3-dev
+    libsqlite3-dev \
+    p7zip-full
 #RUN apt install postgresql-server-dev-11
 # Setup GDAL
 RUN apt-get install -y binutils \

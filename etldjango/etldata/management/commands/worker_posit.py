@@ -186,6 +186,7 @@ class Command(BaseCommand):
         ####### y   x   y1        x1    y        x    y1   x1
         midl_tab_1 = 444
         midl_tab_2 = 495
+        midl_tab_3 = 505
         # Extract data
         def extract_tables(filename, page, areas):
             for i, area in enumerate(areas):
@@ -195,7 +196,7 @@ class Command(BaseCommand):
                                         guess=False,
                                         area=area)
                 table = table[0]
-                print(table)
+                #print(table)
                 #print(table)
                 assert "PCR" in table.columns.tolist(), "Doesn't contain PCR column"
                 assert "Región" in table.columns.tolist(), "Doesn't contain PCR column"
@@ -207,26 +208,26 @@ class Command(BaseCommand):
                 if i==0:
                     total_table = table.copy()
                 else:
-                    print(table.columns.tolist())
+                    #print(table.columns.tolist())
                     assert "% Positividad" in table.columns.tolist(), "Doesn't contain [% Posividad] column"
                     total_table = total_table.join(table.add_suffix('.1') )
             return total_table
-        try:
-            # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS (SAME)
-            areas=[[80, 0, 500, midl_tab_1],[80, midl_tab_1, 500, 1000]]
-            total_table = extract_tables(filename,page, areas)
 
-        except AssertionError as e:
-            print(e)
+        areas = [
             # Tablas ordenadas | PRUEBAS TOTALES ACUMULADAS | PRUEBAS *POSITIVAS* ACUMULADAS (SAME)
-            areas=[[75, 0, 500, midl_tab_1],[75, midl_tab_1, 500, 1000]]
-            total_table = extract_tables(filename,page, areas)
-        except AssertionError as e:
-            print(e)
+            [[80, 0, 500, midl_tab_1],[80, midl_tab_1, 500, 1000]],
+            [[75, 0, 500, midl_tab_1],[75, midl_tab_1, 500, 1000]],
             # Tablas ordenadas | PRUEBAS *POSITIVAS* ACUMULADAS | PRUEBAS TOTALES ACUMULADAS 
-            areas=[[80, midl_tab_2, 500, 1000], [80, 0, 500, midl_tab_2]]
-            total_table = extract_tables(filename,page, areas)
-
+            [[80, midl_tab_2, 500, 1000], [80, 0, 500, midl_tab_2]],
+            [[80, midl_tab_3, 500, 1000], [80, 0, 500, midl_tab_3]],
+        ]
+        for area in areas:
+            try:
+                total_table = extract_tables(filename,page, area)
+                break
+            except AssertionError as e:
+                print(e)
+                pass
 
         total_table.reset_index(inplace=True)
         print(total_table)

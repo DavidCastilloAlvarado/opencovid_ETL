@@ -10,12 +10,14 @@ from .utils.unicodenorm import normalizer_str
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import os
 
 
 class Command(BaseCommand):
     help = "Command for store Vaccines records"
     bucket = GetBucketData(project_id=GCP_PROJECT_ID)
-    file_name = "vacunas.csv"
+    file_name = "vacunas.7z"
+    file_name_csv = "vacunas.csv"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -36,6 +38,10 @@ class Command(BaseCommand):
         print(source_url)
         self.bucket.get_from_bucket(source_name=source_url,
                                     destination_name='temp/'+self.file_name)
+        
+    def unzip_data(self,):
+        os.system(f"7z x temp/{self.file_name} vacunas_covid.csv && \
+                    mv vacunas_covid.csv temp/{self.file_name_csv}")
 
     def save_table(self, table, db, mode):
         if mode == 'full':
@@ -64,6 +70,7 @@ class Command(BaseCommand):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
         self.downloading_data_from_bucket()
+        self.unzip_data()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
         table = self.format_columns(table)
@@ -81,7 +88,7 @@ class Command(BaseCommand):
             "GRUPO_RIESGO"
         ]
         # usecols=cols_extr)
-        table = pd.read_csv('temp/'+self.file_name, usecols=cols_extr)
+        table = pd.read_csv('temp/'+self.file_name_csv, usecols=cols_extr)
 
         table.rename(columns={"FECHA_VACUNACION": "fecha"}, inplace=True)
         # Format date

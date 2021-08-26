@@ -63,7 +63,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         mode = options["mode"]
         assert mode in ['full', 'last'], "Error in --mode argument"
-        self.downloading_data_from_bucket()
+        #self.downloading_data_from_bucket()
         table = self.read_raw_data_format_date()
         table = self.filter_by_date(table, mode)
         table = self.transform_minsa_deads(table)
